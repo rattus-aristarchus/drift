@@ -1,0 +1,19 @@
+pops:
+    огнерунники:
+        name: "огнерунники"
+        sapient: False
+    коптеводы:
+        name: "коптеводы"
+        sapient: True
+        color: [0.7, 0.7, 0, 1]
+    рисоводы:
+        name: "рисоводы"
+        sapient: True
+        color: [0, 0, 1, 1]
+
+biomes:
+    basic:
+        capacity:
+            коптеводы: 10000
+            огнерунники: 100000
+            рисоводы: 8000000

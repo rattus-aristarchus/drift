@@ -1,0 +1,70 @@
+<View>
+    orientation: 'vertical'
+
+    canvas.before:
+        Color:
+            rgba: [0, 0.1, 0, 1]
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: dp(25)
+
+        Button:
+            text: "еще годик"
+            on_release: root.do_turn()
+            size_hint: None, None
+            size: dp(200), dp(25)
+
+        Button:
+            text: "пауза"
+            on_release: root.stop = not root.stop
+            size_hint: None, None
+            size: dp(200), dp(25)
+
+    GridLayout:
+        id: grid
+        rows: root.map.width
+        cols: root.map.height
+    #    col_default_width: dp(20)
+    #    row_default_height: dp(20)
+    #    col_force_default: True
+    #    row_force_default: True
+        spacing: 2, 2
+        size_hint: 1, 1
+
+        canvas.before:
+            Color:
+                rgba: [0, 1, 0, 1]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+<CellView>
+    size_hint: None, None
+    size: dp(50), dp(50)
+    outline_width: 3
+    outline_color: [0, 0, 0, 0]
+
+    canvas.before:
+        Color:
+            rgba: self.background
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<FloatGrid>
+    FloatLayout:
+        id: grid
+        size_hint: None, None
+        size: dp(200), dp(200)
+
+        canvas.before:
+            Color:
+                rgba: [0, 1, 0, 1]
+            Rectangle:
+                pos: self.pos
+                size: self.size
