@@ -74,20 +74,20 @@ class View(BoxLayout):
             max_num = 0
             max = None
             for pop in cell.pops:
-                if pop.number >= max_num and pop.sapient:
+                if pop.size >= max_num and pop.sapient:
                     max = pop
-                    max_num = pop.number
+                    max_num = pop.size
             return max
 
         def get_text(cell):
             result = ""
             for pop in cell.pops:
-                if pop.number < 1000:
-                    number = str(pop.number)
-                elif pop.number < 1000000:
-                    number = str(round(pop.number / 1000)) + "k"
+                if pop.size < 1000:
+                    number = str(pop.size)
+                elif pop.size < 1000000:
+                    number = str(round(pop.size / 1000)) + "k"
                 else:
-                    number = str(round(pop.number / 1000000)) + "m"
+                    number = str(round(pop.size / 1000000)) + "m"
                 # result += pop.name[:2] + ": " + number + "\n"
                 result += number + "\n"
             return result[:-1]

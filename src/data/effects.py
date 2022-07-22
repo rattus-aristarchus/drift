@@ -3,91 +3,111 @@ from kivy.logger import Logger
 from data.base_types import Population
 
 
-def flamesheep_inc(pop, cell, grid):
+class GridBuffer:
+
+    def __init__(self, grid, old_grid):
+        self.grid = grid
+        self.old_grid = old_grid
+        self.all_sootnomads = sum_for_cells("коптеводы", old_grid.cells_as_list())
+
+
+class CellBuffer:
+
+    def __init__(self, cell, grid_buffer):
+        self.cell = cell
+        self.old_cell = grid_buffer.old_grid.cells[cell.x][cell.y]
+        self.neighbors = get_neighbors(cell.x, cell.y, grid_buffer.grid)
+        self.old_neighbors = get_neighbors(cell.x, cell.y, grid_buffer.old_grid)
+
+
+def flamesheep_inc(pop, cell_buffer, grid_buffer):
     pass
 
 
-def flamesheep_dec(pop, cell, grid):
+def flamesheep_dec(pop, cell_buffer, grid_buffer):
     pass
 
 
-def nomad_inc(pop, cell, grid):
-    neighbors = get_neighbors(cell.x, cell.y, grid)
+def flamesheep_dec(pop, cell_buffer, grid_buffer):
+    pass
 
+
+def nomad_inc(pop, cell_buffer, grid_buffer):
     # natural growth
-    Logger.debug("growing pop " + pop.name + ", current number " + str(pop.number))
-    cap = cell.biome['capacity'][pop.name]
-    slowing = (1.0 - pop.number / cap)
+    Logger.debug("growing pop " + pop.name + ", current number " + str(pop.size))
+    cap = cell_buffer.cell.biome['capacity'][pop.name]
+    slowing = (1.0 - pop.size / cap)
     if slowing < 0:
         slowing = 0
-    growth = round(pop.number * 0.1 * slowing)
-    pop.number += growth
-    Logger.debug("new pop number " + str(pop.number))
+    pop.size += round(pop.size * 0.1 * slowing)
+    Logger.debug("new pop number " + str(pop.size))
 
 
-def nomad_dec(pop, cell, grid):
+def nomad_dec(pop, cell_buffer, grid_buffer):
     # pressure for soot nomads is all neighboring rice growers
-    this_and_neighbors = get_neighbors(cell.x, cell.y, grid) + [cell]
+    this_and_neighbors = cell_buffer.old_neighbors + [cell_buffer.old_cell]
     sum_ricegrowers = sum_for_cells("рисоводы", this_and_neighbors)
     decrease = round(sum_ricegrowers * 0.1)
     Logger.debug("decreasing soot nomads by " + str(decrease))
-    pop.number -= decrease
+    pop.size -= decrease
 
 
-def nomad_mig(pop, cell, grid):
-    if pop.number > 1000:
-        # this might affect performance
-        sum_sootnomads = sum_for_cells("коптеводы", grid.cells_as_list())
-
-        check_pop = get_or_create_pop(pop.name, cell)
-        cap = cell.biome['capacity'][pop.name]
-        slowing = (1.0 - check_pop.number / cap)
-        if slowing < 0:
-            slowing = 0
-        growth = round(sum_sootnomads * 0.001 * slowing)
-        check_pop.number += growth
+def nomad_mig(pop, cell_buffer, grid_buffer):
+    if pop.size > 1000:
+        for neighbor in cell_buffer.neighbors:
+            check_pop = get_or_create_pop(pop.name, neighbor)
+            cap = neighbor.biome['capacity'][pop.name]
+            slowing = (1.0 - check_pop.size / cap)
+            if slowing < 0:
+                slowing = 0
+            growth = round(grid_buffer.all_sootnomads * 0.001 * slowing)
+            check_pop.size += growth
 
 
-def rice_inc(pop, cell, grid):
-    Logger.debug("growing pop " + pop.name + ", current number " + str(pop.number))
-    cap = cell.biome['capacity'][pop.name]
-    slowing = (1.0 - pop.number / cap)
+def rice_inc(pop, cell_buffer, grid_buffer):
+    Logger.debug("growing pop " + pop.name + ", current number " + str(pop.size))
+    cap = cell_buffer.cell.biome['capacity'][pop.name]
+    slowing = (1.0 - pop.size / cap)
     if slowing < 0:
         slowing = 0
-    growth = round(pop.number * 0.1 * slowing)
-    pop.number += growth
-    Logger.debug("new pop number " + str(pop.number))
+    growth = round(pop.size * 0.1 * slowing)
+    pop.size += growth
+    Logger.debug("new pop number " + str(pop.size))
 
 
-def rice_dec(pop, cell, grid):
-    sum_sootnomads = sum_for_cells("коптеводы", grid.cells_as_list())
-    decrease = round(sum_sootnomads * 0.01)
-    pop.number -= decrease
+def rice_dec(pop, cell_buffer, grid_buffer):
+    if has_neighbor_sootnomad(cell_buffer.old_neighbors):
+        decrease = round(grid_buffer.all_sootnomads * 0.01)
+        pop.size -= decrease
 
 
-def rice_mig(pop, cell, grid):
-    if pop.number > 1000:
-        check_pop = get_or_create_pop(pop.name, cell)
-        cap = cell.biome['capacity'][pop.name]
-        slowing = (1.0 - check_pop.number / cap)
-        if slowing < 0:
-            slowing = 0
-        growth = round(pop.number * 0.01 * slowing)
-        check_pop.number += growth
+def rice_mig(pop, cell_buffer, grid_buffer):
+    if pop.size > 1000:
+        for neighbor in cell_buffer.neighbors:
+            check_pop = get_or_create_pop(pop.name, neighbor)
+            cap = neighbor.biome['capacity'][pop.name]
+            slowing = (1.0 - check_pop.size / cap)
+            if slowing < 0:
+                slowing = 0
+            growth = round(pop.size * 0.01 * slowing)
+            check_pop.size += growth
 
 
 EFFECTS = {
     "огнерунники": {
-        "inc": flamesheep_inc,
-        "pres": flamesheep_dec
+        'increase': flamesheep_inc,
+        'pressure': flamesheep_dec,
+        'migrate': None
     },
     "коптеводы": {
-        "inc": nomad_inc,
-        "pres": nomad_dec
+        'increase': nomad_inc,
+        'pressure': nomad_dec,
+        'migrate': nomad_mig
     },
     "рисоводы": {
-        "inc": rice_inc,
-        "pres": rice_dec
+        'increase': rice_inc,
+        'pressure': rice_dec,
+        'migrate': rice_mig
     }
 }
 
@@ -104,15 +124,15 @@ def has_neighbor(name):
         if next.get_pop(name) is not None:
             return True
     return False
+"""
 
 
-def has_neighbor_sootnomad():
+def has_neighbor_sootnomad(neighbors):
     for next in neighbors:
         nomads = next.get_pop("коптеводы")
-        if nomads is not None and nomads.age > 0:
+        if nomads is not None:
             return True
     return False
-"""
 
 
 def sum_for_cells(pop_name, cells):
@@ -120,9 +140,9 @@ def sum_for_cells(pop_name, cells):
     for neighbor in cells:
         pop = neighbor.get_pop(pop_name)
         if pop is not None:
-            Logger.debug("found neighboring " + pop.name + ", numbering " + str(pop.number) +
+            Logger.debug("found neighboring " + pop.name + ", numbering " + str(pop.size) +
                          " in cell x " + str(neighbor.x) + ", y " + str(neighbor.y))
-            result += pop.number
+            result += pop.size
     return result
 
 
