@@ -1,2 +1,2 @@
-misc:
-  log_level: debug
+log_level: debug
+world: nomads_vs_farmers

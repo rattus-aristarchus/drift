@@ -1,0 +1,18 @@
+nomads_vs_farmers:
+    width: 20
+    height: 20
+    cells:
+        0:
+            location: random
+            pops:
+                0:
+                    name: "коптеводы"
+                    size: 1000
+            repeat: 3
+        1:
+            location: random
+            pops:
+                0:
+                    name: "рисоводы"
+                    size: 1000
+            repeat: 3

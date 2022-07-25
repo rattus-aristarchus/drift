@@ -21,6 +21,7 @@ Logger.info("Util: using dir " + MAIN_DIR)
 
 CONF = yaml.safe_load(open(MAIN_DIR + "/conf.yml", "r", encoding="utf-8"))
 CONST = yaml.safe_load(open(MAIN_DIR + "/const.yml", "r", encoding="utf-8"))
+WORLDS = yaml.safe_load(open(MAIN_DIR + "/worlds.yml", "r", encoding="utf-8"))
 # STRINGS = yaml.safe_load(open(MAIN_DIR + "/strings.yml", "r", encoding="utf-8"))
 
 

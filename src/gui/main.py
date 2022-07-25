@@ -28,7 +28,7 @@ class Main(App):
 
 class View(BoxLayout):
 
-    map = ObjectProperty(control.generate_basic())
+    map = ObjectProperty(control.generate_grid())
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

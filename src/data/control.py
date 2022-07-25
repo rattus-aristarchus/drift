@@ -1,41 +1,37 @@
 import random
 from kivy.logger import Logger
 
-import data.effects as effects
 from data.effects import EFFECTS, CellBuffer, GridBuffer
-from data.base_types import Grid, Cell, Population
+from data.base_types import Grid, Population
+from util import WORLDS, CONF
 
 
-def generate_basic():
-    width = 20
-    height = 20
-    map = Grid(width, height)
+def generate_grid():
+    world = WORLDS[CONF['world']]
+    grid = Grid(world['width'], world['height'])
 
-    rand_start_nomad(map)
-    rand_start_nomad(map)
-    rand_start_nomad(map)
-    rand_start_rice(map)
-    rand_start_rice(map)
-    rand_start_rice(map)
+    for number, cell_dict in world['cells'].items():
+        if 'repeat' in cell_dict.keys():
+            repeat = cell_dict['repeat']
+        else:
+            repeat = 1
+        for i in range(repeat):
+            generate_cell(cell_dict, grid)
 
-    return map
-
-
-def rand_start_nomad(map):
-    start_a = rand_cell(map)
-    pop = init_pop("коптеводы")
-    pop.size = 1000
-    start_a.pops.append(pop)
-#    pop = init_pop("огнерунники")
-#    pop.number = 10000
-#    start_a.pops.append(pop)
+    return grid
 
 
-def rand_start_rice(map):
-    start_a = rand_cell(map)
-    pop = init_pop("рисоводы")
-    pop.size = 1000
-    start_a.pops.append(pop)
+def generate_cell(cell_dict, grid):
+    if cell_dict['location'] == 'random':
+        cell = rand_cell(grid)
+    else:
+        loc = cell_dict['location']
+        cell = map.cells[loc[0]][loc[1]]
+
+    for number, pop_dict in cell_dict['pops'].items():
+        pop = init_pop(pop_dict['name'])
+        pop.size = pop_dict['size']
+        cell.pops.append(pop)
 
 
 def rand_cell(map):
@@ -74,24 +70,6 @@ def copy_grid(old_grid):
             for cap, value in old_cell.caps.items():
                 new_cell.caps[cap] = value
     return new_grid
-
-
-def do_turn_cell_old(cell, grid):
-    neighbors = effects.get_neighbors(cell.x, cell.y, grid)
-    this_and_neighbors = neighbors + [cell]
-
-    for neighbor in neighbors:
-        for pop in neighbor.pops:
-            if pop.migrate is not None:
-                pop.migrate(pop, cell, grid)
-
-    for pop in cell.pops:
-        if pop.increase is not None:
-            pop.increase(pop, cell, grid)
-
-    for pop in cell.pops:
-        if pop.pressure is not None:
-            pop.pressure(pop, cell, grid)
 
 
 def init_pop(name):
