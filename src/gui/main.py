@@ -1,13 +1,15 @@
 from kivy.app import App
 from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.label import Label
 from kivy.properties import ColorProperty, ObjectProperty
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.uix.label import Label
 
 from src.util import CONST
 from src.data import control
+
+from gui.widgets import CellView, Tooltip
 
 
 class Main(App):
@@ -19,17 +21,9 @@ class Main(App):
         Logger.info("Main: building the app")
 
         self.title = "Drift"
-        Window.size = (1500, 1000)
+        Window.size = (1200, 900)
         self.view = View()
         return self.view
-
-
-class CellView(Label):
-
-    background = ColorProperty([0, 0, 0, 0])
-
-#    def __init__(self, **kwargs):
- #       super().__init__(**kwargs)
 
 
 class View(BoxLayout):

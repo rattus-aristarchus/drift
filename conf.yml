@@ -1,2 +1,2 @@
 misc:
-  log_level: warning
+  log_level: debug

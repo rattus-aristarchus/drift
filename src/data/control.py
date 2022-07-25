@@ -71,6 +71,8 @@ def copy_grid(old_grid):
                 new_pop.size = pop.size
                 new_pop.age = pop.age + 1
                 new_cell.pops.append(new_pop)
+            for cap, value in old_cell.caps.items():
+                new_cell.caps[cap] = value
     return new_grid
 
 
@@ -90,8 +92,6 @@ def do_turn_cell_old(cell, grid):
     for pop in cell.pops:
         if pop.pressure is not None:
             pop.pressure(pop, cell, grid)
-
-
 
 
 def init_pop(name):

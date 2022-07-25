@@ -35,28 +35,37 @@ def flamesheep_dec(pop, cell_buffer, grid_buffer):
 def nomad_inc(pop, cell_buffer, grid_buffer):
     # natural growth
     Logger.debug("growing pop " + pop.name + ", current number " + str(pop.size))
-    cap = cell_buffer.cell.biome['capacity'][pop.name]
+    cap = cell_buffer.cell.caps[pop.name]
     slowing = (1.0 - pop.size / cap)
-    if slowing < 0:
-        slowing = 0
+#    if slowing < 0:
+#        slowing = 0
     pop.size += round(pop.size * 0.1 * slowing)
     Logger.debug("new pop number " + str(pop.size))
 
 
-def nomad_dec(pop, cell_buffer, grid_buffer):
+def nomad_pressure(pop, cell_buffer, grid_buffer):
     # pressure for soot nomads is all neighboring rice growers
     this_and_neighbors = cell_buffer.old_neighbors + [cell_buffer.old_cell]
     sum_ricegrowers = sum_for_cells("рисоводы", this_and_neighbors)
     decrease = round(sum_ricegrowers * 0.1)
+
+    # effects of over-grazing. current population reduces the cap; if the
+    # cap is too low, it starts regenerating
+    overgrazing = round(pop.size * 0.4)
+    max_cap = cell_buffer.cell.biome['capacity'][pop.name]
+    cur_cap = cell_buffer.cell.caps[pop.name]
+    recovery = (max_cap / cur_cap) * (0.1 * max_cap)
+
     Logger.debug("decreasing soot nomads by " + str(decrease))
     pop.size -= decrease
+    cell_buffer.cell.caps[pop.name] -= overgrazing - recovery
 
 
 def nomad_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
             check_pop = get_or_create_pop(pop.name, neighbor)
-            cap = neighbor.biome['capacity'][pop.name]
+            cap = neighbor.caps[pop.name]
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
                 slowing = 0
@@ -66,16 +75,16 @@ def nomad_mig(pop, cell_buffer, grid_buffer):
 
 def rice_inc(pop, cell_buffer, grid_buffer):
     Logger.debug("growing pop " + pop.name + ", current number " + str(pop.size))
-    cap = cell_buffer.cell.biome['capacity'][pop.name]
+    cap = cell_buffer.cell.caps[pop.name]
     slowing = (1.0 - pop.size / cap)
-    if slowing < 0:
-        slowing = 0
+ #   if slowing < 0:
+  #      slowing = 0
     growth = round(pop.size * 0.1 * slowing)
     pop.size += growth
     Logger.debug("new pop number " + str(pop.size))
 
 
-def rice_dec(pop, cell_buffer, grid_buffer):
+def rice_pressure(pop, cell_buffer, grid_buffer):
     if has_neighbor_sootnomad(cell_buffer.old_neighbors):
         decrease = round(grid_buffer.all_sootnomads * 0.01)
         pop.size -= decrease
@@ -85,7 +94,7 @@ def rice_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
             check_pop = get_or_create_pop(pop.name, neighbor)
-            cap = neighbor.biome['capacity'][pop.name]
+            cap = neighbor.caps[pop.name]
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
                 slowing = 0
@@ -101,12 +110,12 @@ EFFECTS = {
     },
     "коптеводы": {
         'increase': nomad_inc,
-        'pressure': nomad_dec,
+        'pressure': nomad_pressure,
         'migrate': nomad_mig
     },
     "рисоводы": {
         'increase': rice_inc,
-        'pressure': rice_dec,
+        'pressure': rice_pressure,
         'migrate': rice_mig
     }
 }

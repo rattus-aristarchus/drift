@@ -29,6 +29,9 @@ class Cell:
         self.y = y
         self.pops = []
         self.biome = CONST['biomes']['basic']
+        self.caps = {}
+        for cap, value in self.biome['capacity'].items():
+            self.caps[cap] = value
 
     def do_effects(self, cell_buffer, grid_buffer):
         for pop in self.pops:
