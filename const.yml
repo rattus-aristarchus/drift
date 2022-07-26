@@ -1,7 +1,4 @@
 pops:
-    огнерунники:
-        name: "огнерунники"
-        sapient: False
     коптеводы:
         name: "коптеводы"
         sapient: True
@@ -10,6 +7,15 @@ pops:
         name: "рисоводы"
         sapient: True
         color: [0, 0, 1, 1]
+    огнерунники:
+        name: "огнерунники"
+        sapient: False
+    крысы:
+        name: "крысы"
+        sapient: False
+    рыси:
+        name: "рыси"
+        sapient: False
 
 biomes:
     basic:

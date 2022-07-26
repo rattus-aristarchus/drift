@@ -63,9 +63,9 @@ class Population(Agent):
         self.migrate = None
 
     def do_effects(self, cell_buffer, grid_buffer):
-        if self.increase is not None:
-            self.increase(self, cell_buffer, grid_buffer)
-        if self.pressure is not None:
-            self.pressure(self, cell_buffer, grid_buffer)
-        if self.migrate is not None:
-            self.migrate(self, cell_buffer, grid_buffer)
+     #   if self.increase is not None:
+        self.increase(self, cell_buffer, grid_buffer)
+    #    if self.pressure is not None:
+        self.pressure(self, cell_buffer, grid_buffer)
+    #    if self.migrate is not None:
+        self.migrate(self, cell_buffer, grid_buffer)

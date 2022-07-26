@@ -16,3 +16,17 @@ nomads_vs_farmers:
                     name: "рисоводы"
                     size: 1000
             repeat: 3
+
+rats_and_lynxes:
+    width: 2
+    height: 2
+    cells:
+        0:
+            location: [0, 0]
+            pops:
+                0:
+                    name: "крысы"
+                    size: 10000
+                1:
+                    name: "рыси"
+                    size: 1000

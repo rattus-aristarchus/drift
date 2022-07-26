@@ -26,7 +26,7 @@ def generate_cell(cell_dict, grid):
         cell = rand_cell(grid)
     else:
         loc = cell_dict['location']
-        cell = map.cells[loc[0]][loc[1]]
+        cell = grid.cells[loc[0]][loc[1]]
 
     for number, pop_dict in cell_dict['pops'].items():
         pop = init_pop(pop_dict['name'])

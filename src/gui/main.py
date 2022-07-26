@@ -23,6 +23,7 @@ class Main(App):
         self.title = "Drift"
         Window.size = (1200, 900)
         self.view = View()
+        Window.add_widget(Label(text='Hello world', size_hint=(None, None), size=(200, 100)))
         return self.view
 
 
@@ -32,7 +33,7 @@ class View(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.stop = False
+        self.stop = True
         self.cells = {}
         self.create_grid()
         Clock.schedule_interval(self.auto_turn, 0.2)

@@ -102,11 +102,56 @@ def rice_mig(pop, cell_buffer, grid_buffer):
             check_pop.size += growth
 
 
+def rat_inc(pop, cell_buffer, grid_buffer):
+    lynxes = cell_buffer.old_cell.get_pop('рыси')
+    if lynxes is None:
+        lynx_num = 0
+    else:
+        lynx_num = lynxes.size
+
+    growth = round(pop.size * (0.15 - lynx_num / 5000))
+    Logger.debug("Rat_inc: growing by " + str(growth))
+    pop.size += growth
+
+
+def rat_press(pop, cell_buffer, grid_buffer):
+    pass
+
+
+def lynx_inc(pop, cell_buffer, grid_buffer):
+    rats = cell_buffer.old_cell.get_pop('крысы')
+    if rats is None:
+        food = 0
+    else:
+        food = rats.size
+    starvation = (pop.size * 10 - food) / (pop.size * 10)
+    if starvation <= 0:
+        starvation = 0
+        natural_growth = round(pop.size * 0.1)
+    else:
+        natural_growth = 0
+
+    deaths = round(starvation * pop.size)
+    Logger.debug("Lynx_inc: starvation intensity " + str(starvation) + ", growth " + str(natural_growth - deaths))
+    pop.size += natural_growth - deaths
+
+
+def lynx_press(pop, cell_buffer, grid_buffer):
+    rats = cell_buffer.cell.get_pop('крысы')
+    if rats is not None:
+        Logger.debug("Lynx_press: eating " + str(pop.size) + " rats")
+        rats.size -= pop.size
+
+
+def do_nothing(pop, cell_buffer, grid_buffer):
+    pass
+
+
 EFFECTS = {
     "огнерунники": {
         'increase': flamesheep_inc,
         'pressure': flamesheep_dec,
-        'migrate': None
+        'migrate': do_nothing
     },
     "коптеводы": {
         'increase': nomad_inc,
@@ -117,6 +162,16 @@ EFFECTS = {
         'increase': rice_inc,
         'pressure': rice_pressure,
         'migrate': rice_mig
+    },
+    "крысы": {
+        'increase': rat_inc,
+        'pressure': rat_press,
+        'migrate': do_nothing
+    },
+    "рыси": {
+        'increase': lynx_inc,
+        'pressure': lynx_press,
+        'migrate': do_nothing
     }
 }
 
@@ -178,5 +233,9 @@ def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
         check_pop = Population(name)
+        # This is a sign of spaghetti code, but right now i can't think of a good way to fix it
+        check_pop.increase = EFFECTS[name]['increase']
+        check_pop.pressure = EFFECTS[name]['pressure']
+        check_pop.migrate = EFFECTS[name]['migrate']
         cell.pops.append(check_pop)
     return check_pop

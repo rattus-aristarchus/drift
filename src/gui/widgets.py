@@ -30,9 +30,9 @@ class CellView(Label):
             Clock.schedule_once(self.display_tooltip, 0.5)
 
     def close_tooltip(self, *args):
-        Logger.debug("removing tooltip")
+#        Logger.debug("removing tooltip")
         Window.remove_widget(self.tooltip)
 
     def display_tooltip(self, *args):
-        Logger.debug("displaying tooltip")
+ #       Logger.debug("displaying tooltip at pos " + str(self.tooltip.pos))
         Window.add_widget(self.tooltip)
