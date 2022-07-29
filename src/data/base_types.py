@@ -8,6 +8,7 @@ class Grid:
         self.height = height
         #dict of dicts
         self.cells = {}
+        self.watched_cells = []
 
         for x in range(0, width):
             self.cells[x] = {}

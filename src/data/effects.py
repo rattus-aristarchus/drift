@@ -109,9 +109,9 @@ def rat_inc(pop, cell_buffer, grid_buffer):
     else:
         lynx_num = lynxes.size
 
-    growth = round(pop.size * (0.15 - lynx_num / 5000))
-    Logger.debug("Rat_inc: growing by " + str(growth))
+    growth = round(pop.size * (0.15 - lynx_num / 10000))
     pop.size += growth
+    Logger.debug("Number of rats increased by " + str(growth) + " to " + str(pop.size))
 
 
 def rat_press(pop, cell_buffer, grid_buffer):
@@ -121,26 +121,17 @@ def rat_press(pop, cell_buffer, grid_buffer):
 def lynx_inc(pop, cell_buffer, grid_buffer):
     rats = cell_buffer.old_cell.get_pop('крысы')
     if rats is None:
-        food = 0
+        rat_num = 0
     else:
-        food = rats.size
-    starvation = (pop.size * 10 - food) / (pop.size * 10)
-    if starvation <= 0:
-        starvation = 0
-        natural_growth = round(pop.size * 0.1)
-    else:
-        natural_growth = 0
+        rat_num = rats.size
 
-    deaths = round(starvation * pop.size)
-    Logger.debug("Lynx_inc: starvation intensity " + str(starvation) + ", growth " + str(natural_growth - deaths))
-    pop.size += natural_growth - deaths
+    growth = round(pop.size * (rat_num / 20000 - 0.5))
+    pop.size += growth
+    Logger.debug("Number of lynxes increased by " + str(growth) + " to " + str(pop.size))
 
 
 def lynx_press(pop, cell_buffer, grid_buffer):
-    rats = cell_buffer.cell.get_pop('крысы')
-    if rats is not None:
-        Logger.debug("Lynx_press: eating " + str(pop.size) + " rats")
-        rats.size -= pop.size
+    pass
 
 
 def do_nothing(pop, cell_buffer, grid_buffer):

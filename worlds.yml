@@ -30,3 +30,4 @@ rats_and_lynxes:
                 1:
                     name: "рыси"
                     size: 1000
+            watch: True

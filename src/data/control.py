@@ -4,6 +4,7 @@ from kivy.logger import Logger
 from data.effects import EFFECTS, CellBuffer, GridBuffer
 from data.base_types import Grid, Population
 from util import WORLDS, CONF
+import storage
 
 
 def generate_grid():
@@ -16,12 +17,14 @@ def generate_grid():
         else:
             repeat = 1
         for i in range(repeat):
-            generate_cell(cell_dict, grid)
+            cell = populate_cell(cell_dict, grid)
+            if 'watch' in cell_dict.keys() and cell_dict['watch']:
+                grid.watched_cells.append(cell)
 
     return grid
 
 
-def generate_cell(cell_dict, grid):
+def populate_cell(cell_dict, grid):
     if cell_dict['location'] == 'random':
         cell = rand_cell(grid)
     else:
@@ -32,6 +35,7 @@ def generate_cell(cell_dict, grid):
         pop = init_pop(pop_dict['name'])
         pop.size = pop_dict['size']
         cell.pops.append(pop)
+    return cell
 
 
 def rand_cell(map):
@@ -52,6 +56,10 @@ def do_turn(old_grid):
                 to_remove.append(pop)
         for pop in to_remove:
             cell.pops.remove(pop)
+
+    # this is bad
+    for cell in new_grid.watched_cells:
+        storage.write_cell(cell)
     return new_grid
 
 
@@ -69,6 +77,9 @@ def copy_grid(old_grid):
                 new_cell.pops.append(new_pop)
             for cap, value in old_cell.caps.items():
                 new_cell.caps[cap] = value
+
+    for cell in old_grid.watched_cells:
+        new_grid.watched_cells.append(new_grid.cells[cell.x][cell.y])
     return new_grid
 
 
