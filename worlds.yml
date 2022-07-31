@@ -18,8 +18,8 @@ nomads_vs_farmers:
             repeat: 3
 
 rats_and_lynxes:
-    width: 2
-    height: 2
+    width: 5
+    height: 5
     cells:
         0:
             location: [0, 0]
@@ -30,4 +30,34 @@ rats_and_lynxes:
                 1:
                     name: "рыси"
                     size: 1000
+            watch: True
+        1:
+            location: [0, 1]
+            pops:
+                0:
+                    name: "крысы"
+                    size: 0
+                1:
+                    name: "рыси"
+                    size: 0
+            watch: True
+        2:
+            location: [1, 0]
+            pops:
+                0:
+                    name: "крысы"
+                    size: 0
+                1:
+                    name: "рыси"
+                    size: 0
+            watch: True
+        3:
+            location: [1, 1]
+            pops:
+                0:
+                    name: "крысы"
+                    size: 0
+                1:
+                    name: "рыси"
+                    size: 0
             watch: True

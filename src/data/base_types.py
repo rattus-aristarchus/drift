@@ -1,4 +1,5 @@
 from util import CONST
+from storage import Output
 
 
 class Grid:
@@ -9,6 +10,7 @@ class Grid:
         #dict of dicts
         self.cells = {}
         self.watched_cells = []
+        self.output = Output()
 
         for x in range(0, width):
             self.cells[x] = {}

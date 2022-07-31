@@ -4,7 +4,7 @@ from kivy.logger import Logger
 from data.effects import EFFECTS, CellBuffer, GridBuffer
 from data.base_types import Grid, Population
 from util import WORLDS, CONF
-import storage
+from storage import Output
 
 
 def generate_grid():
@@ -59,7 +59,8 @@ def do_turn(old_grid):
 
     # this is bad
     for cell in new_grid.watched_cells:
-        storage.write_cell(cell)
+        new_grid.output.write_cell(cell)
+    new_grid.output.write_end_of_turn()
     return new_grid
 
 

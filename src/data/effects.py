@@ -1,3 +1,13 @@
+"""
+All data for the functions are taken from the grid of the previous turn.
+This is done in order to avoid a situation where several cells are pulled from the
+new grid, and some of those cells have already had changes applied to
+them, while others haven't.
+"""
+
+
+import math
+from random import Random
 from kivy.logger import Logger
 
 from data.base_types import Population
@@ -103,35 +113,45 @@ def rice_mig(pop, cell_buffer, grid_buffer):
 
 
 def rat_inc(pop, cell_buffer, grid_buffer):
-    lynxes = cell_buffer.old_cell.get_pop('рыси')
-    if lynxes is None:
-        lynx_num = 0
-    else:
-        lynx_num = lynxes.size
+    rat_num = get_pop_num('крысы', cell_buffer.old_cell)
+    lynx_num = get_pop_num('рыси', cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.caps['крысы']
 
-    growth = round(pop.size * (0.15 - lynx_num / 10000))
+    natural = rat_num * 0.4 * (1 - pop.size / capacity)
+    predation = rat_num * lynx_num / 10000
+    growth = round(natural - predation)
     pop.size += growth
     Logger.debug("Number of rats increased by " + str(growth) + " to " + str(pop.size))
 
 
-def rat_press(pop, cell_buffer, grid_buffer):
-    pass
-
-
 def lynx_inc(pop, cell_buffer, grid_buffer):
-    rats = cell_buffer.old_cell.get_pop('крысы')
-    if rats is None:
-        rat_num = 0
-    else:
-        rat_num = rats.size
+    rat_num = get_pop_num('крысы', cell_buffer.old_cell)
+    lynx_num = get_pop_num('рыси', cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.caps['крысы']
 
-    growth = round(pop.size * (rat_num / 20000 - 0.5))
+    natural = lynx_num * 0.5 * (1 - pop.size / capacity)
+    predation = lynx_num * rat_num / 20000
+    growth = round(predation - natural)
     pop.size += growth
     Logger.debug("Number of lynxes increased by " + str(growth) + " to " + str(pop.size))
 
 
-def lynx_press(pop, cell_buffer, grid_buffer):
-    pass
+def migrate(pop, cell_buffer, grid_buffer):
+    num = get_pop_num(pop.name, cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.caps[pop.name]
+    if num > capacity / 2:
+        # Since data is based on the old grid, we have to calculate
+        # the best neighbor based on old neighbors; but since we'll
+        # be applying changes to the new grid, we need to immediately
+        # get the equivalent cell from the new grid
+        best_destinations = get_neighbor_with_lowest(pop.name, cell_buffer.old_neighbors)
+        random = Random().randrange(0, len(best_destinations))
+        best_destination = best_destinations[random]
+        best_destination = grid_buffer.grid.cells[best_destination.x][best_destination.y]
+        pop_at_destination = get_or_create_pop(pop.name, best_destination)
+        migration = round((pop.size / capacity) * num * 0.2)
+        pop.size -= migration
+        pop_at_destination.size += migration
 
 
 def do_nothing(pop, cell_buffer, grid_buffer):
@@ -156,13 +176,13 @@ EFFECTS = {
     },
     "крысы": {
         'increase': rat_inc,
-        'pressure': rat_press,
-        'migrate': do_nothing
+        'pressure': do_nothing,
+        'migrate': migrate
     },
     "рыси": {
         'increase': lynx_inc,
-        'pressure': lynx_press,
-        'migrate': do_nothing
+        'pressure': do_nothing,
+        'migrate': migrate
     }
 }
 
@@ -223,10 +243,44 @@ def get_neighbors(x, y, grid):
 def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
-        check_pop = Population(name)
-        # This is a sign of spaghetti code, but right now i can't think of a good way to fix it
-        check_pop.increase = EFFECTS[name]['increase']
-        check_pop.pressure = EFFECTS[name]['pressure']
-        check_pop.migrate = EFFECTS[name]['migrate']
+        check_pop = init_pop(name)
         cell.pops.append(check_pop)
     return check_pop
+
+
+def get_pop_num(pop_name, cell):
+    pop = cell.get_pop(pop_name)
+    if pop is None:
+        num = 0
+    else:
+        num = pop.size
+    return num
+
+
+def get_neighbor_with_lowest(pop_name, neighbors):
+    lowest_density = math.inf
+    lowest_cells = []
+    for neighbor in neighbors:
+        cap = neighbor.caps[pop_name]
+        pop = neighbor.get_pop(pop_name)
+        if pop is not None:
+            density = pop.size / cap
+        else:
+            density = 0
+
+        if density == lowest_density:
+            lowest_cells.append(neighbor)
+        elif density < lowest_density:
+            lowest_density = density
+            lowest_cells = [neighbor]
+    return lowest_cells
+
+
+# This is a sign of spaghetti code (an identical function is present
+# in control), but right now i can't think of a good way to fix it
+def init_pop(name):
+    pop = Population(name)
+    pop.increase = EFFECTS[name]['increase']
+    pop.pressure = EFFECTS[name]['pressure']
+    pop.migrate = EFFECTS[name]['migrate']
+    return pop
