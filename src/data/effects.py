@@ -158,6 +158,31 @@ def do_nothing(pop, cell_buffer, grid_buffer):
     pass
 
 
+def sparse_nomad_inc(pop, cell_buffer, grid_buffer):
+    num = get_pop_num('коптеводы', cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.caps['коптеводы']
+    natural = round(num * 0.1 * (1 - pop.size / capacity))
+    pop.size += natural
+
+
+def sparse_nomad_press(pop, cell_buffer, grid_buffer):
+    neighbors_and_this = [cell_buffer.cell] + cell_buffer.neighbors
+    for cell in neighbors_and_this:
+        cap = cell.caps['коптеводы']
+        cap -= round(pop.size * 0.1)
+
+
+def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
+    pass
+
+
+def grass_grow(pop, cell_buffer, grid_buffer):
+    num = get_pop_num('степная_трава', cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.caps['степная_трава']
+    natural = round(num * 0.1 * (1 - pop.size / capacity))
+    pop.size += natural
+
+
 EFFECTS = {
     "огнерунники": {
         'increase': flamesheep_inc,
@@ -165,9 +190,9 @@ EFFECTS = {
         'migrate': do_nothing
     },
     "коптеводы": {
-        'increase': nomad_inc,
-        'pressure': nomad_pressure,
-        'migrate': nomad_mig
+        'increase': sparse_nomad_inc,
+        'pressure': sparse_nomad_press,
+        'migrate': sparse_nomad_mig
     },
     "рисоводы": {
         'increase': rice_inc,
@@ -183,6 +208,11 @@ EFFECTS = {
         'increase': lynx_inc,
         'pressure': do_nothing,
         'migrate': migrate
+    },
+    "степная_трава": {
+        'increase': grass_grow,
+        'pressure': do_nothing,
+        'migrate': do_nothing
     }
 }
 

@@ -61,3 +61,20 @@ rats_and_lynxes:
                     name: "рыси"
                     size: 0
             watch: True
+
+sparse_nomads:
+    width: 10
+    height: 10
+    cells:
+        0:
+            location: everywhere
+            pops:
+                0:
+                    name: "степная_трава"
+                    size: 80000
+        1:
+            location: random
+            pops:
+                0:
+                    name: "коптеводы"
+                    size: 1000

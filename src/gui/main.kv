@@ -15,20 +15,20 @@
 
         Button:
             text: "еще годик"
-            on_release: root.do_turn()
+            on_release: root.controller.do_turn()
             size_hint: None, None
             size: dp(200), dp(25)
 
         Button:
             text: "пауза"
-            on_release: root.stop = not root.stop
+            on_release: root.controller.stop = not root.controller.stop
             size_hint: None, None
             size: dp(200), dp(25)
 
     GridLayout:
         id: grid
-        rows: root.map.width
-        cols: root.map.height
+        rows: root.cells_x
+        cols: root.cells_y
     #    col_default_width: dp(20)
     #    row_default_height: dp(20)
     #    col_force_default: True
