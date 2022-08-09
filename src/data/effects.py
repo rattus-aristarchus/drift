@@ -11,6 +11,7 @@ from random import Random
 from kivy.logger import Logger
 
 from util import CONST
+import data.base_types as base_types
 
 
 class Agent:
@@ -169,7 +170,7 @@ def migrate(pop, cell_buffer, grid_buffer):
         # the best neighbor based on old neighbors; but since we'll
         # be applying changes to the new grid, we need to immediately
         # get the equivalent cell from the new grid
-        best_destinations = get_neighbor_with_lowest(pop.name, cell_buffer.old_neighbors)
+        best_destinations = get_neighbors_with_lowest_density(pop.name, cell_buffer.old_neighbors)
         random = Random().randrange(0, len(best_destinations))
         best_destination = best_destinations[random]
         best_destination = grid_buffer.grid.cells[best_destination.x][best_destination.y]
@@ -185,20 +186,58 @@ def do_nothing(pop, cell_buffer, grid_buffer):
 
 def sparse_nomad_inc(pop, cell_buffer, grid_buffer):
     num = get_pop_num('коптеводы', cell_buffer.old_cell)
-    capacity = cell_buffer.old_cell.caps['коптеводы']
+    grass_num = get_pop_num('степная_трава', cell_buffer.old_cell)
+    capacity = grass_num / 10
     natural = round(num * 0.1 * (1 - pop.size / capacity))
     pop.size += natural
 
 
 def sparse_nomad_press(pop, cell_buffer, grid_buffer):
     neighbors_and_this = [cell_buffer.cell] + cell_buffer.neighbors
+    num = get_pop_num('коптеводы', cell_buffer.old_cell)
     for cell in neighbors_and_this:
-        cap = cell.caps['коптеводы']
-        cap -= round(pop.size * 0.1)
+        grass_num = get_pop_num('степная_трава', cell)
+        protected_num = grass_num - 50000 if grass_num > 50000 else 0
+        decrease = round(num * protected_num / 20000)
+        grass_pop = get_or_create_pop('степная_трава', cell)
+        grass_pop.size -= decrease
 
 
 def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
-    pass
+    # first, we check if the population has exceeded half capacity
+    num = get_pop_num('коптеводы', cell_buffer.old_cell)
+    grass_num = get_pop_num('степная_трава', cell_buffer.old_cell)
+    capacity = grass_num / 10
+
+    if num > capacity / 2:
+        # if it has, time to migrate. choose a destination
+
+        def get_free_capacity(cell):
+            num_nomad = get_pop_num('коптеводы', cell)
+            num_grass = get_pop_num('степная_трава', cell)
+            return round(num_grass / 10 - num_nomad)
+
+        destinations = order_neighbors_by(get_free_capacity, cell_buffer.old_neighbors)
+        #random = Random().randrange(0, len(destinations))
+        grass_num_dest = get_pop_num('степная_трава', destinations[0])
+        capacity_dest = grass_num_dest / 10
+
+        # since we're getting data from the old grid, we now have
+        # to get corresponding cells from the new grid
+        destination = grid_buffer.grid.cells[destinations[-1].x][destinations[-1].y]
+        destination_1 = grid_buffer.grid.cells[destinations[-2].x][destinations[-2].y]
+
+        # if the destination is still too crowded, the band
+        # splits in two. otherwise, it migrates to the destination
+        if num > capacity_dest / 2:
+            new_pop = Population('коптеводы')
+            new_pop.size = round(pop.size / 2)
+            pop.size = round(pop.size / 2)
+
+            base_types.arrive_and_merge(new_pop, destination)
+            base_types.migrate_and_merge(pop, cell_buffer.cell, destination_1)
+        else:
+            base_types.migrate_and_merge(pop, cell_buffer.cell, destination)
 
 
 def grass_grow(pop, cell_buffer, grid_buffer):
@@ -279,7 +318,7 @@ def get_pop_num(pop_name, cell):
     return num
 
 
-def get_neighbor_with_lowest(pop_name, neighbors):
+def get_neighbors_with_lowest_density(pop_name, neighbors):
     lowest_density = math.inf
     lowest_cells = []
     for neighbor in neighbors:
@@ -296,3 +335,32 @@ def get_neighbor_with_lowest(pop_name, neighbors):
             lowest_density = density
             lowest_cells = [neighbor]
     return lowest_cells
+
+
+def get_neighbors_with_highest(pop_name, neighbors):
+    highest_num = 0
+    highest_cells = []
+    for neighbor in neighbors:
+        num = get_pop_num(pop_name, neighbor)
+        if num == highest_num:
+            highest_cells.append(neighbor)
+        elif num > highest_num:
+            highest_num = num
+            highest_cells = [neighbor]
+    return highest_cells
+
+
+def order_neighbors_by(retreive_parameter, neighbors):
+    ordered = []
+
+    for neighbor in neighbors:
+        size = retreive_parameter(neighbor)
+
+        for i in range(len(ordered)):
+            check_size = retreive_parameter(ordered[i])
+            if size <= check_size:
+                ordered.insert(i, neighbor)
+        if neighbor not in ordered:
+            ordered.append(neighbor)
+
+    return ordered

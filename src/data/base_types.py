@@ -47,4 +47,15 @@ class Cell:
         return None
 
 
+def migrate_and_merge(pop, start, destination):
+    if pop in start.pops:
+        start.pops.remove(pop)
+    arrive_and_merge(pop, destination)
 
+
+def arrive_and_merge(pop, destination):
+    present = destination.get_pop(pop.name)
+    if present is None:
+        destination.pops.append(pop)
+    else:
+        present.size += pop.size
