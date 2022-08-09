@@ -47,28 +47,4 @@ class Cell:
         return None
 
 
-class Agent:
 
-    def do_effects(self, cell_buffer, grid_buffer):
-        pass
-
-
-class Population(Agent):
-
-    def __init__(self, name):
-        self.name = name
-        self.size = 0
-        self.age = 0
-        self.sapient = CONST['pops'][name]['sapient']
-
-        self.increase = None
-        self.pressure = None
-        self.migrate = None
-
-    def do_effects(self, cell_buffer, grid_buffer):
-     #   if self.increase is not None:
-        self.increase(self, cell_buffer, grid_buffer)
-    #    if self.pressure is not None:
-        self.pressure(self, cell_buffer, grid_buffer)
-    #    if self.migrate is not None:
-        self.migrate(self, cell_buffer, grid_buffer)

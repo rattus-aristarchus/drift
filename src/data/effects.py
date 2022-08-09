@@ -10,7 +10,32 @@ import math
 from random import Random
 from kivy.logger import Logger
 
-from data.base_types import Population
+from util import CONST
+
+
+class Agent:
+
+    def __init__(self, func_names):
+        self.effects = []
+        for func_name in func_names:
+            self.effects.append(eval(func_name))
+
+    def do_effects(self, cell_buffer, grid_buffer):
+        pass
+
+
+class Population(Agent):
+
+    def __init__(self, name):
+        super().__init__(CONST['pops'][name]['effects'])
+        self.name = name
+        self.size = 0
+        self.age = 0
+        self.sapient = CONST['pops'][name]['sapient']
+
+    def do_effects(self, cell_buffer, grid_buffer):
+        for func in self.effects:
+            func(self, cell_buffer, grid_buffer)
 
 
 class GridBuffer:
@@ -183,39 +208,6 @@ def grass_grow(pop, cell_buffer, grid_buffer):
     pop.size += natural
 
 
-EFFECTS = {
-    "огнерунники": {
-        'increase': flamesheep_inc,
-        'pressure': flamesheep_dec,
-        'migrate': do_nothing
-    },
-    "коптеводы": {
-        'increase': sparse_nomad_inc,
-        'pressure': sparse_nomad_press,
-        'migrate': sparse_nomad_mig
-    },
-    "рисоводы": {
-        'increase': rice_inc,
-        'pressure': rice_pressure,
-        'migrate': rice_mig
-    },
-    "крысы": {
-        'increase': rat_inc,
-        'pressure': do_nothing,
-        'migrate': migrate
-    },
-    "рыси": {
-        'increase': lynx_inc,
-        'pressure': do_nothing,
-        'migrate': migrate
-    },
-    "степная_трава": {
-        'increase': grass_grow,
-        'pressure': do_nothing,
-        'migrate': do_nothing
-    }
-}
-
 """
 def has_empty_neighbor(name):
     for next in neighbors:
@@ -273,7 +265,7 @@ def get_neighbors(x, y, grid):
 def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
-        check_pop = init_pop(name)
+        check_pop = Population(name)
         cell.pops.append(check_pop)
     return check_pop
 
@@ -304,13 +296,3 @@ def get_neighbor_with_lowest(pop_name, neighbors):
             lowest_density = density
             lowest_cells = [neighbor]
     return lowest_cells
-
-
-# This is a sign of spaghetti code (an identical function is present
-# in control), but right now i can't think of a good way to fix it
-def init_pop(name):
-    pop = Population(name)
-    pop.increase = EFFECTS[name]['increase']
-    pop.pressure = EFFECTS[name]['pressure']
-    pop.migrate = EFFECTS[name]['migrate']
-    return pop

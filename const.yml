@@ -3,22 +3,28 @@ pops:
         name: "коптеводы"
         sapient: True
         color: [0.7, 0.7, 0, 1]
+        effects: [sparse_nomad_inc, sparse_nomad_press, sparse_nomad_mig]
     рисоводы:
         name: "рисоводы"
         sapient: True
         color: [0, 0, 1, 1]
+        effects: [rice_inc, rice_pressure, rice_mig]
     огнерунники:
         name: "огнерунники"
         sapient: False
+        effects: [flamesheep_inc, flamesheep_dec]
     крысы:
         name: "крысы"
         sapient: False
+        effects: [rat_inc, migrate]
     рыси:
         name: "рыси"
         sapient: False
+        effects: [lynx_inc, migrate]
     степная_трава:
         name: "степная трава"
         sapient: False
+        effects: [grass_grow]
 
 biomes:
     basic:

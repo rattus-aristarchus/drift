@@ -1,8 +1,8 @@
 import random
 from kivy.logger import Logger
 
-from data.effects import EFFECTS, CellBuffer, GridBuffer
-from data.base_types import Grid, Population
+from data.effects import Population, CellBuffer, GridBuffer
+from data.base_types import Grid
 from storage import Output
 
 
@@ -39,7 +39,7 @@ def retreive_cell(cell_dict, grid):
 
 def populate_cell(cell, cell_dict):
     for number, pop_dict in cell_dict['pops'].items():
-        pop = init_pop(pop_dict['name'])
+        pop = Population(pop_dict['name'])
         pop.size = pop_dict['size']
         cell.pops.append(pop)
         Logger.debug("Control, populate_cell: created pop " + pop.name +
@@ -80,7 +80,7 @@ def copy_grid(old_grid):
             old_cell = old_grid.cells[x][y]
             new_cell = new_grid.cells[x][y]
             for pop in old_cell.pops:
-                new_pop = init_pop(pop.name)
+                new_pop = Population(pop.name)
                 new_pop.size = pop.size
                 new_pop.age = pop.age + 1
                 new_cell.pops.append(new_pop)
@@ -90,11 +90,3 @@ def copy_grid(old_grid):
     for cell in old_grid.watched_cells:
         new_grid.watched_cells.append(new_grid.cells[cell.x][cell.y])
     return new_grid
-
-
-def init_pop(name):
-    pop = Population(name)
-    pop.increase = EFFECTS[name]['increase']
-    pop.pressure = EFFECTS[name]['pressure']
-    pop.migrate = EFFECTS[name]['migrate']
-    return pop
