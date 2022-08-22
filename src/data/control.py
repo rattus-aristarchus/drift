@@ -2,12 +2,12 @@ import random
 from kivy.logger import Logger
 
 from data.effects import Population, CellBuffer, GridBuffer
-from data.base_types import Grid
-from storage import Output
+from data.base_types import History
 
 
-def generate_grid(world):
-    grid = Grid(world['width'], world['height'])
+def generate_history(world):
+    history = History(world['width'], world['height'])
+    grid = history.current_state()
 
     for number, cell_dict in world['cells'].items():
         if cell_dict['location'] == 'everywhere':
@@ -25,7 +25,7 @@ def generate_grid(world):
                 if 'watch' in cell_dict.keys() and cell_dict['watch']:
                     grid.watched_cells.append(cell)
 
-    return grid
+    return history
 
 
 def retreive_cell(cell_dict, grid):
@@ -50,9 +50,11 @@ def rand_cell(map):
     return map.cells[random.randint(0, map.width - 1)][random.randint(0, map.height - 1)]
 
 
-def do_turn(old_grid):
+def do_turn(history):
     Logger.info("Grid: doing turn")
-    new_grid = copy_grid(old_grid)
+    old_grid = history.current_state()
+    new_grid = history.new_turn()
+    copy_grid(old_grid, new_grid)
     grid_buffer = GridBuffer(new_grid, old_grid)
     for cell in new_grid.cells_as_list():
         cell_buffer = CellBuffer(cell, grid_buffer)
@@ -69,12 +71,9 @@ def do_turn(old_grid):
     for cell in new_grid.watched_cells:
         new_grid.output.write_cell(cell)
     new_grid.output.write_end_of_turn()
-    return new_grid
 
 
-def copy_grid(old_grid):
-    new_grid = Grid(old_grid.width, old_grid.height)
-
+def copy_grid(old_grid, new_grid):
     for x in range(0, old_grid.width):
         for y in range(0, old_grid.height):
             old_cell = old_grid.cells[x][y]

@@ -14,8 +14,14 @@
         height: dp(25)
 
         Button:
-            text: "еще годик"
-            on_release: root.controller.do_turn()
+            text: "шаг назад"
+            on_release: root.controller.backwards()
+            size_hint: None, None
+            size: dp(200), dp(25)
+
+        Button:
+            text: "шаг вперед"
+            on_release: root.controller.forwards()
             size_hint: None, None
             size: dp(200), dp(25)
 
@@ -29,19 +35,8 @@
         id: grid
         rows: root.cells_x
         cols: root.cells_y
-    #    col_default_width: dp(20)
-    #    row_default_height: dp(20)
-    #    col_force_default: True
-    #    row_force_default: True
         spacing: 2, 2
         size_hint: 1, 1
-
-        canvas.before:
-            Color:
-                rgba: [0, 1, 0, 1]
-            Rectangle:
-                pos: self.pos
-                size: self.size
 
 <CellView>
     size_hint: None, None

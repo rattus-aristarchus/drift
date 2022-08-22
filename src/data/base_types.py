@@ -2,15 +2,44 @@ from util import CONST
 from storage import Output
 
 
+class History:
+
+    def __init__(self, world_width, world_height):
+        self.past_grids = []
+        self.turn = 0
+        first_grid = Grid(world_width, world_height, history=self)
+        self.past_grids.append(first_grid)
+
+    def new_turn(self):
+        """
+        Create a new grid for the new turn.
+        """
+        self.turn += 1
+        old_grid = self.past_grids[-1]
+        new_grid = Grid(old_grid.width, old_grid.height, history=self)
+        self.past_grids.append(new_grid)
+        return new_grid
+
+    def current_state(self):
+        return self.past_grids[-1]
+
+    def state_at_turn(self, turn):
+        if turn < len(self.past_grids):
+            return self.past_grids[turn]
+        else:
+            return None
+
+
 class Grid:
 
-    def __init__(self, height, width):
+    def __init__(self, height, width, history):
         self.width = width
         self.height = height
         #dict of dicts
         self.cells = {}
         self.watched_cells = []
         self.output = Output()
+        self.history = history
 
         for x in range(0, width):
             self.cells[x] = {}
