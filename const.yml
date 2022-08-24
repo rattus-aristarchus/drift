@@ -40,7 +40,10 @@ pops:
         name: "пшеница"
         sapient: False
         effects: [wheat_grow]
-
+groups:
+    settlement:
+        name: "поселение"
+        effects: [settlement]
 biomes:
     basic:
         capacity:

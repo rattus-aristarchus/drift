@@ -12,31 +12,7 @@ from kivy.logger import Logger
 
 from util import CONST
 import data.base_types as base_types
-
-
-class Agent:
-
-    def __init__(self, func_names):
-        self.effects = []
-        for func_name in func_names:
-            self.effects.append(eval(func_name))
-
-    def do_effects(self, cell_buffer, grid_buffer):
-        pass
-
-
-class Population(Agent):
-
-    def __init__(self, name):
-        super().__init__(CONST['pops'][name]['effects'])
-        self.name = name
-        self.size = 0
-        self.age = 0
-        self.sapient = CONST['pops'][name]['sapient']
-
-    def do_effects(self, cell_buffer, grid_buffer):
-        for func in self.effects:
-            func(self, cell_buffer, grid_buffer)
+from data.base_types import Population, Group
 
 
 class GridBuffer:
@@ -57,6 +33,17 @@ class CellBuffer:
 
         # self.nomad_capacity = round(get_pop_num('steppe_grass', cell) / 10 - get_pop_num('soot_nomads', cell))
         # self.wheatmen_capacity = round(get_pop_num('wheat', cell) / 2 - get_pop_num('wheatmen', cell))
+
+
+def add_effects(agent, type, name):
+    func_names = CONST[type][name]['effects']
+    for func_name in func_names:
+        agent.effects.append(eval(func_name))
+
+
+"""
+The effect functions
+"""
 
 
 def flamesheep_inc(pop, cell_buffer, grid_buffer):
@@ -248,7 +235,7 @@ def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
         # if the destination is still too crowded, the band
         # splits in two. otherwise, it migrates to the destination
         if num > get_free_capacity(dest_0_old) / 2:
-            new_pop = Population('soot_nomads')
+            new_pop = cell_buffer.cell.create_pop('soot_nomads')
             new_pop.size = round(pop.size / 2)
             pop.size = round(pop.size / 2)
 
@@ -271,6 +258,12 @@ def wheatmen_inc(pop, cell_buffer, grid_buffer):
 
 def wheatmen_press(pop, cell_buffer, grid_buffer):
     num = get_pop_num('wheatmen', cell_buffer.old_cell)
+
+    # if not part of a community, farmers form a village
+    if pop.group is None:
+        village = cell_buffer.cell.create_group('settlement')
+        pop.group = village
+        village.pops.append(pop)
 
     # farmers farm
     wheat_planted = num * 10
@@ -307,11 +300,16 @@ def wheatmen_mig(pop, cell_buffer, grid_buffer):
             return round(wheat_cap / 50 - num)
 
         def choose_destination(sorted_destinations):
+            for i in range(-1, -len(sorted_destinations), -1):
+                whos_territory = get_group('settlement', sorted_destinations[i])
+                if whos_territory is not None:
+                    sorted_destinations.remove(sorted_destinations[i])
+
             # if the top destinations are equal, we choose between them
             # randomly
             best = [sorted_destinations[-1]]
             free_cap = get_free_capacity(sorted_destinations[-1])
-            for i in range(-2, -len(destinations), -1):
+            for i in range(-2, -len(sorted_destinations), -1):
                 free_cap_check = get_free_capacity(sorted_destinations[i])
                 if free_cap_check < free_cap:
                     break
@@ -346,6 +344,17 @@ def wheat_grow(pop, cell_buffer, grid_buffer):
     pop.size -= num
 
 
+def settlement(group, cell_buffer, grid_buffer):
+    # expand the borders
+    if len(group.territory) == 1:
+        for neighbor in cell_buffer.neighbors:
+            random = Random().randrange(0, 1)
+            if random > 0.25:
+                base_types.add_territory(neighbor, group)
+
+    # TODO: so here we obviously need a more fundamental mechanism for
+    # how the farmers would expand into more territory
+
 """
 def has_empty_neighbor(name):
     for next in neighbors:
@@ -360,6 +369,15 @@ def has_neighbor(name):
             return True
     return False
 """
+
+
+def get_group(name, cell):
+    result = None
+    for group in cell.groups:
+        if group.name == name:
+            result = group
+            break
+    return result
 
 
 def has_neighbor_sootnomad(neighbors):
@@ -403,8 +421,7 @@ def get_neighbors(x, y, grid):
 def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
-        check_pop = Population(name)
-        cell.pops.append(check_pop)
+        check_pop = cell.create_pop(name)
     return check_pop
 
 
@@ -463,6 +480,7 @@ def order_neighbors_by(retreive_parameter, neighbors):
             check_size = retreive_parameter(ordered[i])
             if size <= check_size:
                 ordered.insert(i, neighbor)
+                break
         if neighbor not in ordered:
             ordered.append(neighbor)
 
