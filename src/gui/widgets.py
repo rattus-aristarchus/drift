@@ -5,7 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ColorProperty, ObjectProperty, NumericProperty
 from kivy.clock import Clock
 
-from util import CONST
+from src.util import CONST
 
 
 class Tooltip(Label):

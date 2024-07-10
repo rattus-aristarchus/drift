@@ -1,7 +1,8 @@
-import util
+from src import util
 
 
 class Output:
+    # офигеть. а почему я не сделал так чтобы загрузка миров шла через этот класс?
 
     def __init__(self):
         self.address = util.MAIN_DIR + "/output.csv"

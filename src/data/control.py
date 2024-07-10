@@ -1,9 +1,9 @@
 import random
 from kivy.logger import Logger
 
-import data.effects as effects
-from data.effects import CellBuffer, GridBuffer
-from data.base_types import History
+import src.data.effects as effects
+from src.data.effects import CellBuffer, GridBuffer
+from src.data.history import History
 
 
 def generate_history(world):
@@ -63,6 +63,7 @@ def do_turn(history):
     :param history: the history object
     """
     Logger.info("Grid: doing turn")
+
     old_grid = history.current_state()
     new_grid = history.new_turn()
 

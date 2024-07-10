@@ -1,7 +1,7 @@
 
 from kivy.clock import Clock
 
-import data.control as control
+import src.data.control as control
 
 
 class Controller:

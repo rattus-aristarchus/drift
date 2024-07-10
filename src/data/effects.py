@@ -10,9 +10,11 @@ import math
 from random import Random
 from kivy.logger import Logger
 
-from util import CONST
-import data.base_types as base_types
-from data.base_types import Population, Group
+from src.util import CONST
+import src.data.base_types as base_types
+from src.data.base_types import Population, Group
+
+import src.data.cell
 
 
 class GridBuffer:
@@ -239,10 +241,10 @@ def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
             new_pop.size = round(pop.size / 2)
             pop.size = round(pop.size / 2)
 
-            base_types.arrive_and_merge(new_pop, destination)
-            base_types.migrate_and_merge(pop, cell_buffer.cell, destination_1)
+            src.data.cell.arrive_and_merge(new_pop, destination)
+            src.data.cell.migrate_and_merge(pop, cell_buffer.cell, destination_1)
         else:
-            base_types.migrate_and_merge(pop, cell_buffer.cell, destination)
+            src.data.cell.migrate_and_merge(pop, cell_buffer.cell, destination)
 
 
 def wheatmen_inc(pop, cell_buffer, grid_buffer):
@@ -350,7 +352,7 @@ def settlement(group, cell_buffer, grid_buffer):
         for neighbor in cell_buffer.neighbors:
             random = Random().randrange(0, 1)
             if random > 0.25:
-                base_types.add_territory(neighbor, group)
+                src.data.cell.add_territory(neighbor, group)
 
     # TODO: so here we obviously need a more fundamental mechanism for
     # how the farmers would expand into more territory
