@@ -4,6 +4,9 @@ from src.data import grid
 from src.data.buffers import GridBuffer, CellBuffer
 from src.data.grid import Grid
 from src.storage import Output
+from src.util import WORLDS
+
+get_world_effect = None
 
 
 def do_turn(history):
@@ -58,6 +61,7 @@ def _write_output(new_grid):
         output.write_cell(cell)
     output.write_end_of_turn()
 
+
 class History:
 
     def __init__(self, world_width, world_height):
@@ -68,6 +72,8 @@ class History:
         first_grid = Grid(world_width, world_height)
         grid.populate(first_grid)
         self.past_grids.append(first_grid)
+        self.effects = []
+
 
     def new_turn(self):
         """

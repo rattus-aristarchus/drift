@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 
 /conf.yml
+/output.csv

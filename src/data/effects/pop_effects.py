@@ -8,6 +8,7 @@ them, while others haven't.
 from random import Random
 from kivy.logger import Logger
 
+from src.data.effects import util
 from src.data.effects.util import get_group, has_neighbor_sootnomad, sum_for_cells, get_or_create_pop, \
     get_pop_size, get_neighbors_with_lowest_density, order_neighbors_by
 from src.data import cells
@@ -15,11 +16,6 @@ from src.data import cells
 
 def get_effect(func_name):
     return eval(func_name)
-
-
-"""
-The effect functions
-"""
 
 
 def flamesheep_inc(pop, cell_buffer, grid_buffer):
@@ -66,7 +62,7 @@ def nomad_pressure(pop, cell_buffer, grid_buffer):
 def nomad_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
-            check_pop = get_or_create_pop(pop.name, neighbor, get_effect)
+            check_pop = get_or_create_pop(pop.name, neighbor)
             cap = neighbor.caps[pop.name]
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
@@ -93,7 +89,7 @@ def rice_pressure(pop, cell_buffer, grid_buffer):
 def rice_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
-            check_pop = get_or_create_pop(pop.name, neighbor, get_effect)
+            check_pop = get_or_create_pop(pop.name, neighbor)
             cap = neighbor.caps[pop.name]
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
@@ -142,7 +138,7 @@ def migrate(pop, cell_buffer, grid_buffer):
         random = Random().randrange(0, len(best_destinations))
         best_destination = best_destinations[random]
         best_destination = grid_buffer.grid.cells[best_destination.x][best_destination.y]
-        pop_at_destination = get_or_create_pop(pop.name, best_destination, get_effect)
+        pop_at_destination = get_or_create_pop(pop.name, best_destination)
         migration = round((pop.size / capacity) * num * 0.2)
         pop.size -= migration
         pop_at_destination.size += migration
@@ -172,7 +168,7 @@ def sparse_nomad_press(pop, cell_buffer, grid_buffer):
     grass_num = get_pop_size('steppe_grass', cell_buffer.old_cell)
     protected_num = grass_num - 5000 if grass_num > 5000 else 0
     decrease = round(num * protected_num / 8000)
-    grass_pop = get_or_create_pop('steppe_grass', cell_buffer.cell, get_effect)
+    grass_pop = get_or_create_pop('steppe_grass', cell_buffer.cell)
     grass_pop.size -= decrease
 
 
@@ -217,7 +213,7 @@ def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
         # if the destination is still too crowded, the band
         # splits in two. otherwise, it migrates to the destination
         if num > get_free_capacity(dest_0_old) / 2:
-            new_pop = cells.create_pop(cell_buffer.cell, 'soot_nomads', get_effect)
+            new_pop = cells.create_pop(cell_buffer.cell, 'soot_nomads')
             new_pop.size = round(pop.size / 2)
             pop.size = round(pop.size / 2)
 
@@ -243,7 +239,7 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
 
     # if not part of a community, farmers form a village
     if pop.group is None:
-        village = cells.create_group(cell_buffer.cell, 'settlement', get_effect)
+        village = cells.create_group(cell_buffer.cell, 'settlement')
         pop.group = village
         village.pops.append(pop)
 
@@ -252,7 +248,7 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
     wheat_capacity = cell_buffer.old_cell.caps['wheat']
     wheat_inc = round(wheat_planted * (1 - wheat_planted / wheat_capacity))
     Logger.debug("wheatmen_press: wheatmen have planted " + str(wheat_inc) + " wheat")
-    get_or_create_pop('wheat', cell_buffer.cell, get_effect).size += wheat_inc
+    get_or_create_pop('wheat', cell_buffer.cell).size += wheat_inc
 
     # farmers also reduce available grass for grazing
     grass_num = get_pop_size('steppe_grass', cell_buffer.old_cell)
@@ -282,16 +278,13 @@ def wheatmen_mig(pop, cell_buffer, grid_buffer):
             return round(wheat_cap / 50 - num)
 
         def choose_destination(sorted_destinations):
-            for i in range(-1, -len(sorted_destinations), -1):
-                whos_territory = get_group('settlement', sorted_destinations[i])
-                if whos_territory is not None:
-                    sorted_destinations.remove(sorted_destinations[i])
-
             # if the top destinations are equal, we choose between them
-            # randomly
+            # randomly. unfortunately, we can't take just the first in the
+            # list, since with zeroes ties will occur often and the bias will
+            # be significant
             best = [sorted_destinations[-1]]
             free_cap = get_free_capacity(sorted_destinations[-1])
-            for i in range(-2, -len(sorted_destinations), -1):
+            for i in range(len(sorted_destinations)):
                 free_cap_check = get_free_capacity(sorted_destinations[i])
                 if free_cap_check < free_cap:
                     break
@@ -300,18 +293,30 @@ def wheatmen_mig(pop, cell_buffer, grid_buffer):
             random = Random().randrange(0, len(best))
             return best[random]
 
-        destinations = order_neighbors_by(get_free_capacity, cell_buffer.old_neighbors)
-        dest_0_old = choose_destination(destinations)
+        def filter_occupied(destinations):
+            filtered = []
+            for i in range(len(destinations)):
+                whos_territory = get_group('settlement', destinations[i])
+                if whos_territory is None:
+                    filtered.append(destinations[i])
+            return filtered
 
-        # since we're getting data from the old grid, we now have
-        # to get corresponding cells from the new grid
-        destination = grid_buffer.grid.cells[dest_0_old.x][dest_0_old.y]
-        dest_pop = get_or_create_pop('wheatmen', destination, get_effect)
-        migrated_amount = round(num * 0.05)
-        pop.size -= migrated_amount
-        dest_pop.size += migrated_amount
-        dest_wheat = get_or_create_pop('wheat', destination, get_effect)
-        dest_wheat.size += migrated_amount * 2
+        destinations = util.order_neighbors_by_descending(get_free_capacity, cell_buffer.old_neighbors)
+        destinations = filter_occupied(destinations)
+
+        # if everything is occupied, no point continuing
+        if len(destinations) > 0:
+            dest_0_old = choose_destination(destinations)
+
+            # since we're getting data from the old grid, we now have
+            # to get corresponding cells from the new grid
+            destination = grid_buffer.grid.cells[dest_0_old.x][dest_0_old.y]
+            dest_pop = get_or_create_pop('wheatmen', destination)
+            migrated_amount = round(num * 0.05)
+            pop.size -= migrated_amount
+            dest_pop.size += migrated_amount
+            dest_wheat = get_or_create_pop('wheat', destination)
+            dest_wheat.size += migrated_amount * 2
 
 
 def grass_grow(pop, cell_buffer, grid_buffer):
@@ -324,15 +329,3 @@ def grass_grow(pop, cell_buffer, grid_buffer):
 def wheat_grow(pop, cell_buffer, grid_buffer):
     num = get_pop_size('wheat', cell_buffer.old_cell)
     pop.size -= num
-
-
-def settlement(group, cell_buffer, grid_buffer):
-    # expand the borders
-    if len(group.territory) == 1:
-        for neighbor in cell_buffer.neighbors:
-            random = Random().randrange(0, 1)
-            if random > 0.25:
-                cells.add_territory(neighbor, group)
-
-    # TODO: so here we obviously need a more fundamental mechanism for
-    # how the farmers would expand into more territory

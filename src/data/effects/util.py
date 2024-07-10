@@ -52,10 +52,10 @@ def get_neighbors(x, y, grid):
     return result
 
 
-def get_or_create_pop(name, cell, get_effect):
+def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
-        check_pop = cells.create_pop(cell, name, get_effect)
+        check_pop = cells.create_pop(cell, name)
     return check_pop
 
 
@@ -113,6 +113,28 @@ def order_neighbors_by(retreive_parameter, neighbors):
         for i in range(len(ordered)):
             check_size = retreive_parameter(ordered[i])
             if size <= check_size:
+                ordered.insert(i, neighbor)
+                break
+        if neighbor not in ordered:
+            ordered.append(neighbor)
+
+    return ordered
+
+
+def order_neighbors_by_descending(retreive_parameter, neighbors):
+    """
+    Sort the cells in the neighbors list in descending order by the
+    retreive parameter function.
+    """
+
+    ordered = []
+
+    for neighbor in neighbors:
+        size = retreive_parameter(neighbor)
+
+        for i in range(len(ordered)):
+            check_size = retreive_parameter(ordered[i])
+            if size >= check_size:
                 ordered.insert(i, neighbor)
                 break
         if neighbor not in ordered:

@@ -1,11 +1,7 @@
 from src.util import CONST
 
-
-def add_effects(agent, type, name, get_effect):
-    func_names = CONST[type][name]['effects']
-    for func_name in func_names:
-        effect = get_effect(func_name)
-        agent.effects.append(effect)
+get_pop_effect = None
+get_group_effect = None
 
 
 class Agent:
@@ -25,15 +21,19 @@ class Group(Agent):
         self.pops = []
         # a list of cells
         self.territory = []
+        self._add_effects()
 
-   # def copy_group(self, destination):
-    #    new_group = destination.create_group(self.name)
-     #   new_group.pops =
-        # TODO: allright, this is a really big problem. here we need not the pops
-        # in the old group, but the new pops at the new cell
-        # maybe this is a sign that my approach with creating a new grid for every turn
-        # is wrong
-      #  return new_group
+    def _add_effects(self):
+        func_names = CONST["groups"][self.name]['effects']
+        for func_name in func_names:
+            effect = get_group_effect(func_name)
+            self.effects.append(effect)
+
+    def copy_group_without_pop(self, destination):
+        new_group = Group(self.name)
+        destination.groups.append(new_group)
+        new_group.territory.append(destination)
+        return new_group
 
 
 class Population(Agent):
@@ -46,6 +46,13 @@ class Population(Agent):
         self.sapient = False
         if name in CONST['pops']:
             self.sapient = CONST['pops'][name]['sapient']
+        self._add_effects()
+
+    def _add_effects(self):
+        func_names = CONST["pops"][self.name]['effects']
+        for func_name in func_names:
+            effect = get_pop_effect(func_name)
+            self.effects.append(effect)
 
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:

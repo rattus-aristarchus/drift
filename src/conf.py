@@ -47,5 +47,3 @@ def _update_conf(conf, default_conf):
 def write_conf(conf, path):
     with open(path, "w", encoding="utf-8") as file:
         yaml.dump(conf, file)
-
-
