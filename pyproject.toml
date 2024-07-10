@@ -1,0 +1,12 @@
+[tool.poetry]
+name = "src"
+version = "0.1.0"
+description = ""
+authors = ["rattus-aristarchus <lankin.m.a@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12.4"
+pytest = "^7.4.3"
+kivy = "^2.3.0"
+pyyaml = "^6.0.1"

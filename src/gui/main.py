@@ -5,9 +5,9 @@ from kivy.uix.label import Label
 
 from src.data import control
 
-from gui.widgets import View
-from gui.controller import Controller
-from util import WORLDS, CONF
+from src.gui.widgets import View
+from src.gui.controller import Controller
+from src.util import WORLDS, CONF
 
 
 class Main(App):
