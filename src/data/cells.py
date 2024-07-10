@@ -1,4 +1,5 @@
-from src.data.base_types import Population, Group
+from src.data import agents
+from src.data.agents import Population, Group
 from src.util import CONST
 
 
@@ -38,6 +39,21 @@ def increase_age(cell, value=1):
         pop.age += value
 
 
+def create_pop(cell, name, get_effect):
+    result = Population(name)
+    agents.add_effects(result, "pops", name, get_effect)
+    cell.pops.append(result)
+    return result
+
+
+def create_group(cell, name, get_effect):
+    result = Group(name)
+    agents.add_effects(result, "group", name, get_effect)
+    cell.groups.append(result)
+    result.territory.append(cell)
+    return result
+
+
 class Cell:
 
     def __init__(self, x, y):
@@ -61,14 +77,3 @@ class Cell:
             if pop.name == name:
                 return pop
         return None
-
-    def create_pop(self, name):
-        result = Population(name)
-        self.pops.append(result)
-        return result
-
-    def create_group(self, name):
-        result = Group(name)
-        self.groups.append(result)
-        result.territory.append(self)
-        return result

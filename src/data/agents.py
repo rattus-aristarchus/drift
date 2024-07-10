@@ -1,6 +1,13 @@
 from src.util import CONST
 
 
+def add_effects(agent, type, name, get_effect):
+    func_names = CONST[type][name]['effects']
+    for func_name in func_names:
+        effect = get_effect(func_name)
+        agent.effects.append(effect)
+
+
 class Agent:
 
     def __init__(self, name):

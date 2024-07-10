@@ -2,6 +2,7 @@
 from kivy.clock import Clock
 
 import src.data.control as control
+import src.data.history
 
 
 class Controller:
@@ -14,6 +15,7 @@ class Controller:
     def run(self, view):
         self.view = view
         view.create_grid(self.history.current_state())
+        view.show_grid(self.history.current_state())
         Clock.schedule_interval(self.auto_turn, 0.2)
 
     def auto_turn(self, dt):
@@ -23,7 +25,7 @@ class Controller:
     def forwards(self):
         self.viewed_turn += 1
         if self.viewed_turn > self.history.turn:
-            control.do_turn(self.history)
+            src.data.history.do_turn(self.history)
 
         self.view.show_grid(self.history.state_at_turn(self.viewed_turn))
 

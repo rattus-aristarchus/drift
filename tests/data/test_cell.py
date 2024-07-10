@@ -1,4 +1,4 @@
 import pytest
 
-from src.data import cell
+from src.data import cells
 

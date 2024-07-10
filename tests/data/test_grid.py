@@ -1,7 +1,7 @@
 import pytest
 
 from src.data import grid
-from src.data.base_types import Population
+from src.data.agents import Population
 from src.data.grid import Grid
 from src.data.history import History
 
@@ -14,7 +14,7 @@ def history():
 
 @pytest.fixture
 def fresh_grid(history):
-    output = Grid(history.width, history.height, history)
+    output = Grid(history.width, history.height)
     grid.populate(output)
     output.cells[0][0].pops.append(Population("test_pop"))
     return output

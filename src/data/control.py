@@ -1,8 +1,7 @@
 import random
 from kivy.logger import Logger
 
-import src.data.effects as effects
-from src.data.effects import CellBuffer, GridBuffer
+from src.data import cells, effects
 from src.data.history import History
 
 
@@ -46,7 +45,7 @@ def _retreive_cell(cell_dict, grid):
 
 def _populate_cell(cell, cell_dict):
     for number, pop_dict in cell_dict['pops'].items():
-        pop = cell.create_pop(pop_dict['name'])
+        pop = cells.create_pop(cell, pop_dict['name'], effects.get_effect)
         pop.size = pop_dict['size']
         Logger.debug("Control, populate_cell: created pop " + pop.name +
                      " of size " + str(pop.size))
@@ -56,35 +55,3 @@ def _rand_cell(map):
     return map.cells[random.randint(0, map.width - 1)][random.randint(0, map.height - 1)]
 
 
-def do_turn(history):
-    """
-    Executes one turn by creating a new grid object and adding it to the
-    list of grids for past turns.
-    :param history: the history object
-    """
-    Logger.info("Grid: doing turn")
-
-    old_grid = history.current_state()
-    new_grid = history.new_turn()
-
-    # the gridbuffer and cellbuffers help avoid doing some
-    # calculations multiple times
-    grid_buffer = GridBuffer(new_grid, old_grid)
-    for cell in new_grid.cells_as_list():
-        cell_buffer = CellBuffer(cell, grid_buffer)
-
-        # this is the main call that calls do_effects for all agents in a cell
-        cell.do_effects(cell_buffer, grid_buffer)
-
-        # remove pops that have died out
-        to_remove = []
-        for pop in cell.pops:
-            if pop.size <= 0:
-                to_remove.append(pop)
-        for pop in to_remove:
-            cell.pops.remove(pop)
-
-    # this is bad
-    for cell in new_grid.watched_cells:
-        new_grid.output.write_cell(cell)
-    new_grid.output.write_end_of_turn()
