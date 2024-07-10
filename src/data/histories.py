@@ -1,8 +1,7 @@
 from kivy import Logger
 
-from src.data import grid
+from src.data import grids
 from src.data.buffers import GridBuffer, CellBuffer
-from src.data.grid import Grid
 from src.storage import Output
 from src.util import WORLDS
 
@@ -29,8 +28,8 @@ def do_turn(history):
 
 def _create_new_turn_grid(history):
     old_grid = history.past_grids[-1]
-    new_grid = grid.copy(old_grid)
-    grid.increase_age(new_grid)
+    new_grid = grids.copy(old_grid)
+    grids.increase_age(new_grid)
     history.past_grids.append(new_grid)
     return new_grid
 
@@ -62,6 +61,18 @@ def _write_output(new_grid):
     output.write_end_of_turn()
 
 
+def create_history(width, height, effects=[]):
+    result = History(width, height)
+    first_grid = grids.create_grid(width, height)
+    result.past_grids.append(first_grid)
+
+    for func_name in effects:
+        effect = get_world_effect(func_name)
+        result.effects.append(effect)
+
+    return result
+
+
 class History:
 
     def __init__(self, world_width, world_height):
@@ -69,11 +80,7 @@ class History:
         self.turn = 0
         self.width = world_width
         self.height = world_height
-        first_grid = Grid(world_width, world_height)
-        grid.populate(first_grid)
-        self.past_grids.append(first_grid)
         self.effects = []
-
 
     def new_turn(self):
         """
@@ -81,8 +88,8 @@ class History:
         """
         self.turn += 1
         old_grid = self.past_grids[-1]
-        new_grid = grid.copy(old_grid)
-        grid.increase_age(new_grid)
+        new_grid = grids.copy(old_grid)
+        grids.increase_age(new_grid)
         self.past_grids.append(new_grid)
         return new_grid
 

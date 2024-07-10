@@ -4,6 +4,54 @@ get_pop_effect = None
 get_group_effect = None
 
 
+def create_group(name, destination, get_effect=get_group_effect):
+    new_group = Group(name)
+    _add_group_effects(new_group)
+    destination.groups.append(new_group)
+    new_group.territory.append(destination)
+    return new_group
+
+
+def create_pop(name, destination=None, get_effect=get_pop_effect):
+    # for some unfathomable reason get_pop_effect here is none
+
+    new_pop = Population(name)
+    _add_pop_effects(new_pop)
+
+    if name in CONST['pops']:
+        new_pop.sapient = CONST['pops'][name]['sapient']
+
+    if destination:
+        destination.pops.append(new_pop)
+
+    return new_pop
+
+
+def copy_pop(pop, destination):
+    new_pop = Population(pop.name)
+    new_pop.size = pop.size
+    new_pop.age = pop.age
+    new_pop.group = pop.group
+    new_pop.sapient = pop.sapient
+    new_pop.effects = pop.effects
+    destination.pops.append(new_pop)
+    return new_pop
+
+
+def _add_group_effects(group):
+    func_names = CONST["groups"][group.name]['effects']
+    for func_name in func_names:
+        effect = get_group_effect(func_name)
+        group.effects.append(effect)
+
+
+def _add_pop_effects(pop):
+    func_names = CONST["pops"][pop.name]['effects']
+    for func_name in func_names:
+        effect = get_pop_effect(func_name)
+        pop.effects.append(effect)
+
+
 class Agent:
 
     def __init__(self, name):
@@ -11,7 +59,8 @@ class Agent:
         self.effects = []
 
     def do_effects(self, cell_buffer, grid_buffer):
-        pass
+        for func in self.effects:
+            func(self, cell_buffer, grid_buffer)
 
 
 class Group(Agent):
@@ -21,19 +70,6 @@ class Group(Agent):
         self.pops = []
         # a list of cells
         self.territory = []
-        self._add_effects()
-
-    def _add_effects(self):
-        func_names = CONST["groups"][self.name]['effects']
-        for func_name in func_names:
-            effect = get_group_effect(func_name)
-            self.effects.append(effect)
-
-    def copy_group_without_pop(self, destination):
-        new_group = Group(self.name)
-        destination.groups.append(new_group)
-        new_group.territory.append(destination)
-        return new_group
 
 
 class Population(Agent):
@@ -44,28 +80,3 @@ class Population(Agent):
         self.size = 0
         self.age = 0
         self.sapient = False
-        if name in CONST['pops']:
-            self.sapient = CONST['pops'][name]['sapient']
-        self._add_effects()
-
-    def _add_effects(self):
-        func_names = CONST["pops"][self.name]['effects']
-        for func_name in func_names:
-            effect = get_pop_effect(func_name)
-            self.effects.append(effect)
-
-    def do_effects(self, cell_buffer, grid_buffer):
-        for func in self.effects:
-            func(self, cell_buffer, grid_buffer)
-
-    def copy_pop(self, destination):
-        new_pop = Population(self.name)
-        new_pop.size = self.size
-        new_pop.age = self.age
-        new_pop.group = self.group
-        new_pop.sapient = self.sapient
-        new_pop.effects = self.effects
-        destination.pops.append(new_pop)
-        return new_pop
-
-

@@ -2,7 +2,7 @@ import math
 
 from kivy import Logger
 
-from src.data import cells
+from src.data import cells, agents
 
 
 def get_group(name, cell):
@@ -55,7 +55,7 @@ def get_neighbors(x, y, grid):
 def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
-        check_pop = cells.create_pop(cell, name)
+        check_pop = agents.create_pop(name, cell)
     return check_pop
 
 

@@ -1,10 +1,8 @@
 import random
 from kivy.logger import Logger
 
-import src.data.history
-from src.data import cells
-from src.data.effects import pop_effects, world_effects
-from src.data.history import History
+import src.data
+from src.data import agents, histories
 
 
 def generate_history(world):
@@ -14,9 +12,13 @@ def generate_history(world):
     :param world: a dictionary with the data used to generate the first grid
     :return: a history object
     """
-    history = History(world['width'], world['height'])
-    if 'effects' in world.keys():
-        _add_history_effects(history, world['effects'])
+
+    history = histories.create_history(
+        world['width'],
+        world['height'],
+        effects=world['effects'] if 'effects' in world.keys() else []
+    )
+
     grid = history.current_state()
 
     for number, cell_dict in world['cells'].items():
@@ -38,12 +40,6 @@ def generate_history(world):
     return history
 
 
-def _add_history_effects(history, effect_names):
-    for func_name in effect_names:
-        effect = src.data.history.get_world_effect(func_name)
-        history.effects.append(effect)
-
-
 def _retreive_cell(cell_dict, grid):
     if cell_dict['location'] == 'random':
         cell = _rand_cell(grid)
@@ -55,7 +51,7 @@ def _retreive_cell(cell_dict, grid):
 
 def _populate_cell(cell, cell_dict):
     for number, pop_dict in cell_dict['pops'].items():
-        pop = cells.create_pop(cell, pop_dict['name'])
+        pop = agents.create_pop(pop_dict['name'], cell)
         pop.size = pop_dict['size']
         Logger.debug("Control, populate_cell: created pop " + pop.name +
                      " of size " + str(pop.size))

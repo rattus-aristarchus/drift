@@ -11,7 +11,7 @@ from kivy.logger import Logger
 from src.data.effects import util
 from src.data.effects.util import get_group, has_neighbor_sootnomad, sum_for_cells, get_or_create_pop, \
     get_pop_size, get_neighbors_with_lowest_density, order_neighbors_by
-from src.data import cells
+from src.data import cells, agents
 
 
 def get_effect(func_name):
@@ -213,7 +213,7 @@ def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
         # if the destination is still too crowded, the band
         # splits in two. otherwise, it migrates to the destination
         if num > get_free_capacity(dest_0_old) / 2:
-            new_pop = cells.create_pop(cell_buffer.cell, 'soot_nomads')
+            new_pop = agents.create_pop('soot_nomads', cell_buffer.cell)
             new_pop.size = round(pop.size / 2)
             pop.size = round(pop.size / 2)
 
@@ -239,7 +239,7 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
 
     # if not part of a community, farmers form a village
     if pop.group is None:
-        village = cells.create_group(cell_buffer.cell, 'settlement')
+        village = agents.create_group('settlement', cell_buffer.cell)
         pop.group = village
         village.pops.append(pop)
 

@@ -5,10 +5,10 @@ without circular references, get_effects functions are specified
 in effects files and then injected into data classes at initialization
 """
 
-from . import agents, history
+from . import agents, histories
 from .effects import pop_effects, group_effects, world_effects
 
 
 agents.get_group_effect = group_effects.get_effect
 agents.get_pop_effect = pop_effects.get_effect
-history.get_world_effect = world_effects.get_effect
+histories.get_world_effect = world_effects.get_effect

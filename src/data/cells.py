@@ -29,10 +29,11 @@ def add_territory(cell, group):
 def copy_cell(old_cell):
     new_cell = Cell(old_cell.x, old_cell.y)
     new_cell.caps = dict(old_cell.caps)
+    new_cell.biome = old_cell.biome
     for group in old_cell.groups:
-        group.copy_group_without_pop(new_cell)
+        agents.create_group(group.name, new_cell)
     for pop in old_cell.pops:
-        new_pop = pop.copy_pop(new_cell)
+        new_pop = agents.copy_pop(pop, new_cell)
         if pop.group is not None:
             group = _find_group(pop.group.name, old_cell)
             if group is None:
@@ -57,16 +58,12 @@ def increase_age(cell, value=1):
         pop.age += value
 
 
-def create_pop(cell, name):
-    result = Population(name)
-    cell.pops.append(result)
-    return result
+def create_cell(x, y):
+    result = Cell(x, y)
+    result.biome = CONST['biomes']['basic']
+    for cap, value in result.biome['capacity'].items():
+        result.caps[cap] = value
 
-
-def create_group(cell, name):
-    result = Group(name)
-    cell.groups.append(result)
-    result.territory.append(cell)
     return result
 
 
@@ -77,10 +74,8 @@ class Cell:
         self.y = y
         self.pops = []
         self.groups = []
-        self.biome = CONST['biomes']['basic']
+        self.biome = {}
         self.caps = {}
-        for cap, value in self.biome['capacity'].items():
-            self.caps[cap] = value
 
     def do_effects(self, cell_buffer, grid_buffer):
         for pop in self.pops:
