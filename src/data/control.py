@@ -1,7 +1,8 @@
 import random
 from kivy.logger import Logger
 
-from src.data import cells, effects
+from src.data import cells
+from src.data.effects import effects
 from src.data.history import History
 
 
@@ -53,5 +54,4 @@ def _populate_cell(cell, cell_dict):
 
 def _rand_cell(map):
     return map.cells[random.randint(0, map.width - 1)][random.randint(0, map.height - 1)]
-
 

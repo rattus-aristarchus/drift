@@ -1,6 +1,5 @@
 from src.data import cells
 from src.data.cells import Cell
-from src.storage import Output
 
 
 def populate(grid, old_grid=None):

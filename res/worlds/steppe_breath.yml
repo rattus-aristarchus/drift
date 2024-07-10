@@ -1,0 +1,17 @@
+width: 20
+height: 20
+cells:
+    0:
+        location: random
+        pops:
+            0:
+                name: 'soot_nomads'
+                size: 1000
+        repeat: 3
+    1:
+        location: random
+        pops:
+            0:
+                name: 'rice_growers'
+                size: 1000
+        repeat: 3

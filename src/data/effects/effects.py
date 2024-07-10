@@ -5,34 +5,12 @@ new grid, and some of those cells have already had changes applied to
 them, while others haven't.
 """
 
-
-import math
 from random import Random
 from kivy.logger import Logger
 
-from src.util import CONST
-
+from src.data.effects.util import get_group, has_neighbor_sootnomad, sum_for_cells, get_or_create_pop, \
+    get_pop_size, get_neighbors_with_lowest_density, order_neighbors_by
 from src.data import cells
-
-
-class GridBuffer:
-
-    def __init__(self, grid, old_grid):
-        self.grid = grid
-        self.old_grid = old_grid
-        self.all_sootnomads = sum_for_cells('soot_nomads', old_grid.cells_as_list())
-
-
-class CellBuffer:
-
-    def __init__(self, cell, grid_buffer):
-        self.cell = cell
-        self.old_cell = grid_buffer.old_grid.cells[cell.x][cell.y]
-        self.neighbors = get_neighbors(cell.x, cell.y, grid_buffer.grid)
-        self.old_neighbors = get_neighbors(cell.x, cell.y, grid_buffer.old_grid)
-
-        # self.nomad_capacity = round(get_pop_num('steppe_grass', cell) / 10 - get_pop_num('soot_nomads', cell))
-        # self.wheatmen_capacity = round(get_pop_num('wheat', cell) / 2 - get_pop_num('wheatmen', cell))
 
 
 def get_effect(func_name):
@@ -88,7 +66,7 @@ def nomad_pressure(pop, cell_buffer, grid_buffer):
 def nomad_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
-            check_pop = get_or_create_pop(pop.name, neighbor)
+            check_pop = get_or_create_pop(pop.name, neighbor, get_effect)
             cap = neighbor.caps[pop.name]
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
@@ -115,7 +93,7 @@ def rice_pressure(pop, cell_buffer, grid_buffer):
 def rice_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
-            check_pop = get_or_create_pop(pop.name, neighbor)
+            check_pop = get_or_create_pop(pop.name, neighbor, get_effect)
             cap = neighbor.caps[pop.name]
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
@@ -164,7 +142,7 @@ def migrate(pop, cell_buffer, grid_buffer):
         random = Random().randrange(0, len(best_destinations))
         best_destination = best_destinations[random]
         best_destination = grid_buffer.grid.cells[best_destination.x][best_destination.y]
-        pop_at_destination = get_or_create_pop(pop.name, best_destination)
+        pop_at_destination = get_or_create_pop(pop.name, best_destination, get_effect)
         migration = round((pop.size / capacity) * num * 0.2)
         pop.size -= migration
         pop_at_destination.size += migration
@@ -194,7 +172,7 @@ def sparse_nomad_press(pop, cell_buffer, grid_buffer):
     grass_num = get_pop_size('steppe_grass', cell_buffer.old_cell)
     protected_num = grass_num - 5000 if grass_num > 5000 else 0
     decrease = round(num * protected_num / 8000)
-    grass_pop = get_or_create_pop('steppe_grass', cell_buffer.cell)
+    grass_pop = get_or_create_pop('steppe_grass', cell_buffer.cell, get_effect)
     grass_pop.size -= decrease
 
 
@@ -274,7 +252,7 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
     wheat_capacity = cell_buffer.old_cell.caps['wheat']
     wheat_inc = round(wheat_planted * (1 - wheat_planted / wheat_capacity))
     Logger.debug("wheatmen_press: wheatmen have planted " + str(wheat_inc) + " wheat")
-    get_or_create_pop('wheat', cell_buffer.cell).size += wheat_inc
+    get_or_create_pop('wheat', cell_buffer.cell, get_effect).size += wheat_inc
 
     # farmers also reduce available grass for grazing
     grass_num = get_pop_size('steppe_grass', cell_buffer.old_cell)
@@ -328,11 +306,11 @@ def wheatmen_mig(pop, cell_buffer, grid_buffer):
         # since we're getting data from the old grid, we now have
         # to get corresponding cells from the new grid
         destination = grid_buffer.grid.cells[dest_0_old.x][dest_0_old.y]
-        dest_pop = get_or_create_pop('wheatmen', destination)
+        dest_pop = get_or_create_pop('wheatmen', destination, get_effect)
         migrated_amount = round(num * 0.05)
         pop.size -= migrated_amount
         dest_pop.size += migrated_amount
-        dest_wheat = get_or_create_pop('wheat', destination)
+        dest_wheat = get_or_create_pop('wheat', destination, get_effect)
         dest_wheat.size += migrated_amount * 2
 
 
@@ -358,134 +336,3 @@ def settlement(group, cell_buffer, grid_buffer):
 
     # TODO: so here we obviously need a more fundamental mechanism for
     # how the farmers would expand into more territory
-
-"""
-def has_empty_neighbor(name):
-    for next in neighbors:
-        if next.get_pop(name) is None:
-            return True
-    return False
-
-
-def has_neighbor(name):
-    for next in neighbors:
-        if next.get_pop(name) is not None:
-            return True
-    return False
-"""
-
-
-def get_group(name, cell):
-    result = None
-    for group in cell.groups:
-        if group.name == name:
-            result = group
-            break
-    return result
-
-
-def has_neighbor_sootnomad(neighbors):
-    for next in neighbors:
-        nomads = next.get_pop("коптеводы")
-        if nomads is not None:
-            return True
-    return False
-
-
-def sum_for_cells(pop_name, cells):
-    result = 0
-    for neighbor in cells:
-        pop = neighbor.get_pop(pop_name)
-        if pop is not None:
-            Logger.debug("found neighboring " + pop.name + ", numbering " + str(pop.size) +
-                         " in cell x " + str(neighbor.x) + ", y " + str(neighbor.y))
-            result += pop.size
-    return result
-
-
-def get_neighbors(x, y, grid):
-    result = []
-
-    poss_x_rng = [x - 1, x, x + 1]
-    poss_y_rng = [y - 1, y, y + 1]
-
-    for poss_x in poss_x_rng:
-        for poss_y in poss_y_rng:
-            if poss_x == x and poss_y == y:
-                continue
-            if poss_x < 0 or poss_x >= grid.width:
-                continue
-            if poss_y < 0 or poss_y >= grid.height:
-                continue
-            result.append(grid.cells[poss_x][poss_y])
-
-    return result
-
-
-def get_or_create_pop(name, cell):
-    check_pop = cell.get_pop(name)
-    if check_pop is None:
-        check_pop = cells.create_pop(cell, name, get_effect)
-    return check_pop
-
-
-def get_pop_size(pop_name, cell):
-    pop = cell.get_pop(pop_name)
-    if pop is None:
-        num = 0
-    else:
-        num = pop.size
-    return num
-
-
-def get_neighbors_with_lowest_density(pop_name, neighbors):
-    lowest_density = math.inf
-    lowest_cells = []
-    for neighbor in neighbors:
-        cap = neighbor.caps[pop_name]
-        pop = neighbor.get_pop(pop_name)
-        if pop is not None:
-            density = pop.size / cap
-        else:
-            density = 0
-
-        if density == lowest_density:
-            lowest_cells.append(neighbor)
-        elif density < lowest_density:
-            lowest_density = density
-            lowest_cells = [neighbor]
-    return lowest_cells
-
-
-def get_neighbors_with_highest(pop_name, neighbors):
-    highest_num = 0
-    highest_cells = []
-    for neighbor in neighbors:
-        num = get_pop_size(pop_name, neighbor)
-        if num == highest_num:
-            highest_cells.append(neighbor)
-        elif num > highest_num:
-            highest_num = num
-            highest_cells = [neighbor]
-    return highest_cells
-
-
-def order_neighbors_by(retreive_parameter, neighbors):
-    """
-    Sort the cells in the neighbors list in ascending order by the
-    retreive parameter function.
-    """
-    ordered = []
-
-    for neighbor in neighbors:
-        size = retreive_parameter(neighbor)
-
-        for i in range(len(ordered)):
-            check_size = retreive_parameter(ordered[i])
-            if size <= check_size:
-                ordered.insert(i, neighbor)
-                break
-        if neighbor not in ordered:
-            ordered.append(neighbor)
-
-    return ordered

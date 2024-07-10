@@ -1,7 +1,7 @@
 from kivy import Logger
 
 from src.data import grid
-from src.data.effects import GridBuffer, CellBuffer
+from src.data.buffers import GridBuffer, CellBuffer
 from src.data.grid import Grid
 from src.storage import Output
 
