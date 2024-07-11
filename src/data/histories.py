@@ -14,14 +14,16 @@ def do_turn(history):
     list of grids for past turns.
     :param history: the history object
     """
-    Logger.info("History: doing turn")
 
     history.turn += 1
 
     old_grid = history.current_state()
     new_grid = _create_new_turn_grid(history)
 
-    _do_effects(new_grid, old_grid)
+    _do_effects(history, new_grid, old_grid)
+
+    Logger.info(f"The age is {new_grid.state.age}. Global temeprature"
+                f" is {new_grid.state.temperature}.")
 
     _write_output(new_grid)
 
@@ -34,10 +36,12 @@ def _create_new_turn_grid(history):
     return new_grid
 
 
-def _do_effects(new_grid, old_grid):
+def _do_effects(history, new_grid, old_grid):
     # the gridbuffer and cellbuffers help avoid doing some
     # calculations multiple times
-    grid_buffer = GridBuffer(new_grid, old_grid)
+    grid_buffer = GridBuffer(new_grid, old_grid, history)
+    history.do_effects(grid_buffer)
+
     for cell in new_grid.cells_as_list():
         cell_buffer = CellBuffer(cell, grid_buffer)
 
@@ -82,17 +86,6 @@ class History:
         self.height = world_height
         self.effects = []
 
-    def new_turn(self):
-        """
-        Create a new grid for the new turn.
-        """
-        self.turn += 1
-        old_grid = self.past_grids[-1]
-        new_grid = grids.copy(old_grid)
-        grids.increase_age(new_grid)
-        self.past_grids.append(new_grid)
-        return new_grid
-
     def current_state(self):
         return self.past_grids[-1]
 
@@ -101,3 +94,7 @@ class History:
             return self.past_grids[turn]
         else:
             return None
+
+    def do_effects(self, grid_buffer):
+        for func in self.effects:
+            func(self, grid_buffer)

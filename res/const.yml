@@ -45,6 +45,7 @@ groups:
         name: "поселение"
         effects: [settlement]
 biomes:
+    effects:
     basic:
         capacity:
             soot_nomads: 10000

@@ -4,6 +4,8 @@ from src.util import CONST
 
 from kivy.logger import Logger
 
+get_cell_effect = None
+
 
 def migrate_and_merge(pop, start, destination):
     if pop in start.pops:
@@ -30,6 +32,7 @@ def copy_cell(old_cell):
     new_cell = Cell(old_cell.x, old_cell.y)
     new_cell.caps = dict(old_cell.caps)
     new_cell.biome = old_cell.biome
+    new_cell.effects = old_cell.effects
     for group in old_cell.groups:
         agents.create_group(group.name, new_cell)
     for pop in old_cell.pops:
@@ -67,6 +70,13 @@ def create_cell(x, y):
     return result
 
 
+def _add_pop_effects(cell, biome_name):
+    func_names = CONST["biomes"][biome_name]['effects']
+    for func_name in func_names:
+        effect = get_cell_effect(func_name)
+        cell.effects.append(effect)
+
+
 class Cell:
 
     def __init__(self, x, y):
@@ -76,8 +86,11 @@ class Cell:
         self.groups = []
         self.biome = {}
         self.caps = {}
+        self.effects = []
 
     def do_effects(self, cell_buffer, grid_buffer):
+        for func in self.effects:
+            func(self, cell_buffer, grid_buffer)
         for pop in self.pops:
             pop.do_effects(cell_buffer, grid_buffer)
         for group in self.groups:

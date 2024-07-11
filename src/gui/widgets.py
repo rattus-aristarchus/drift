@@ -75,7 +75,6 @@ class View(BoxLayout):
             self.cells_y = map.height
 
     def show_grid(self, map):
-        Logger.info("View: showing grid")
         element = self.ids['grid']
         self.size_check(map)
 
