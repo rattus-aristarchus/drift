@@ -1,10 +1,7 @@
 from src.data import agents
-from src.data.agents import Population, Group
-from src.util import CONST
+from src.data.models import BiomeModel
 
 from kivy.logger import Logger
-
-get_cell_effect = None
 
 
 def migrate_and_merge(pop, start, destination):
@@ -30,11 +27,10 @@ def add_territory(cell, group):
 
 def copy_cell(old_cell):
     new_cell = Cell(old_cell.x, old_cell.y)
-    new_cell.caps = dict(old_cell.caps)
     new_cell.biome = old_cell.biome
-    new_cell.effects = old_cell.effects
+    new_cell.effects = list(old_cell.effects)
     for group in old_cell.groups:
-        agents.create_group(group.name, new_cell)
+        agents.copy_group(group, new_cell)
     for pop in old_cell.pops:
         new_pop = agents.copy_pop(pop, new_cell)
         if pop.group is not None:
@@ -61,20 +57,11 @@ def increase_age(cell, value=1):
         pop.age += value
 
 
-def create_cell(x, y):
+def create_cell(x, y, biome_model: BiomeModel):
     result = Cell(x, y)
-    result.biome = CONST['biomes']['basic']
-    for cap, value in result.biome['capacity'].items():
-        result.caps[cap] = value
-
+    result.effects = biome_model.effects
+    result.biome = Biome(biome_model)
     return result
-
-
-def _add_pop_effects(cell, biome_name):
-    func_names = CONST["biomes"][biome_name]['effects']
-    for func_name in func_names:
-        effect = get_cell_effect(func_name)
-        cell.effects.append(effect)
 
 
 class Cell:
@@ -84,8 +71,7 @@ class Cell:
         self.y = y
         self.pops = []
         self.groups = []
-        self.biome = {}
-        self.caps = {}
+        self.biome = None
         self.effects = []
 
     def do_effects(self, cell_buffer, grid_buffer):
@@ -101,3 +87,16 @@ class Cell:
             if pop.name == name:
                 return pop
         return None
+
+
+class Biome:
+
+    def __init__(self, model):
+        self.model = model
+        self.capacity = dict(model.capacity)
+
+    def get_capacity(self, pop_name):
+        if pop_name in self.capacity.keys():
+            return self.capacity[pop_name]
+        else:
+            return 0

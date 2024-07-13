@@ -1,8 +1,10 @@
 import math
-
 from kivy import Logger
 
 from src.data import cells, agents
+
+
+model_base = None
 
 
 def get_group(name, cell):
@@ -55,7 +57,8 @@ def get_neighbors(x, y, grid):
 def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
-        check_pop = agents.create_pop(name, cell)
+        model = model_base.get_pop(name)
+        check_pop = agents.create_pop(model, cell)
     return check_pop
 
 
@@ -72,7 +75,7 @@ def get_neighbors_with_lowest_density(pop_name, neighbors):
     lowest_density = math.inf
     lowest_cells = []
     for neighbor in neighbors:
-        cap = neighbor.caps[pop_name]
+        cap = neighbor.biome.get_capacity(pop_name)
         pop = neighbor.get_pop(pop_name)
         if pop is not None:
             density = pop.size / cap

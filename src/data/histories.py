@@ -2,10 +2,7 @@ from kivy import Logger
 
 from src.data import grids
 from src.data.buffers import GridBuffer, CellBuffer
-from src.storage import Output
-from src.util import WORLDS
-
-get_world_effect = None
+from src.io.output import Output
 
 
 def do_turn(history):
@@ -65,14 +62,11 @@ def _write_output(new_grid):
     output.write_end_of_turn()
 
 
-def create_history(width, height, effects=[]):
-    result = History(width, height)
-    first_grid = grids.create_grid(width, height)
+def create_history(world_model, model_base):
+    result = History(world_model.width, world_model.height)
+    first_grid = grids.create_grid(world_model.width, world_model.height, model_base.get_biome('basic'))
     result.past_grids.append(first_grid)
-
-    for func_name in effects:
-        effect = get_world_effect(func_name)
-        result.effects.append(effect)
+    result.effects = list(world_model.effects)
 
     return result
 

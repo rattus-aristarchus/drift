@@ -2,15 +2,22 @@
 from kivy.clock import Clock
 
 import src.data.control as control
+import src.data.effects.util
 from src.data import histories
+from src.io import storage
+from src.util import CONF
 
 
 class Controller:
 
-    def __init__(self, history):
+    def __init__(self):
         self.stop = True
-        self.viewed_turn = history.turn
-        self.history = history
+
+        self.model_base = storage.load_models()
+        src.data.effects.util.model_base = self.model_base
+        world_model = self.model_base.get_world(CONF['world'])
+        self.history = control.generate_history(world_model, self.model_base)
+        self.viewed_turn = self.history.turn
 
     def run(self, view):
         self.view = view

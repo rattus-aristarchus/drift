@@ -1,0 +1,4 @@
+settlement:
+    id: "settlement"
+    name: "поселение"
+    effects: [settlement]

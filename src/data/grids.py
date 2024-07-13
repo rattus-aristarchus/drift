@@ -1,7 +1,7 @@
 from src.data import cells
 
 
-def create_grid(width, height, age=0):
+def create_grid(width, height, default_biome, age=0):
     result = Grid(width, height)
     result.state = GridState()
     result.state.age = age
@@ -9,7 +9,7 @@ def create_grid(width, height, age=0):
     for x in range(0, result.width):
         result.cells[x] = {}
         for y in range(0, result.height):
-            result.cells[x][y] = cells.create_cell(x, y)
+            result.cells[x][y] = cells.create_cell(x, y, default_biome)
 
     return result
 

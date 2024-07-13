@@ -33,7 +33,7 @@ def flamesheep_dec(pop, cell_buffer, grid_buffer):
 def nomad_inc(pop, cell_buffer, grid_buffer):
     # natural growth
     Logger.debug("growing pop " + pop.name + ", current number " + str(pop.size))
-    cap = cell_buffer.cell.caps[pop.name]
+    cap = cell_buffer.cell.biome.get_capacity(pop.name)
     slowing = (1.0 - pop.size / cap)
 #    if slowing < 0:
 #        slowing = 0
@@ -50,20 +50,20 @@ def nomad_pressure(pop, cell_buffer, grid_buffer):
     # effects of over-grazing. current population reduces the cap; if the
     # cap is too low, it starts regenerating
     overgrazing = round(pop.size * 0.4)
-    max_cap = cell_buffer.cell.biome['capacity'][pop.name]
-    cur_cap = cell_buffer.cell.caps[pop.name]
+    max_cap = cell_buffer.cell.biome.get_capacity(pop.name)
+    cur_cap = cell_buffer.cell.biome.get_capacity(pop.name)
     recovery = (max_cap / cur_cap) * (0.1 * max_cap)
 
     Logger.debug("decreasing soot nomads by " + str(decrease))
     pop.size -= decrease
-    cell_buffer.cell.caps[pop.name] -= overgrazing - recovery
+    cell_buffer.cell.biome.capacity[pop.name] -= overgrazing - recovery
 
 
 def nomad_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
             check_pop = get_or_create_pop(pop.name, neighbor)
-            cap = neighbor.caps[pop.name]
+            cap = neighbor.biome.get_capacity(pop.name)
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
                 slowing = 0
@@ -73,7 +73,7 @@ def nomad_mig(pop, cell_buffer, grid_buffer):
 
 def rice_inc(pop, cell_buffer, grid_buffer):
     Logger.debug("growing pop " + pop.name + ", current number " + str(pop.size))
-    cap = cell_buffer.cell.caps[pop.name]
+    cap = cell_buffer.cell.biome.get_capacity(pop.name)
     slowing = (1.0 - pop.size / cap)
     growth = round(pop.size * 0.1 * slowing)
     pop.size += growth
@@ -90,7 +90,7 @@ def rice_mig(pop, cell_buffer, grid_buffer):
     if pop.size > 1000:
         for neighbor in cell_buffer.neighbors:
             check_pop = get_or_create_pop(pop.name, neighbor)
-            cap = neighbor.caps[pop.name]
+            cap = neighbor.biome.get_capacity(pop.name)
             slowing = (1.0 - check_pop.size / cap)
             if slowing < 0:
                 slowing = 0
@@ -102,7 +102,7 @@ def rice_mig(pop, cell_buffer, grid_buffer):
 def rat_inc(pop, cell_buffer, grid_buffer):
     rat_num = get_pop_size('крысы', cell_buffer.old_cell)
     lynx_num = get_pop_size('рыси', cell_buffer.old_cell)
-    capacity = cell_buffer.old_cell.caps['крысы']
+    capacity = cell_buffer.old_cell.biome.get_capacity('крысы')
 
     natural = rat_num * 0.4 * (1 - pop.size / capacity)
     predation = rat_num * lynx_num / 10000
@@ -115,7 +115,7 @@ def rat_inc(pop, cell_buffer, grid_buffer):
 def lynx_inc(pop, cell_buffer, grid_buffer):
     rat_num = get_pop_size('rats', cell_buffer.old_cell)
     lynx_num = get_pop_size('lynxes', cell_buffer.old_cell)
-    capacity = cell_buffer.old_cell.caps['крысы']
+    capacity = cell_buffer.old_cell.biome.get_capacity('крысы')
 
     natural = lynx_num * 0.5 * (1 - pop.size / capacity)
     predation = lynx_num * rat_num / 20000
@@ -128,7 +128,7 @@ def lynx_inc(pop, cell_buffer, grid_buffer):
 
 def migrate(pop, cell_buffer, grid_buffer):
     num = get_pop_size(pop.name, cell_buffer.old_cell)
-    capacity = cell_buffer.old_cell.caps[pop.name]
+    capacity = cell_buffer.old_cell.biome.get_capacity(pop.name)
     if num > capacity / 2:
         # Since data is based on the old grid, we have to calculate
         # the best neighbor based on old neighbors; but since we'll
@@ -213,6 +213,7 @@ def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
         # if the destination is still too crowded, the band
         # splits in two. otherwise, it migrates to the destination
         if num > get_free_capacity(dest_0_old) / 2:
+            model = util.model_base.get_pop('soot_nomads')
             new_pop = agents.create_pop('soot_nomads', cell_buffer.cell)
             new_pop.size = round(pop.size / 2)
             pop.size = round(pop.size / 2)
@@ -239,13 +240,14 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
 
     # if not part of a community, farmers form a village
     if pop.group is None:
-        village = agents.create_group('settlement', cell_buffer.cell)
+        model = util.model_base.get_group('settlement')
+        village = agents.create_group(model, cell_buffer.cell)
         pop.group = village
         village.pops.append(pop)
 
     # farmers farm
     wheat_planted = num * 10
-    wheat_capacity = cell_buffer.old_cell.caps['wheat']
+    wheat_capacity = cell_buffer.old_cell.biome.get_capacity('wheat')
     wheat_inc = round(wheat_planted * (1 - wheat_planted / wheat_capacity))
     Logger.debug("wheatmen_press: wheatmen have planted " + str(wheat_inc) + " wheat")
     get_or_create_pop('wheat', cell_buffer.cell).size += wheat_inc
@@ -253,7 +255,7 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
     # farmers also reduce available grass for grazing
     grass_num = get_pop_size('steppe_grass', cell_buffer.old_cell)
     if not grass_num == 0:
-        grass_capacity = cell_buffer.old_cell.caps['steppe_grass']
+        grass_capacity = cell_buffer.old_cell.biome.get_capacity('steppe_grass')
         # let's assume grass and wheat compete for the same space;
         # so wheat at full capacity means there's not space for grass
         # and vice versa
@@ -267,14 +269,14 @@ def wheatmen_mig(pop, cell_buffer, grid_buffer):
     # first, we check if the population is approaching capacity
     num = get_pop_size('wheatmen', cell_buffer.old_cell)
     wheat_num = get_pop_size('wheat', cell_buffer.old_cell)
-    wheat_cap = cell_buffer.old_cell.caps['wheat']
+    wheat_cap = cell_buffer.old_cell.biome.get_capacity('wheat')
 
     if num > wheat_cap / 50:
         # if it has, time to migrate. choose a destination
 
         def get_free_capacity(cell):
             num = get_pop_size('wheatmen', cell)
-            wheat_cap = cell_buffer.old_cell.caps['wheat']
+            wheat_cap = cell_buffer.old_cell.biome.get_capacity('wheat')
             return round(wheat_cap / 50 - num)
 
         def choose_destination(sorted_destinations):
@@ -321,7 +323,7 @@ def wheatmen_mig(pop, cell_buffer, grid_buffer):
 
 def grass_grow(pop, cell_buffer, grid_buffer):
     num = get_pop_size('steppe_grass', cell_buffer.old_cell)
-    capacity = cell_buffer.old_cell.caps['steppe_grass']
+    capacity = cell_buffer.old_cell.biome.get_capacity('steppe_grass')
     natural = round(num * 0.1 * (1 - pop.size / capacity))
     pop.size += natural
 

@@ -5,27 +5,27 @@ import src.data
 from src.data import agents, histories
 
 
-def generate_history(world):
+def generate_history(world_model, model_base):
     """
     This function is called once, at the beginning, creating the history
     object with the first grid.
     :param world: a dictionary with the data used to generate the first grid
+    :model base: a base from which all entities in history will be generated
     :return: a history object
     """
 
     history = histories.create_history(
-        world['width'],
-        world['height'],
-        effects=world['effects'] if 'effects' in world.keys() else []
+        world_model,
+        model_base,
     )
 
     grid = history.current_state()
 
-    for number, cell_dict in world['cells'].items():
+    for number, cell_dict in world_model.cells.items():
         if cell_dict['location'] == 'everywhere':
             for x, column in grid.cells.items():
                 for y, cell in column.items():
-                    _populate_cell(cell, cell_dict)
+                    _populate_cell(cell, cell_dict, model_base)
         else:
             if 'repeat' in cell_dict.keys():
                 repeat = cell_dict['repeat']
@@ -33,7 +33,7 @@ def generate_history(world):
                 repeat = 1
             for i in range(repeat):
                 cell = _retreive_cell(cell_dict, grid)
-                _populate_cell(cell, cell_dict)
+                _populate_cell(cell, cell_dict, model_base)
                 if 'watch' in cell_dict.keys() and cell_dict['watch']:
                     grid.watched_cells.append(cell)
 
@@ -49,9 +49,10 @@ def _retreive_cell(cell_dict, grid):
     return cell
 
 
-def _populate_cell(cell, cell_dict):
+def _populate_cell(cell, cell_dict, model_base):
     for number, pop_dict in cell_dict['pops'].items():
-        pop = agents.create_pop(pop_dict['name'], cell)
+        pop_model = model_base.get_pop(pop_dict['name'])
+        pop = agents.create_pop(pop_model, cell)
         pop.size = pop_dict['size']
         Logger.debug("Control, populate_cell: created pop " + pop.name +
                      " of size " + str(pop.size))

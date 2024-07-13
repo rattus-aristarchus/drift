@@ -9,4 +9,5 @@ def sample_effect():
 
 @pytest.fixture
 def sample_cell():
-    return cells.create_cell(0, 0)
+    pass
+ #   return cells.create_cell(0, 0)

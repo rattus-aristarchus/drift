@@ -2,8 +2,10 @@ import pytest
 
 from src.data import grids
 from src.data.agents import Population
+from src.data.cells import Biome
 from src.data.grids import Grid
 from src.data.histories import History
+from src.data.models import BiomeModel
 
 
 @pytest.fixture
@@ -14,7 +16,7 @@ def history():
 
 @pytest.fixture
 def fresh_grid(history):
-    output = grids.create_grid(history.width, history.height)
+    output = grids.create_grid(history.width, history.height, Biome(BiomeModel()))
     output.cells[0][0].pops.append(Population("test_pop"))
     return output
 

@@ -5,8 +5,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ColorProperty, ObjectProperty, NumericProperty
 from kivy.clock import Clock
 
-from src.util import CONST
-
 
 class Tooltip(Label):
     pass
@@ -104,7 +102,7 @@ class View(BoxLayout):
             for x in range(0, map.width):
                 cell = map.cells[x][y]
                 max_pop = get_max_pop(cell)
-                color = [1, 1, 1, 1] if max_pop is None else CONST['pops'][max_pop.name]['color']
+                color = [1, 1, 1, 1]
                 label = self.cells[x][y]
                 label.text = get_text(cell)
                 label.background = color

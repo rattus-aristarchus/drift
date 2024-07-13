@@ -1,25 +1,26 @@
-from src.util import CONST
 
-get_pop_effect = None
-get_group_effect = None
-
-
-def create_group(name, destination, get_effect=get_group_effect):
-    new_group = Group(name)
-    _add_group_effects(new_group)
+def create_group(model, destination):
+    new_group = Group(model.id)
+    new_group.effects = list(model.effects)
     destination.groups.append(new_group)
     new_group.territory.append(destination)
     return new_group
 
 
-def create_pop(name, destination=None, get_effect=get_pop_effect):
+def copy_group(group, destination):
+    new_group = Group(group.name)
+    new_group.effects = list(group.effects)
+    destination.groups.append(new_group)
+    new_group.territory.append(destination)
+    return new_group
+
+
+def create_pop(model, destination=None):
     # for some unfathomable reason get_pop_effect here is none
 
-    new_pop = Population(name)
-    _add_pop_effects(new_pop)
-
-    if name in CONST['pops']:
-        new_pop.sapient = CONST['pops'][name]['sapient']
+    new_pop = Population(model.id)
+    new_pop.effects = list(model.effects)
+    new_pop.sapient = model.sapient
 
     if destination:
         destination.pops.append(new_pop)
@@ -33,23 +34,9 @@ def copy_pop(pop, destination):
     new_pop.age = pop.age
     new_pop.group = pop.group
     new_pop.sapient = pop.sapient
-    new_pop.effects = pop.effects
+    new_pop.effects = list(pop.effects)
     destination.pops.append(new_pop)
     return new_pop
-
-
-def _add_group_effects(group):
-    func_names = CONST["groups"][group.name]['effects']
-    for func_name in func_names:
-        effect = get_group_effect(func_name)
-        group.effects.append(effect)
-
-
-def _add_pop_effects(pop):
-    func_names = CONST["pops"][pop.name]['effects']
-    for func_name in func_names:
-        effect = get_pop_effect(func_name)
-        pop.effects.append(effect)
 
 
 class Agent:
