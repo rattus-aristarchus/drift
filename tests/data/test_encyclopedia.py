@@ -1,6 +1,6 @@
 import pytest
 
-from src.data.models import PopModel
+from src.logic.models import PopModel
 
 
 @pytest.fixture

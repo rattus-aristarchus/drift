@@ -1,8 +1,7 @@
 import math
 from kivy import Logger
 
-from src.data import cells, agents
-
+from src.logic.entities import agents
 
 model_base = None
 

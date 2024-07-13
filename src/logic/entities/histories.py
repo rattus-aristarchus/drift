@@ -1,7 +1,7 @@
 from kivy import Logger
 
-from src.data import grids
-from src.data.buffers import GridBuffer, CellBuffer
+from src.logic.entities import grids
+from src.logic.buffers import GridBuffer, CellBuffer
 from src.io.output import Output
 
 

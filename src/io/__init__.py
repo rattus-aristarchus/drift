@@ -6,7 +6,7 @@ in effects files and then injected into data classes at initialization
 """
 
 from . import storage
-from src.data.effects import pop_effects, group_effects, world_effects, cell_effects
+from src.logic.effects import pop_effects, group_effects, world_effects, cell_effects
 
 
 storage.get_group_effect = group_effects.get_effect

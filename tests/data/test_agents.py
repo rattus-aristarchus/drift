@@ -1,7 +1,5 @@
 import pytest
 
-from src.data import cells
-
 
 def sample_effect():
     return "effect executed"

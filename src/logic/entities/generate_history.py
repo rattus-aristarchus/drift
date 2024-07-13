@@ -1,11 +1,10 @@
 import random
 from kivy.logger import Logger
 
-import src.data
-from src.data import agents, histories
+from src.logic.entities import histories, agents
 
 
-def generate_history(world_model, model_base):
+def do(world_model, model_base):
     """
     This function is called once, at the beginning, creating the history
     object with the first grid.

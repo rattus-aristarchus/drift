@@ -1,4 +1,4 @@
-from src.data import cells
+from src.logic.entities import cells
 
 
 def create_grid(width, height, default_biome, age=0):

@@ -8,10 +8,10 @@ them, while others haven't.
 from random import Random
 from kivy.logger import Logger
 
-from src.data.effects import util
-from src.data.effects.util import get_group, has_neighbor_sootnomad, sum_for_cells, get_or_create_pop, \
+from src.logic.effects import util
+from src.logic.effects.util import get_group, has_neighbor_sootnomad, sum_for_cells, get_or_create_pop, \
     get_pop_size, get_neighbors_with_lowest_density, order_neighbors_by
-from src.data import cells, agents
+from src.logic.entities import cells, agents
 
 
 def get_effect(func_name):

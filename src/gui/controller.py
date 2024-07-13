@@ -1,11 +1,7 @@
 
 from kivy.clock import Clock
 
-import src.data.control as control
-import src.data.effects.util
-from src.data import histories
-from src.io import storage
-from src.util import CONF, MAIN_DIR
+from src.logic.entities import histories
 
 
 class Controller:

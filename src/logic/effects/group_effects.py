@@ -1,6 +1,6 @@
 from random import Random
 
-from src.data import cells
+from src.logic.entities import cells
 
 
 def get_effect(func_name):

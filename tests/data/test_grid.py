@@ -1,11 +1,10 @@
 import pytest
 
-from src.data import grids
-from src.data.agents import Population
-from src.data.cells import Biome
-from src.data.grids import Grid
-from src.data.histories import History
-from src.data.models import BiomeModel
+from src.logic.entities import grids
+from src.logic.entities.agents import Population
+from src.logic.entities.cells import Biome
+from src.logic.entities.histories import History
+from src.logic.models import BiomeModel
 
 
 @pytest.fixture

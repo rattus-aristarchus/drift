@@ -1,6 +1,6 @@
 import math
 
-from src.data.buffers import GridBuffer
+from src.logic.buffers import GridBuffer
 
 
 def get_effect(func_name):

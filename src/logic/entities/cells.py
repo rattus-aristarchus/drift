@@ -1,5 +1,5 @@
-from src.data import agents
-from src.data.models import BiomeModel
+from src.logic.entities import agents
+from src.logic.models import BiomeModel
 
 from kivy.logger import Logger
 

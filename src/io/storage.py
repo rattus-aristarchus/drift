@@ -3,7 +3,7 @@ import sys
 from typing import List
 import yaml
 from kivy import Logger
-from src.data.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel
+from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel
 
 
 # the following methods are required to load effects into models
