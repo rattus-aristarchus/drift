@@ -8,14 +8,12 @@ from src.gui.controller import Controller
 
 class Main(App):
 
-    def __init__(self, history):
+    def __init__(self, history, assets):
         super().__init__()
         self.controller = Controller(history)
         self.view = None
 
-        self.world_model = None
-        self.history = None
-        self.model_base = None
+        self.assets = assets
 
     def build(self):
         Logger.info("Main: building the app")
@@ -24,6 +22,7 @@ class Main(App):
         Window.size = (1200, 900)
 
         self.view = View(self.controller,
+                         self.assets,
                          cells_x=self.controller.history.current_state().width,
                          cells_y=self.controller.history.current_state().height)
         self.controller.run(self.view)

@@ -12,7 +12,7 @@ class Model:
 @dataclasses.dataclass
 class EffectModel(Model):
 
-    effects: list = field(default_factory=lambda: [])
+    effects: List = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -20,7 +20,6 @@ class PopModel(EffectModel):
 
     name: str = ""
     sapient: bool = False
-    color: List[int] = field(default_factory=lambda: [0, 0, 0, 0])
 
 
 @dataclasses.dataclass

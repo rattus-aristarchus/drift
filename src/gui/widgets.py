@@ -44,8 +44,9 @@ class View(BoxLayout):
     cells_x = NumericProperty(0)
     cells_y = NumericProperty(0)
 
-    def __init__(self, controller, **kwargs):
+    def __init__(self, controller, assets, **kwargs):
         super().__init__(**kwargs)
+        self.assets = assets
         self.controller = controller
         self.cells = {}
 
@@ -102,7 +103,12 @@ class View(BoxLayout):
             for x in range(0, map.width):
                 cell = map.cells[x][y]
                 max_pop = get_max_pop(cell)
-                color = [1, 1, 1, 1]
+                if max_pop is None:
+                    color = [1, 1, 1, 1]
+                else:
+                    color = self.assets.get_color(max_pop.name)
+                    if color is None:
+                        color = [1, 1, 1, 1]
                 label = self.cells[x][y]
                 label.text = get_text(cell)
                 label.background = color

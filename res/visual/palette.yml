@@ -1,0 +1,5 @@
+soot_nomads: [0.7, 0.7, 0, 1]
+rice_growers: [0, 0, 1, 1]
+wheatmen: [0, 0, 0.7, 1]
+peddlers: [0, 0, 0, 1]
+raiders: [0.5, 0.5, 0.5, 1]

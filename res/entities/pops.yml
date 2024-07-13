@@ -2,19 +2,16 @@ soot_nomads:
     id: "soot_nomads"
     name: "коптеводы"
     sapient: True
-    color: [0.7, 0.7, 0, 1]
     effects: [sparse_nomad_inc, sparse_nomad_press, sparse_nomad_mig]
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
     sapient: True
-    color: [0, 0, 1, 1]
     effects: [rice_inc, rice_pressure, rice_mig]
 wheatmen:
     id: "wheatmen"
     name: "пшеничники"
     sapient: True
-    color: [0, 0, 0.7, 1]
     effects: [wheatmen_inc, wheatmen_press, wheatmen_mig]
 peddlers:
     id: "peddlers"

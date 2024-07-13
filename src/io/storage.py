@@ -3,6 +3,8 @@ import sys
 from typing import List
 import yaml
 from kivy import Logger
+
+from src.gui.assets import Assets
 from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel
 
 
@@ -58,6 +60,15 @@ def load_models(data_dir):
     _replace_effects(result.groups, get_group_effect)
     _replace_effects(result.biomes, get_biome_effect)
     _replace_effects(result.worlds, get_world_effect)
+
+    return result
+
+
+def load_assets(data_dir):
+    assets_dir = os.path.join(data_dir, "visual")
+    colors = yaml.safe_load(open(assets_dir + "/palette.yml", "r", encoding="utf-8"))
+
+    result = Assets(colors=colors)
 
     return result
 
