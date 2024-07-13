@@ -18,10 +18,13 @@ from kivy.logger import Logger
 # now, sys.path[0] is a better alternative, it gives the initial directory from which the
 # script was launched
 
+# MAIN_DIR = os.path.dirname(os.getcwd())
+MAIN_DIR = os.path.dirname(sys.path[0])
+RES_DIR = os.path.join(MAIN_DIR, "res")
+Logger.info("Storage: loading dir " + MAIN_DIR)
 
-conf_path = os.path.dirname(sys.path[0]) + "/conf.yml"
+conf_path = MAIN_DIR + "/conf.yml"
 CONF = conf.init_conf(conf_path)
-CONST = []
 
 
 # STRINGS = yaml.safe_load(open(MAIN_DIR + "/strings.yml", "r", encoding="utf-8"))

@@ -1,20 +1,10 @@
 import os
 import sys
 from typing import List
-
 import yaml
 from kivy import Logger
-
 from src.data.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel
 
-# getcwd returns the current working directory, which can change during program execution,
-# and which can give different results depending on where the program is launched from. for
-# now, sys.path[0] is a better alternative, it gives the initial directory from which the
-# script was launched
-
-# MAIN_DIR = os.path.dirname(os.getcwd())
-MAIN_DIR = os.path.dirname(sys.path[0])
-Logger.info("Storage: loadi dir " + MAIN_DIR)
 
 # the following methods are required to load effects into models
 get_pop_effect = None
@@ -23,11 +13,10 @@ get_biome_effect = None
 get_world_effect = None
 
 
-def load_models():
+def load_models(data_dir):
 
     # load all the stuff
 
-    data_dir = os.path.join(MAIN_DIR, "res")
     entities_dir = os.path.join(data_dir, "entities")
     biomes = yaml.safe_load(open(entities_dir + "/biomes.yml", "r", encoding="utf-8"))
     pops = yaml.safe_load(open(entities_dir + "/pops.yml", "r", encoding="utf-8"))

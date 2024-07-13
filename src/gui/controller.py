@@ -5,18 +5,14 @@ import src.data.control as control
 import src.data.effects.util
 from src.data import histories
 from src.io import storage
-from src.util import CONF
+from src.util import CONF, MAIN_DIR
 
 
 class Controller:
 
-    def __init__(self):
+    def __init__(self, history):
         self.stop = True
-
-        self.model_base = storage.load_models()
-        src.data.effects.util.model_base = self.model_base
-        world_model = self.model_base.get_world(CONF['world'])
-        self.history = control.generate_history(world_model, self.model_base)
+        self.history = history
         self.viewed_turn = self.history.turn
 
     def run(self, view):
