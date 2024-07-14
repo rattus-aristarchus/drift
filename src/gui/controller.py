@@ -1,3 +1,5 @@
+import dataclasses
+from typing import List
 
 from kivy.clock import Clock
 
@@ -32,3 +34,14 @@ class Controller:
         if self.viewed_turn > 0:
             self.viewed_turn -= 1
             self.view.show_grid(self.history.state_at_turn(self.viewed_turn))
+
+
+@dataclasses.dataclass
+class MapFilter:
+    """
+    A map filter controls which entites are displayed on the map
+    at any given moment.
+    """
+
+    name: str
+    pops_to_show: List[str]

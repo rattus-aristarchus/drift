@@ -47,6 +47,7 @@ class View(BoxLayout):
         self.assets = assets
         self.controller = controller
         self.cells = {}
+        self.filter = self.assets.get_map_filter("population")
 
     def create_grid(self, map):
         element = self.ids['grid']
@@ -73,41 +74,51 @@ class View(BoxLayout):
         element = self.ids['grid']
         self.size_check(map)
 
-        def get_max_pop(cell):
-            max_num = 0
-            max = None
-            for pop in cell.pops:
-                if pop.size >= max_num and pop.sapient:
-                    max = pop
-                    max_num = pop.size
-            return max
-
-        def get_text(cell):
-            result = ""
-            for pop in cell.pops:
-                if pop.size < 1000:
-                    number = str(pop.size)
-                elif pop.size < 1000000:
-                    number = str(round(pop.size / 1000)) + "k"
-                else:
-                    number = str(round(pop.size / 1000000)) + "m"
-                # result += pop.name[:2] + ": " + number + "\n"
-                result += number + "\n"
-            return result[:-1]
-
         for x in range(0, map.width):
             for y in range(0, map.height):
                 cell = map.cells[x][y]
-                max_pop = get_max_pop(cell)
-
-                img_name = "none"
-                if max_pop is not None:
-                    img_name = max_pop.name
-                img_source = self.assets.get_icon_name(img_name)
-
                 label = self.cells[x][y]
-                label.text = get_text(cell)
-                label.icon_source = img_source
+
+                max_pop = _get_max_viewable_pop(cell, self.filter)
+
+                label.text = _get_text_for_pop(max_pop)
+                label.icon_source = _get_image_for_pop(max_pop, self.assets)
+
+
+def _get_image_for_pop(max_pop, assets):
+    img_name = "none"
+    if max_pop is not None:
+        img_name = max_pop.name
+    return assets.get_icon_name(img_name)
+
+
+def _get_text_for_pop(max_pop):
+    if max_pop == None:
+        return ""
+
+    if max_pop.size < 1000:
+        result = str(max_pop.size)
+    elif max_pop.size < 1000000:
+        result = str(round(max_pop.size / 1000)) + "k"
+    else:
+        result = str(round(max_pop.size / 1000000)) + "m"
+
+    return result
+
+
+def _get_max_viewable_pop(cell, map_filter):
+    """
+    Compares all populations in a cell that the current map filter
+    allows us to view.
+    """
+    max_num = 0
+    max = None
+    for pop in cell.pops:
+        if pop.size >= max_num and pop.name in map_filter.pops_to_show:
+            max = pop
+            max_num = pop.size
+    return max
+
 
 class Map(GridLayout):
     pass

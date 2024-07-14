@@ -1,0 +1,3 @@
+0:
+    name: "population"
+    pops_to_show: ["wheatmen", "soot_nomads", "rice_growers"]

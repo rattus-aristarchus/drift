@@ -6,6 +6,7 @@ import yaml
 from kivy import Logger
 
 from src.gui.assets import Assets
+from src.gui.controller import MapFilter
 from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel, GridModel
 
 # the following methods are required to load effects into models
@@ -65,7 +66,12 @@ def load_models(entities_dir, worlds_dir):
 def load_assets(assets_dir):
     colors = yaml.safe_load(open(assets_dir + "/palette.yml", "r", encoding="utf-8"))
     icons = yaml.safe_load(open(assets_dir + "/icons.yml", "r", encoding="utf-8"))
-    result = Assets(colors=colors, icons=icons)
+    map_filter_data = yaml.safe_load(open(assets_dir + "/map_filters.yml", "r", encoding="utf-8"))
+    map_filters = []
+    for id, data in map_filter_data.items():
+        map_filters.append(MapFilter(**data))
+
+    result = Assets(colors=colors, icons=icons, map_filters=map_filters)
     return result
 
 
