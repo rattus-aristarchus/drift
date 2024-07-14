@@ -1,5 +1,4 @@
 import pytest
-
 from src.logic.models import PopModel
 
 
