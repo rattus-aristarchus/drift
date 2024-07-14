@@ -64,7 +64,8 @@ def load_models(entities_dir, worlds_dir):
 
 def load_assets(assets_dir):
     colors = yaml.safe_load(open(assets_dir + "/palette.yml", "r", encoding="utf-8"))
-    result = Assets(colors=colors)
+    icons = yaml.safe_load(open(assets_dir + "/icons.yml", "r", encoding="utf-8"))
+    result = Assets(colors=colors, icons=icons)
     return result
 
 

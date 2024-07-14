@@ -1,8 +1,9 @@
 from kivy.core.window import Window
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import ColorProperty, ObjectProperty, NumericProperty
+from kivy.properties import ColorProperty, ObjectProperty, NumericProperty, StringProperty
 from kivy.clock import Clock
 
 
@@ -12,8 +13,7 @@ class Tooltip(Label):
 
 class CellView(Label):
 
-    background = ColorProperty([0, 0, 0, 0])
-
+    icon_source = StringProperty("empty.png")
     tooltip = Tooltip(text='Hello world')
 
     def __init__(self, **kwargs):
@@ -31,11 +31,9 @@ class CellView(Label):
             Clock.schedule_once(self.display_tooltip, 0.5)
 
     def close_tooltip(self, *args):
-        # Logger.debug("removing tooltip")
         Window.remove_widget(self.tooltip)
 
     def display_tooltip(self, *args):
-        # Logger.debug("displaying tooltip at pos " + str(self.tooltip.pos))
         Window.add_widget(self.tooltip)
 
 
@@ -58,13 +56,11 @@ class View(BoxLayout):
         for x in range(0, map.width):
             self.cells[x] = {}
             for y in range(0, map.height):
-                cell = map.cells[x][y]
                 label = CellView(text="")
-                label.background = [1, 1, 1, 1]
                 self.cells[x][y] = label
 
-        for y in range(0, map.height):
-            for x in range(0, map.width):
+        for x in range(0, map.width):
+            for y in range(0, map.height):
                 element.add_widget(self.cells[x][y])
 
     def size_check(self, map):
@@ -99,16 +95,19 @@ class View(BoxLayout):
                 result += number + "\n"
             return result[:-1]
 
-        for y in range(0, map.height):
-            for x in range(0, map.width):
+        for x in range(0, map.width):
+            for y in range(0, map.height):
                 cell = map.cells[x][y]
                 max_pop = get_max_pop(cell)
-                if max_pop is None:
-                    color = [1, 1, 1, 1]
-                else:
-                    color = self.assets.get_color(max_pop.name)
-                    if color is None:
-                        color = [1, 1, 1, 1]
+
+                img_name = "none"
+                if max_pop is not None:
+                    img_name = max_pop.name
+                img_source = self.assets.get_icon_name(img_name)
+
                 label = self.cells[x][y]
                 label.text = get_text(cell)
-                label.background = color
+                label.icon_source = img_source
+
+class Map(GridLayout):
+    pass
