@@ -7,7 +7,7 @@ class Assets:
 
     colors: Dict = dataclasses.field(default_factory=lambda: {})
     icons: Dict = dataclasses.field(default_factory=lambda: {})
-    map_filters: Dict = dataclasses.field(default_factory=lambda: [])
+    map_filters: List = dataclasses.field(default_factory=lambda: [])
 
     def get_map_filter(self, name):
         for filter in self.map_filters:
