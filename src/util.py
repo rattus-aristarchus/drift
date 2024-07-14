@@ -22,6 +22,10 @@ from kivy.logger import Logger
 MAIN_DIR = os.path.dirname(sys.path[0])
 RES_DIR = os.path.join(MAIN_DIR, "res")
 Logger.info("Storage: loading dir " + MAIN_DIR)
+ASSETS_DIR = os.path.join(RES_DIR, "visual")
+ENTITIES_DIR = os.path.join(RES_DIR, "entities")
+MAPS_DIR = os.path.join(RES_DIR, "maps")
+WORLDS_DIR = os.path.join(RES_DIR, "worlds")
 
 conf_path = MAIN_DIR + "/conf.yml"
 CONF = conf.init_conf(conf_path)

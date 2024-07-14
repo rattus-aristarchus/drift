@@ -1,3 +1,4 @@
+import csv
 import os
 import sys
 from typing import List
@@ -5,8 +6,7 @@ import yaml
 from kivy import Logger
 
 from src.gui.assets import Assets
-from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel
-
+from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel, GridModel
 
 # the following methods are required to load effects into models
 get_pop_effect = None
@@ -15,16 +15,14 @@ get_biome_effect = None
 get_world_effect = None
 
 
-def load_models(data_dir):
+def load_models(entities_dir, worlds_dir):
 
     # load all the stuff
 
-    entities_dir = os.path.join(data_dir, "entities")
     biomes = yaml.safe_load(open(entities_dir + "/biomes.yml", "r", encoding="utf-8"))
     pops = yaml.safe_load(open(entities_dir + "/pops.yml", "r", encoding="utf-8"))
     groups = yaml.safe_load(open(entities_dir + "/groups.yml", "r", encoding="utf-8"))
 
-    worlds_dir = os.path.join(data_dir, "worlds")
     worlds = {}
 
     for element in os.listdir(worlds_dir):
@@ -64,12 +62,9 @@ def load_models(data_dir):
     return result
 
 
-def load_assets(data_dir):
-    assets_dir = os.path.join(data_dir, "visual")
+def load_assets(assets_dir):
     colors = yaml.safe_load(open(assets_dir + "/palette.yml", "r", encoding="utf-8"))
-
     result = Assets(colors=colors)
-
     return result
 
 
@@ -85,4 +80,26 @@ def _get_model_effects(model: EffectModel, get_effect):
     result = []
     for effect_name in model.effects:
         result.append(get_effect(effect_name))
+    return result
+
+
+def load_maps(maps_dir):
+    for file in os.listdir(maps_dir):
+        file_path = os.path.join(maps_dir, file)
+        if os.path.isfile(file_path) and os.path.splitext(file)[1] == ".csv":
+            _load_map(file_path)
+
+
+def _load_map(path):
+    result = None
+    with open(path) as csv_file:
+        name = os.path.splitext(os.path.basename(path))[0]
+        result = GridModel(id=name)
+
+        csvreader = csv.reader(csv_file, delimiter=';')
+        result = []
+        for row in csvreader:
+            for cell in row:
+                result.cells.append(cell)
+
     return result

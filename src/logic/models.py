@@ -43,6 +43,12 @@ class WorldModel(EffectModel):
 
 
 @dataclasses.dataclass
+class GridModel(Model):
+
+    cells: List = field(default_factory=lambda: [])
+
+
+@dataclasses.dataclass
 class ModelStorage:
     """
     All the data models in the simulation
