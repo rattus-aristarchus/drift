@@ -1,5 +1,4 @@
-width: 45
-height: 23
+map: map
 effects:
     [climate]
 cells:

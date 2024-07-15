@@ -16,7 +16,7 @@ get_biome_effect = None
 get_world_effect = None
 
 
-def load_models(entities_dir, worlds_dir):
+def load_models(entities_dir, worlds_dir, maps_dir):
 
     # load all the stuff
 
@@ -33,9 +33,17 @@ def load_models(entities_dir, worlds_dir):
             world_name = os.path.splitext(element)[0]
             worlds[world_name] = world
 
+    maps = []
+
+    for file in os.listdir(maps_dir):
+        file_path = os.path.join(maps_dir, file)
+        if os.path.isfile(file_path) and os.path.splitext(file)[1] == ".csv":
+            maps.append(_load_map(file_path))
+
     # now, create models
 
     result = ModelStorage()
+    result.maps = maps
     for name, content in pops.items():
         model = PopModel(**content)
         result.pops.append(model)
@@ -53,12 +61,14 @@ def load_models(entities_dir, worlds_dir):
         model.id = name
         result.worlds.append(model)
 
+
     # replace effect names with effect functions from effect modules
 
     _replace_effects(result.pops, get_pop_effect)
     _replace_effects(result.groups, get_group_effect)
     _replace_effects(result.biomes, get_biome_effect)
     _replace_effects(result.worlds, get_world_effect)
+    _replace_maps(result.worlds, maps)
 
     return result
 
@@ -73,6 +83,13 @@ def load_assets(assets_dir):
 
     result = Assets(colors=colors, icons=icons, map_filters=map_filters)
     return result
+
+
+def _replace_maps(worlds, maps):
+    for world in worlds:
+        for map in maps:
+            if world.map == map.id:
+                world.map = map
 
 
 def _replace_effects(model_list: List[EffectModel], get_effect):
@@ -90,13 +107,6 @@ def _get_model_effects(model: EffectModel, get_effect):
     return result
 
 
-def load_maps(maps_dir):
-    for file in os.listdir(maps_dir):
-        file_path = os.path.join(maps_dir, file)
-        if os.path.isfile(file_path) and os.path.splitext(file)[1] == ".csv":
-            _load_map(file_path)
-
-
 def _load_map(path):
     result = None
     with open(path) as csv_file:
@@ -104,9 +114,21 @@ def _load_map(path):
         result = GridModel(id=name)
 
         csvreader = csv.reader(csv_file, delimiter=';')
-        result = []
+        rows = []
         for row in csvreader:
+            cell_row = []
             for cell in row:
-                result.cells.append(cell)
+                cell_row.append(cell)
+            rows.append(cell_row)
+
+        # the csv reader reads the file by rows; however, we
+        # need to arrange them by columns first, so that we
+        # can call matrix[x][y] (x being the index of a column)
+
+        for x in range(0, len(rows[0])):
+            column = []
+            for y in range(0, len(rows)):
+                column.append(rows[y][x])
+            result.cell_matrix.append(column)
 
     return result

@@ -1,11 +1,10 @@
 import os.path
 from src.io import storage
+from tests.conftest import RESOURCES_DIR
 
 
 def test_load_map():
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    RESOURCES_DIR = os.path.join(BASE_DIR, 'resources')
     path = os.path.join(RESOURCES_DIR, "map.csv")
 
     map = storage._load_map(path)
-    assert map.cells[0] == "id:0,links:[1,00]"
+    assert map.cell_matrix[0][1] == "id:00,links:[0]"

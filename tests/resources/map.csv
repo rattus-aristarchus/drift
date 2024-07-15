@@ -1,2 +1,2 @@
 id:0,links:[1,00];id:1,links:[0]
-id:00,links:[0];
+id:00,links:[0];id:11,links:[0, 00]

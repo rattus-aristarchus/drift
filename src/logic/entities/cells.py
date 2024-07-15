@@ -1,3 +1,6 @@
+import dataclasses
+from typing import List, Dict
+
 from src.logic.entities import agents
 from src.logic.models import BiomeModel
 
@@ -60,7 +63,13 @@ def increase_age(cell, value=1):
 def create_cell(x, y, biome_model: BiomeModel):
     result = Cell(x, y)
     result.effects = biome_model.effects
-    result.biome = Biome(biome_model)
+    result.biome = create_biome(biome_model)
+    return result
+
+
+def create_biome(biome_model):
+    result = Biome(model=biome_model)
+    result.capacity = dict(biome_model.capacity)
     return result
 
 
@@ -89,11 +98,11 @@ class Cell:
         return None
 
 
+@dataclasses.dataclass
 class Biome:
 
-    def __init__(self, model):
-        self.model = model
-        self.capacity = dict(model.capacity)
+    model: BiomeModel = None
+    capacity: Dict = dataclasses.field(default_factory=lambda: {})
 
     def get_capacity(self, pop_name):
         if pop_name in self.capacity.keys():
