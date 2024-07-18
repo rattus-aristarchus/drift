@@ -2,6 +2,7 @@ import dataclasses
 from typing import List, Dict
 
 from src.logic.entities import agents
+from src.logic.entities.agents import Entity
 from src.logic.models import BiomeModel
 
 from kivy.logger import Logger
@@ -68,7 +69,7 @@ def create_cell(x, y, biome_model: BiomeModel):
 
 
 def create_biome(biome_model):
-    result = Biome(model=biome_model)
+    result = Biome(name=biome_model.id, model=biome_model)
     if biome_model.capacity:
         result.capacity = dict(biome_model.capacity)
     return result
@@ -100,7 +101,7 @@ class Cell:
 
 
 @dataclasses.dataclass
-class Biome:
+class Biome(Entity):
 
     model: BiomeModel = None
     capacity: Dict = dataclasses.field(default_factory=lambda: {})

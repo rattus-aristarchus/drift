@@ -1,3 +1,6 @@
 0:
     name: "population"
     pops_to_show: ["wheatmen", "soot_nomads", "rice_growers"]
+1:
+    name: "biomes"
+    show_biome: True

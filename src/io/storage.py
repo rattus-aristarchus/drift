@@ -6,7 +6,7 @@ import yaml
 from kivy import Logger
 
 from src.gui.assets import Assets
-from src.gui.controller import MapFilter
+from src.gui.map_filter import MapFilter
 from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel, GridModel, \
     CellModel
 
@@ -33,9 +33,6 @@ def load_models(entities_dir, worlds_dir, maps_dir):
             world = yaml.safe_load(open(element_path, "r", encoding="utf-8"))
             world_name = os.path.splitext(element)[0]
             worlds[world_name] = world
-
-
-
 
     # now, create models
 

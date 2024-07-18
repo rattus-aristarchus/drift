@@ -38,7 +38,6 @@
 
 
 <Map>
-    spacing: 2, 2
     size_hint: 1, 1
 
     canvas.before:
@@ -50,7 +49,7 @@
 <CellView>
     size_hint: None, None
     size: dp(40), dp(40)
-    outline_width: 3
+    outline_width: 0
     halign: "left"
     valign: "bottom"
     text_size: self.size
@@ -61,7 +60,7 @@
             rgba: 0, 0, 0, 0.25
         Line:
             width: 1
-            rectangle: self.x, self.y, self.width, self.height
+            rectangle: self.x, self.y, self.width-1, self.height-1
 
     Image:
         pos: (self.parent.x - 40, self.parent.y - 16)

@@ -44,6 +44,12 @@ def copy_pop(pop, destination):
 
 
 @dataclasses.dataclass
+class Entity:
+
+    name: str = ""
+
+
+@dataclasses.dataclass
 class Agent:
 
     name: str

@@ -18,6 +18,7 @@ class CellView(Label):
 
     def __init__(self, **kwargs):
         Window.bind(mouse_pos=self.on_mouse_pos)
+        self.cell = None
         super().__init__(**kwargs)
 
     def on_mouse_pos(self, *args):
@@ -47,21 +48,21 @@ class View(BoxLayout):
         self.assets = assets
         self.controller = controller
         self.cells = {}
-        self.filter = self.assets.get_map_filter("population")
+        self.filter = self.assets.get_map_filter("biomes")
 
-    def create_grid(self, map, world_name):
+    def create_grid(self, logical_grid, world_name):
         element = self.ids['grid']
         element.clear_widgets()
-        self.size_check(map)
+        self.size_check(logical_grid)
 
-        for x in range(0, map.width):
+        for x in range(0, logical_grid.width):
             self.cells[x] = {}
-            for y in range(0, map.height):
+            for y in range(0, logical_grid.height):
                 label = CellView(text="")
                 self.cells[x][y] = label
 
-        for x in range(0, map.width):
-            for y in range(0, map.height):
+        for y in range(0, logical_grid.height):
+            for x in range(0, logical_grid.width):
                 element.add_widget(self.cells[x][y])
 
         self._set_background(world_name)
@@ -73,31 +74,62 @@ class View(BoxLayout):
         element.background_width = data["size"][0]
         element.background_height = data["size"][1]
 
-    def size_check(self, map):
-        if not map.width == self.cells_x:
-            self.cells_x = map.width
-        if not map.height == self.cells_y:
-            self.cells_y = map.height
+    def size_check(self, grid):
+        if not grid.width == self.cells_x:
+            self.cells_x = grid.width
+        if not grid.height == self.cells_y:
+            self.cells_y = grid.height
 
-    def show_grid(self, map):
-        element = self.ids['grid']
-        self.size_check(map)
+    def show_grid(self, grid):
+        self.size_check(grid)
 
-        for x in range(0, map.width):
-            for y in range(0, map.height):
-                cell = map.cells[x][y]
+        for x in range(0, grid.width):
+            for y in range(0, grid.height):
+                cell = grid.cells[x][y]
                 label = self.cells[x][y]
 
-                max_pop = _get_max_viewable_pop(cell, self.filter)
+                text, icon_file = _get_cell_representation(cell, self.filter, self.assets)
+                label.text = text
+                label.icon_source = icon_file
 
-                label.text = _get_text_for_pop(max_pop)
-                label.icon_source = _get_image_for_pop(max_pop, self.assets)
+
+def _get_cell_representation(cell, filter, assets):
+    entity = None
+
+    if filter.groups_to_show:
+        entity = _get_group(cell, filter)
+        if entity:
+            pass
+
+    if filter.pops_to_show:
+        entity = _get_max_viewable_pop(cell, filter)
+        if entity:
+            text = _get_text_for_pop(entity)
+            image = _get_image(entity, assets)
+            return text, image
+
+    if filter.show_biome:
+        image = _get_image(cell.biome, assets)
+        if image == "none":
+            Logger.error(f"Could not find image for biome {cell.biome.name}")
+        return "", image
+
+    Logger.warning(f"Could not find anything to represent cell ({cell.x}, {cell.y})")
+    return "", assets.get_icon_name("none")
 
 
-def _get_image_for_pop(max_pop, assets):
+#TODO:
+def _get_group(cell, filter):
+    return None
+
+
+def _get_biome(cell):
+    return
+
+def _get_image(entity, assets):
     img_name = "none"
-    if max_pop is not None:
-        img_name = max_pop.name
+    if entity is not None:
+        img_name = entity.name
     return assets.get_icon_name(img_name)
 
 
