@@ -1,0 +1,48 @@
+soot_nomads:
+    id: "soot_nomads"
+    name: "коптеводы"
+    sapient: True
+    effects: [sparse_nomad_inc, sparse_nomad_press, sparse_nomad_mig]
+rice_growers:
+    id: "rice_growers"
+    name: "рисоводы"
+    sapient: True
+    effects: [rice_inc, rice_pressure, rice_mig]
+wheatmen:
+    id: "wheatmen"
+    name: "пшеничники"
+    sapient: True
+    effects: [wheatmen_inc, wheatmen_press, wheatmen_mig]
+peddlers:
+    id: "peddlers"
+    name: "торговцы"
+    sapient: True
+raiders:
+    id: "raiders"
+    name: "налётчики"
+    sapient: True
+flamesheep:
+    id: "flamesheep"
+    name: "огнерунники"
+    sapient: False
+    effects: [flamesheep_inc, flamesheep_dec]
+rats:
+    id: "rats"
+    name: "крысы"
+    sapient: False
+    effects: [rat_inc, migrate]
+lynxes:
+    id: "lynxes"
+    name: "рыси"
+    sapient: False
+    effects: [lynx_inc, migrate]
+steppe_grass:
+    id: "steppe_grass"
+    name: "степная трава"
+    sapient: False
+    effects: [grass_grow]
+wheat:
+    id: "wheat"
+    name: "пшеница"
+    sapient: False
+    effects: [wheat_grow]

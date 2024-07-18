@@ -1,0 +1,7 @@
+"backgrounds":
+    "middle_kingdom":
+        name: "middle_kingdom.jpg"
+        size: [1041, 571]
+"icons":
+    "none": "empty.png"
+    "wheatmen": "food.png"

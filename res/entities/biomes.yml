@@ -9,3 +9,77 @@ basic:
         lynxes: 7000
         steppe_grass: 100000
         wheat: 100000
+
+sea:
+    id: "sea"
+
+mountains:
+    id: "mountains"
+    capacity:
+        yaks: 10000
+        millet: 5000
+
+tibet:
+    id: "tibet"
+    capacity:
+        yaks: 10000
+
+peaks:
+    id: "peaks"
+    capacity:
+
+mountain_forest:
+    id: "mountain_forest"
+    capacity:
+        millet: 10000
+
+steppe:
+    id: "steppe"
+    capacity:
+        sheep: 50000
+
+loess_plateau:
+    id: "loess_plateau"
+    capacity:
+        millet: 250000
+        sheep: 25000
+
+temperate_river_valley:
+    id: "temperate_river_valley"
+    capacity:
+        millet: 500000
+        sheep: 50000
+
+tropical_river_valley:
+    id: "tropical_river_valley"
+    capacity:
+        rice: 750000
+        sheep: 10000
+
+desert:
+    id: "desert"
+    capacity:
+
+semi-desert:
+    id: "semi-desert"
+    capacity:
+        sheep: 10000
+
+plains:
+    id: "plains"
+    capacity:
+        millet: 100000
+        sheep: 50000
+
+chernozem:
+    id: "chernozem"
+    capacity:
+        millet: 250000
+        sheep: 50000
+
+hills:
+    id: "hills"
+    capacity:
+        millet: 50000
+        rice: 50000
+        sheep: 50000
