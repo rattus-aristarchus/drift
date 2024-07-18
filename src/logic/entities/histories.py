@@ -74,9 +74,7 @@ def create_history(world_model, model_base):
 
 
 def _with_premade_map(world_model, model_base):
-    width = len(world_model.map.cell_matrix)
-    height = len(world_model.map.cell_matrix[0])
-    result = History(width, height)
+    result = History(world_model)
     first_grid = grids.create_grid_from_model(world_model.map, model_base, world_model.age)
     result.past_grids.append(first_grid)
     result.effects = list(world_model.effects)
@@ -84,7 +82,7 @@ def _with_premade_map(world_model, model_base):
 
 
 def _with_generated_map(world_model, model_base):
-    result = History(world_model.width, world_model.height)
+    result = History(world_model)
     first_grid = grids.create_grid(world_model.width, world_model.height, model_base.get_biome('basic'))
     result.past_grids.append(first_grid)
     result.effects = list(world_model.effects)
@@ -93,11 +91,10 @@ def _with_generated_map(world_model, model_base):
 
 class History:
 
-    def __init__(self, world_width, world_height):
+    def __init__(self, world_model):
         self.past_grids = []
         self.turn = 0
-        self.width = world_width
-        self.height = world_height
+        self.world_model = world_model
         self.effects = []
 
     def current_state(self):

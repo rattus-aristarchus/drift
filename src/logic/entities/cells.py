@@ -69,7 +69,8 @@ def create_cell(x, y, biome_model: BiomeModel):
 
 def create_biome(biome_model):
     result = Biome(model=biome_model)
-    result.capacity = dict(biome_model.capacity)
+    if biome_model.capacity:
+        result.capacity = dict(biome_model.capacity)
     return result
 
 

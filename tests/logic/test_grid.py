@@ -2,22 +2,23 @@ import ast
 
 import pytest
 
-from src.logic.entities import grids
+from src.logic.entities import grids, histories
 from src.logic.entities.agents import Population
 from src.logic.entities.cells import Biome
 from src.logic.entities.histories import History
-from src.logic.models import BiomeModel
+from src.logic.models import BiomeModel, WorldModel
 
 
 @pytest.fixture
 def history():
-    output = History(5, 5)
+    wm = WorldModel(width=5, height=5)
+    output = History(wm)
     return output
 
 
 @pytest.fixture
 def fresh_grid(history):
-    output = grids.create_grid(history.width, history.height, BiomeModel())
+    output = grids.create_grid(history.world_model.width, history.world_model.height, BiomeModel())
     output.cells[0][0].pops.append(Population(name="test_pop"))
     return output
 

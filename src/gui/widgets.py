@@ -49,7 +49,7 @@ class View(BoxLayout):
         self.cells = {}
         self.filter = self.assets.get_map_filter("population")
 
-    def create_grid(self, map):
+    def create_grid(self, map, world_name):
         element = self.ids['grid']
         element.clear_widgets()
         self.size_check(map)
@@ -63,6 +63,15 @@ class View(BoxLayout):
         for x in range(0, map.width):
             for y in range(0, map.height):
                 element.add_widget(self.cells[x][y])
+
+        self._set_background(world_name)
+
+    def _set_background(self, world_name):
+        element = self.ids['grid']
+        data = self.assets.get_background_data(world_name)
+        element.background_name = data["name"]
+        element.background_width = data["size"][0]
+        element.background_height = data["size"][1]
 
     def size_check(self, map):
         if not map.width == self.cells_x:
@@ -121,4 +130,7 @@ def _get_max_viewable_pop(cell, map_filter):
 
 
 class Map(GridLayout):
-    pass
+
+    background_name = StringProperty("empty.png")
+    background_width = NumericProperty(0)
+    background_height = NumericProperty(0)

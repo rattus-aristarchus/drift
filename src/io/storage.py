@@ -7,7 +7,8 @@ from kivy import Logger
 
 from src.gui.assets import Assets
 from src.gui.controller import MapFilter
-from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel, GridModel
+from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel, GridModel, \
+    CellModel
 
 # the following methods are required to load effects into models
 get_pop_effect = None
@@ -33,17 +34,12 @@ def load_models(entities_dir, worlds_dir, maps_dir):
             world_name = os.path.splitext(element)[0]
             worlds[world_name] = world
 
-    maps = []
 
-    for file in os.listdir(maps_dir):
-        file_path = os.path.join(maps_dir, file)
-        if os.path.isfile(file_path) and os.path.splitext(file)[1] == ".csv":
-            maps.append(_load_map(file_path))
+
 
     # now, create models
 
     result = ModelStorage()
-    result.maps = maps
     for name, content in pops.items():
         model = PopModel(**content)
         result.pops.append(model)
@@ -61,6 +57,14 @@ def load_models(entities_dir, worlds_dir, maps_dir):
         model.id = name
         result.worlds.append(model)
 
+    # load maps
+
+    maps = []
+    for file in os.listdir(maps_dir):
+        file_path = os.path.join(maps_dir, file)
+        if os.path.isfile(file_path) and os.path.splitext(file)[1] == ".csv":
+            maps.append(_load_map_from_tiled(file_path, result))
+    result.maps = maps
 
     # replace effect names with effect functions from effect modules
 
@@ -75,13 +79,13 @@ def load_models(entities_dir, worlds_dir, maps_dir):
 
 def load_assets(assets_dir):
     colors = yaml.safe_load(open(assets_dir + "/palette.yml", "r", encoding="utf-8"))
-    icons = yaml.safe_load(open(assets_dir + "/icons.yml", "r", encoding="utf-8"))
+    images = yaml.safe_load(open(assets_dir + "/images.yml", "r", encoding="utf-8"))
     map_filter_data = yaml.safe_load(open(assets_dir + "/map_filters.yml", "r", encoding="utf-8"))
     map_filters = []
     for id, data in map_filter_data.items():
         map_filters.append(MapFilter(**data))
 
-    result = Assets(colors=colors, icons=icons, map_filters=map_filters)
+    result = Assets(colors=colors, images=images, map_filters=map_filters)
     return result
 
 
@@ -107,7 +111,7 @@ def _get_model_effects(model: EffectModel, get_effect):
     return result
 
 
-def _load_map(path):
+def _load_map(path, model_storage):
     result = None
     with open(path) as csv_file:
         name = os.path.splitext(os.path.basename(path))[0]
@@ -129,6 +133,44 @@ def _load_map(path):
             column = []
             for y in range(0, len(rows)):
                 column.append(rows[y][x])
+            result.cell_matrix.append(column)
+
+    return result
+
+
+def _load_map_from_tiled(path, model_storage):
+    result = None
+    with open(path) as csv_file:
+        name = os.path.splitext(os.path.basename(path))[0]
+        result = GridModel(id=name)
+
+        csvreader = csv.reader(csv_file, delimiter=',')
+        cell_rows = []
+        x = 0
+        y = 0
+        for row in csvreader:
+            cell_row = []
+            for cell_string in row:
+                cell = CellModel(x=x, y=y)
+                biome = model_storage.get_biome(cell_string)
+                if biome is None:
+                    Logger.error(f"Map file at {path} conatins an invalid biome name: {cell_string}")
+                else:
+                    cell.biome = biome
+                cell_row.append(cell)
+                x += 1
+            cell_rows.append(cell_row)
+            y += 1
+            x = 0
+
+        # the csv reader reads the file by rows; however, we
+        # need to arrange them by columns first, so that we
+        # can call matrix[x][y] (x being the index of a column)
+
+        for x in range(0, len(cell_rows[0])):
+            column = []
+            for y in range(0, len(cell_rows)):
+                column.append(cell_rows[y][x])
             result.cell_matrix.append(column)
 
     return result

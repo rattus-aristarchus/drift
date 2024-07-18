@@ -6,7 +6,7 @@ from typing import Dict, List
 class Assets:
 
     colors: Dict = dataclasses.field(default_factory=lambda: {})
-    icons: Dict = dataclasses.field(default_factory=lambda: {})
+    images: Dict = dataclasses.field(default_factory=lambda: {})
     map_filters: List = dataclasses.field(default_factory=lambda: [])
 
     def get_map_filter(self, name):
@@ -19,7 +19,10 @@ class Assets:
         return self.get_asset(name, self.colors)
 
     def get_icon_name(self, name):
-        return self.get_asset(name, self.icons)
+        return self.get_asset(name, self.images["icons"])
+
+    def get_background_data(self, name):
+        return self.get_asset(name, self.images["backgrounds"])
 
     def get_asset(self, name, dictionary):
         if name in dictionary.keys():

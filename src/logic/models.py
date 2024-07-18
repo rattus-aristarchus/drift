@@ -35,6 +35,16 @@ class BiomeModel(EffectModel):
 
 
 @dataclasses.dataclass
+class CellModel(Model):
+
+    x: int = 0
+    y: int = 0
+    biome: BiomeModel = None
+    pops: List = field(default_factory=lambda: [])
+    groups: List = field(default_factory=lambda: [])
+
+
+@dataclasses.dataclass
 class WorldModel(EffectModel):
 
     width: int = 0

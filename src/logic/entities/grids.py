@@ -3,7 +3,7 @@ import ast
 from kivy import Logger
 from src.logic.entities import cells
 from src.logic.entities.cells import Cell
-from src.logic.models import GridModel, ModelStorage
+from src.logic.models import GridModel, ModelStorage, CellModel
 
 
 def create_grid(width, height, default_biome, age=0):
@@ -19,16 +19,16 @@ def create_grid(width, height, default_biome, age=0):
 
 
 def create_grid_from_model(grid_model: GridModel, model_base: ModelStorage, age=0):
-    height = len(grid_model.cell_matrix)
-    width = len(grid_model.cell_matrix[0])
+    height = len(grid_model.cell_matrix[0])
+    width = len(grid_model.cell_matrix)
     result = Grid(width, height)
     result.state = GridState(age=age)
 
     for x in range(0, width):
         result.cells[x] = {}
         for y in range(0, height):
-            cell_data = ast.literal_eval(grid_model.cell_matrix[y][x])
-            result.cells[x][y] = create_cell_from_dict(x, y, cell_data, model_base)
+            cell_model = grid_model.cell_matrix[x][y]
+            result.cells[x][y] = create_cell_from_model(cell_model)
 
     return result
 
@@ -48,6 +48,22 @@ def create_cell_from_dict(x, y, cell_data, model_base: ModelStorage):
 
     # TODO
     if "groups" in cell_data:
+        pass
+
+    return result
+
+
+def create_cell_from_model(model: CellModel):
+    result = None
+    if model.biome:
+        result = cells.create_cell(model.x, model.y, model.biome)
+
+    # TODO
+    if len(model.pops) > 0:
+        pass
+
+    # TODO
+    if len(model.groups) > 0:
         pass
 
     return result

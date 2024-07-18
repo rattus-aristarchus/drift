@@ -43,9 +43,9 @@
 
     canvas.before:
         Rectangle:
-            pos: self.pos
-            size: self.size
-            source: "east_asia.png"
+            pos: (self.x, self.top - self.background_height)
+            size: (self.background_width, self.background_height)
+            source: self.background_name
 
 <CellView>
     size_hint: None, None
