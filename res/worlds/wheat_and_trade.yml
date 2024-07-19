@@ -1,19 +1,12 @@
-map: middle_kingdom
-effects:
-    [climate]
+effects: [climate]
 cells:
-    0:
-        location: everywhere
-        pops:
-            0:
-                name: 'steppe_grass'
-                size: 80000
-    1:
-        location: random
-        pops:
-            0:
-                name: 'wheatmen'
-                size: 1000
-            1:
-                name: 'wheat'
-                size: 10000
+    - location: everywhere
+      pops:
+          - name: 'steppe_grass'
+            size: 80000
+    - location: random
+      pops:
+          - name: 'wheatmen'
+            size: 1000
+          - name: 'wheat'
+            size: 10000

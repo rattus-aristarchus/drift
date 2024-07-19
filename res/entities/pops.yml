@@ -2,39 +2,47 @@ steppe_herders:
     id: "steppe_herders"
     name: "степные скотоводы"
     sapient: True
+    type: "producer"
     effects: []
 sheep:
     id: "sheep"
     name: "овцы"
     sapient: False
+    type: "livestock"
     effects: []
 mountain_herders:
     id: "mountain_herders"
     name: "горные скотоводы"
     sapient: True
+    type: "producer"
     effects: []
 yaks:
     id: "yaks"
     name: "яки"
     sapient: False
+    type: "livestock"
     effects: []
 northern_farmers:
     id: "northern_farmers"
     name: "крестьяне севера"
     sapient: True
+    type: "producer"
     effects: []
 millet:
     id: "millet"
     name: "просо"
     sapient: False
+    type: "crop"
     effects: []
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
     sapient: True
+    type: "producer"
     effects: []
 rice:
     id: "rice"
     name: "рис"
     sapient: False
+    type: "crop"
     effects: []

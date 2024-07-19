@@ -1,6 +1,10 @@
 0:
-    name: "population"
-    pops_to_show: ["wheatmen", "soot_nomads", "rice_growers"]
+    name: "producers"
+    can_be_empty: True
+    accept_type: "pop"
+    accept_key: "type"
+    accept_values: "producer"
 1:
     name: "biomes"
-    show_biome: True
+    can_be_empty: False
+    accept_type: "biome"

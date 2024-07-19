@@ -25,6 +25,7 @@ def create_pop(model, destination=None):
     new_pop = Population(name=model.id)
     new_pop.effects = list(model.effects)
     new_pop.sapient = model.sapient
+    new_pop.type = model.type
 
     if destination:
         destination.pops.append(new_pop)
@@ -38,6 +39,7 @@ def copy_pop(pop, destination):
     new_pop.age = pop.age
     new_pop.group = pop.group
     new_pop.sapient = pop.sapient
+    new_pop.type = pop.type
     new_pop.effects = list(pop.effects)
     destination.pops.append(new_pop)
     return new_pop
@@ -75,3 +77,4 @@ class Population(Agent):
     size: int = 0
     age: int = 0
     sapient: bool = False
+    type: str = ""

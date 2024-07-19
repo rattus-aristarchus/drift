@@ -20,6 +20,7 @@ class PopModel(EffectModel):
 
     name: str = ""
     sapient: bool = False
+    type: str = ""
 
 
 @dataclasses.dataclass
@@ -47,8 +48,8 @@ class CellModel(Model):
 @dataclasses.dataclass
 class WorldModel(EffectModel):
 
-    width: int = 0
-    height: int = 0
+    width: int = 10
+    height: int = 10
     age: int = 0
     map: str = ""
     cells: dict = field(default_factory=lambda: {})

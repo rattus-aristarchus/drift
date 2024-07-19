@@ -9,20 +9,6 @@ from src.logic.entities.histories import History
 from src.logic.models import BiomeModel, WorldModel
 
 
-@pytest.fixture
-def history():
-    wm = WorldModel(width=5, height=5)
-    output = History(wm)
-    return output
-
-
-@pytest.fixture
-def fresh_grid(history):
-    output = grids.create_grid(history.world_model.width, history.world_model.height, BiomeModel())
-    output.cells[0][0].pops.append(Population(name="test_pop"))
-    return output
-
-
 def test_increase_grid_age(fresh_grid):
     grids.increase_age(fresh_grid, 2)
 

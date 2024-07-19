@@ -35,7 +35,8 @@ class CellView(Label):
         Window.remove_widget(self.tooltip)
 
     def display_tooltip(self, *args):
-        Window.add_widget(self.tooltip)
+        # Window.add_widget(self.tooltip)
+        pass
 
 
 class View(BoxLayout):
@@ -48,7 +49,7 @@ class View(BoxLayout):
         self.assets = assets
         self.controller = controller
         self.cells = {}
-        self.filter = self.assets.get_map_filter("biomes")
+        self.filter = self.assets.get_map_filter("producers")
 
     def create_grid(self, logical_grid, world_name):
         element = self.ids['grid']
@@ -70,9 +71,10 @@ class View(BoxLayout):
     def _set_background(self, world_name):
         element = self.ids['grid']
         data = self.assets.get_background_data(world_name)
-        element.background_name = data["name"]
-        element.background_width = data["size"][0]
-        element.background_height = data["size"][1]
+        if not data == "none":
+            element.background_name = data["name"]
+            element.background_width = data["size"][0]
+            element.background_height = data["size"][1]
 
     def size_check(self, grid):
         if not grid.width == self.cells_x:
@@ -94,27 +96,33 @@ class View(BoxLayout):
 
 
 def _get_cell_representation(cell, filter, assets):
+    """
+    Return a text and an image name to represent the cell according
+    to the current filter.
+    """
     entity = None
 
-    if filter.groups_to_show:
+    if filter.accept_type == "group":
         entity = _get_group(cell, filter)
         if entity:
             pass
 
-    if filter.pops_to_show:
+    elif filter.accept_type == "pop":
         entity = _get_max_viewable_pop(cell, filter)
         if entity:
             text = _get_text_for_pop(entity)
             image = _get_image(entity, assets)
             return text, image
 
-    if filter.show_biome:
+    elif filter.accept_type == "biome" or filter.accept_type == "":
         image = _get_image(cell.biome, assets)
         if image == "none":
             Logger.error(f"Could not find image for biome {cell.biome.name}")
         return "", image
 
-    Logger.warning(f"Could not find anything to represent cell ({cell.x}, {cell.y})")
+    if not filter.can_be_empty:
+        Logger.error(f"Could not find anything to represent cell ({cell.x}, {cell.y})")
+
     return "", assets.get_icon_name("none")
 
 
@@ -125,6 +133,7 @@ def _get_group(cell, filter):
 
 def _get_biome(cell):
     return
+
 
 def _get_image(entity, assets):
     img_name = "none"
@@ -155,10 +164,18 @@ def _get_max_viewable_pop(cell, map_filter):
     max_num = 0
     max = None
     for pop in cell.pops:
-        if pop.size >= max_num and pop.name in map_filter.pops_to_show:
+        if pop.size >= max_num and _should_view(pop, map_filter):
             max = pop
             max_num = pop.size
     return max
+
+
+def _should_view(agent, map_filter):
+    if map_filter.accept_key == "":
+        return True
+
+    value = eval(f"agent.{map_filter.accept_key}")
+    return value in map_filter.accept_values
 
 
 class Map(GridLayout):

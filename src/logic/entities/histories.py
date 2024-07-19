@@ -65,10 +65,10 @@ def _write_output(new_grid):
 def create_history(world_model, model_base):
     result = None
 
-    if world_model.width > 0:
-        result = _with_generated_map(world_model, model_base)
-    elif world_model.map != "":
+    if world_model.map != "":
         result = _with_premade_map(world_model, model_base)
+    else:
+        result = _with_generated_map(world_model, model_base)
 
     return result
 

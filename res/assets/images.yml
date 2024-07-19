@@ -4,6 +4,7 @@
         size: [1041, 571]
 "icons":
     "none": "empty.png"
+    "basic": "empty.png"
     "sea": "sea.png"
     "mountains": "mountain.png"
     "tibet": "tibet.png"
@@ -19,3 +20,7 @@
     "mountain_forest": "mountain_forest.png"
     "chernozem": "chernozem.png"
     "loess_plateau": "loess_plateau.png"
+    "steppe_herders": "horse.png"
+    "mountain_herders": "yak.png"
+    "northern_farmers": "grain.png"
+    "rice_growers": "rice.png"

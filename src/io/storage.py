@@ -151,7 +151,7 @@ def _load_map_from_tiled(path, model_storage):
                 cell = CellModel(x=x, y=y)
                 biome = model_storage.get_biome(cell_string)
                 if biome is None:
-                    Logger.error(f"Map file at {path} conatins an invalid biome name: {cell_string}")
+                    Logger.error(f"Map file at {path} contains an invalid biome name: {cell_string}")
                 else:
                     cell.biome = biome
                 cell_row.append(cell)
