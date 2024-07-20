@@ -12,73 +12,100 @@ basic:
 
 sea:
     id: "sea"
+    moisture: "wet"
+    effects: [temp_change]
 
 mountains:
     id: "mountains"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         yaks: 10000
         millet: 5000
 
 tibet:
     id: "tibet"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         yaks: 10000
 
 peaks:
     id: "peaks"
-    capacity:
+    moisture: "wet"
+    effects: [temp_change]
 
 mountain_forest:
     id: "mountain_forest"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         millet: 10000
 
 steppe:
     id: "steppe"
+    moisture: "dry"
+    effects: [temp_change]
     capacity:
         sheep: 50000
 
 loess_plateau:
     id: "loess_plateau"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         millet: 250000
         sheep: 25000
 
 temperate_river_valley:
     id: "temperate_river_valley"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         millet: 500000
         sheep: 50000
 
 tropical_river_valley:
     id: "tropical_river_valley"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         rice: 750000
         sheep: 10000
 
 desert:
     id: "desert"
+    moisture: "dry"
+    effects: [temp_change]
     capacity:
 
 semi-desert:
     id: "semi-desert"
+    moisture: "dry"
+    effects: [temp_change]
     capacity:
         sheep: 10000
 
 plains:
     id: "plains"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         millet: 100000
         sheep: 50000
 
 chernozem:
     id: "chernozem"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         millet: 250000
         sheep: 50000
 
 hills:
     id: "hills"
+    moisture: "wet"
+    effects: [temp_change]
     capacity:
         millet: 50000
         rice: 50000

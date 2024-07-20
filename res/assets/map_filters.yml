@@ -5,6 +5,12 @@
     accept_key: "type"
     accept_values: "producer"
 1:
+    name: "food"
+    can_be_empty: True
+    accept_type: "pop"
+    accept_key: "type"
+    accept_values: ["livestock", "crop"]
+2:
     name: "biomes"
     can_be_empty: False
     accept_type: "biome"

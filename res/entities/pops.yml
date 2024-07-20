@@ -3,46 +3,62 @@ steppe_herders:
     name: "степные скотоводы"
     sapient: True
     type: "producer"
-    effects: [steppe_herders_grow, migrate]
+    yearly_growth: 0.1
+    sustained_by:
+        "sheep": 10
+    effects: [producer_grow, producer_mig]
 sheep:
     id: "sheep"
     name: "овцы"
     sapient: False
     type: "livestock"
-    effects: [sheep_grow, migrate]
+    yearly_growth: 0.4
+    effects: [default_grow]
 mountain_herders:
     id: "mountain_herders"
     name: "горные скотоводы"
     sapient: True
     type: "producer"
-    effects: []
+    yearly_growth: 0.1
+    sustained_by:
+        "yaks": 5
+    effects: [producer_grow, producer_mig]
 yaks:
     id: "yaks"
     name: "яки"
     sapient: False
     type: "livestock"
-    effects: []
+    yearly_growth: 0.1
+    effects: [default_grow]
 northern_farmers:
     id: "northern_farmers"
     name: "крестьяне севера"
     sapient: True
     type: "producer"
-    effects: []
+    yearly_growth: 0.1
+    sustained_by:
+        "millet": 10
+    effects: [producer_grow, producer_mig]
 millet:
     id: "millet"
     name: "просо"
     sapient: False
     type: "crop"
-    effects: []
+    yearly_growth: 0.2
+    effects: [default_grow]
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
     sapient: True
     type: "producer"
-    effects: []
+    yearly_growth: 0.1
+    sustained_by:
+        "rice": 10
+    effects: [producer_grow, producer_mig]
 rice:
     id: "rice"
     name: "рис"
     sapient: False
     type: "crop"
-    effects: []
+    yearly_growth: 0.2
+    effects: [default_grow]

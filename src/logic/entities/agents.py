@@ -1,6 +1,6 @@
 import dataclasses
 from dataclasses import field
-from typing import List
+from typing import List, Dict
 
 
 def create_group(model, destination):
@@ -26,6 +26,8 @@ def create_pop(model, destination=None):
     new_pop.effects = list(model.effects)
     new_pop.sapient = model.sapient
     new_pop.type = model.type
+    new_pop.sustained_by = model.sustained_by
+    new_pop.yearly_growth = model.yearly_growth
 
     if destination:
         destination.pops.append(new_pop)
@@ -40,7 +42,9 @@ def copy_pop(pop, destination):
     new_pop.group = pop.group
     new_pop.sapient = pop.sapient
     new_pop.type = pop.type
+    new_pop.yearly_growth = pop.yearly_growth
     new_pop.effects = list(pop.effects)
+    new_pop.sustained_by = dict(pop.sustained_by)
     destination.pops.append(new_pop)
     return new_pop
 
@@ -78,3 +82,5 @@ class Population(Agent):
     age: int = 0
     sapient: bool = False
     type: str = ""
+    yearly_growth: float = 0.0
+    sustained_by: Dict = field(default_factory=lambda: {})

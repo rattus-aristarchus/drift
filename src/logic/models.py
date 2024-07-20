@@ -21,6 +21,8 @@ class PopModel(EffectModel):
     name: str = ""
     sapient: bool = False
     type: str = ""
+    yearly_growth: float = 0.0
+    sustained_by: dict = field(default_factory=lambda: {})
 
 
 @dataclasses.dataclass
@@ -33,6 +35,7 @@ class GroupModel(EffectModel):
 class BiomeModel(EffectModel):
 
     capacity: dict = field(default_factory=lambda: {})
+    moisture: str = ""
 
 
 @dataclasses.dataclass
@@ -51,6 +54,11 @@ class WorldModel(EffectModel):
     width: int = 10
     height: int = 10
     age: int = 0
+    mean_temp: float = 7
+    # how much the temperature needs to deviate for
+    # pops to change by 50%:
+    deviation_50: float = 1
+
     map: str = ""
     cells: dict = field(default_factory=lambda: {})
 

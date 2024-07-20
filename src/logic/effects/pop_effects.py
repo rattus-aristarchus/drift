@@ -332,19 +332,59 @@ def wheat_grow(pop, cell_buffer, grid_buffer):
     pop.size -= num
 
 
-def steppe_herders_grow(pop, cell_buffer, grid_buffer):
-    num = get_pop_size('steppe_herders', cell_buffer.old_cell)
-    sheep_num = get_pop_size('sheep', cell_buffer.old_cell)
-    capacity = sheep_num * 0.1
+def producer_grow(pop, cell_buffer, grid_buffer):
+    num = get_pop_size(pop.name, cell_buffer.old_cell)
+    cap = util.get_cap_for_pop(pop, cell_buffer.old_cell)
 
-    pop.size += util.growth_with_capacity(num, capacity, 0.05)
+    pop.size += util.growth_with_capacity(num, cap, pop.yearly_growth)
 
 
-def sheep_grow(pop, cell_buffer, grid_buffer):
-    num = get_pop_size('sheep', cell_buffer.old_cell)
-    capacity = cell_buffer.old_cell.biome.get_capacity('sheep')
+def producer_mig(pop, cell_buffer, grid_buffer):
+    num = get_pop_size(pop.name, cell_buffer.old_cell)
 
-    pop.size += util.growth_with_capacity(num, capacity, 0.2)
+    # тут вопрос. мы меряем пока станет тесно кочевникам или овцам? пока кочевникам
+    cap = util.get_cap_for_pop(pop, cell_buffer.old_cell)
+
+    if num > cap / 2:
+
+        pops_to_migrate = []
+        for food_name in pop.sustained_by.keys():
+            sustains_pop = cell_buffer.cell.get_pop(food_name)
+            if sustains_pop:
+                pops_to_migrate.append(sustains_pop)
+
+        # a list of all cells where the main pop has
+        # something to sustain it
+        all_destinations = []
+
+        for pop_to_migrate in pops_to_migrate:
+            old_destinations = util.get_available_neighbors(pop_to_migrate.name, cell_buffer.old_neighbors)
+            destinations = util.find_equivalent_cells(old_destinations, grid_buffer.grid)
+            old_size = get_pop_size(pop_to_migrate.name, cell_buffer.old_cell)
+            _migrate_pop(pop_to_migrate, destinations, old_size, 0.2)
+
+            for destination in destinations:
+                if destination not in all_destinations:
+                    all_destinations.append(destination)
+
+        _migrate_pop(pop, all_destinations, num, 0.2)
+
+
+def _migrate_pop(pop, destinations, old_size, fraction_to_migrate):
+    migrants = round(old_size * fraction_to_migrate)
+    per_dest = round(migrants / len(destinations))
+
+    pop.size -= migrants
+    for destination in destinations:
+        new_pop = get_or_create_pop(pop.name, destination)
+        new_pop.size += per_dest
+
+
+def default_grow(pop, cell_buffer, grid_buffer):
+    num = get_pop_size(pop.name, cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.biome.get_capacity(pop.name)
+
+    pop.size += util.growth_with_capacity(num, capacity, pop.yearly_growth)
 
 # def mountain_herders_grow(pop, cell_buffer, grid_buffer):
 

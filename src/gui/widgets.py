@@ -100,7 +100,7 @@ class View(BoxLayout):
         self._set_background(world_name)
 
     def filter_changed(self, new_filter):
-        self.view.filter = self.assets.get_map_filter(new_filter)
+        self.filter = self.assets.get_map_filter(new_filter)
         self.show_grid(self.logical_grid)
 
     def _set_background(self, world_name):
@@ -118,6 +118,7 @@ class View(BoxLayout):
             self.cells_y = grid.height
 
     def show_grid(self, grid):
+        self.logical_grid = grid
         self.size_check(grid)
 
         for x in range(0, grid.width):

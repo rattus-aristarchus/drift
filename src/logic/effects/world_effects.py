@@ -16,5 +16,7 @@ All world effects accept two parameteres:
 
 def climate(history, grid_buffer):
     age = grid_buffer.grid.state.age
-    temp = 7 + math.sin(age / 5) / 2
+    mean = history.world_model.mean_temp
+
+    temp = mean + math.sin(age / 5) / 2
     grid_buffer.grid.state.temperature = temp

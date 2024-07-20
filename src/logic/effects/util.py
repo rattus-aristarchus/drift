@@ -145,6 +145,22 @@ def order_neighbors_by_descending(retreive_parameter, neighbors):
     return ordered
 
 
+def get_available_neighbors(pop_name, neighbors):
+    result = []
+    for neighbor in neighbors:
+        if pop_name in neighbor.biome.capacity.keys():
+            result.append(neighbor)
+    return result
+
+
+def find_equivalent_cells(cells, grid):
+    result = []
+    for cell in cells:
+        new_cell = grid.cells[cell.x][cell.y]
+        result.append(new_cell)
+    return result
+
+
 def growth_with_capacity(number, capacity, growth):
     # growth is a fraction of 1
     if capacity <= 0:
@@ -157,6 +173,18 @@ def growth_with_capacity(number, capacity, growth):
     else:
         result = - round((number - capacity) / 2)
     return result
+
+
+def get_cap_for_pop(pop, cell):
+    """
+    Returns the capacity of this cell for this population
+    based on other populations this one is sustained by
+    """
+    ttl_cap = 0
+    for food, food_index in pop.sustained_by.items():
+        ttl_cap += round(cell.biome.get_capacity(food) / food_index)
+    return ttl_cap
+
 
 
 """

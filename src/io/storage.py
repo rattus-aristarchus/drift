@@ -13,7 +13,7 @@ from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, Wor
 # the following methods are required to load effects into models
 get_pop_effect = None
 get_group_effect = None
-get_biome_effect = None
+get_cell_effect = None
 get_world_effect = None
 
 
@@ -67,7 +67,7 @@ def load_models(entities_dir, worlds_dir, maps_dir):
 
     _replace_effects(result.pops, get_pop_effect)
     _replace_effects(result.groups, get_group_effect)
-    _replace_effects(result.biomes, get_biome_effect)
+    _replace_effects(result.biomes, get_cell_effect)
     _replace_effects(result.worlds, get_world_effect)
     _replace_maps(result.worlds, maps)
 

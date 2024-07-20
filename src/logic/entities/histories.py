@@ -19,8 +19,7 @@ def do_turn(history):
 
     _do_effects(history, new_grid, old_grid)
 
-    Logger.info(f"The age is {new_grid.state.age}. Global temeprature"
-                f" is {new_grid.state.temperature}.")
+
 
     _write_output(new_grid)
 
@@ -38,6 +37,10 @@ def _do_effects(history, new_grid, old_grid):
     # calculations multiple times
     grid_buffer = GridBuffer(new_grid, old_grid, history)
     history.do_effects(grid_buffer)
+
+    Logger.info(f"The age is {new_grid.state.age}. Global temeprature"
+                f" is {new_grid.state.temperature}. It deviates from"
+                f" mean by {grid_buffer.temp_deviation}.")
 
     for cell in new_grid.cells_as_list():
         cell_buffer = CellBuffer(cell, grid_buffer)
