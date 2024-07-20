@@ -14,6 +14,12 @@
         height: dp(25)
 
         Button:
+            id: filter_selector
+            text: "слой карты"
+            size_hint: None, None
+            size: dp(200), dp(25)
+
+        Button:
             text: "шаг назад"
             on_release: root.controller.backwards()
             size_hint: None, None

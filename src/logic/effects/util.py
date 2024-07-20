@@ -145,6 +145,20 @@ def order_neighbors_by_descending(retreive_parameter, neighbors):
     return ordered
 
 
+def growth_with_capacity(number, capacity, growth):
+    # growth is a fraction of 1
+    if capacity <= 0:
+        capacity = 1
+    if number <= 0:
+        return 0
+
+    if number <= capacity:
+        result = round(number * growth * (1 - number / capacity))
+    else:
+        result = - round((number - capacity) / 2)
+    return result
+
+
 """
 def has_empty_neighbor(name):
     for next in neighbors:

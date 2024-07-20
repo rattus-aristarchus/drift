@@ -7,7 +7,6 @@ them, while others haven't.
 
 from random import Random
 from kivy.logger import Logger
-
 from src.logic.effects import util
 from src.logic.effects.util import get_group, has_neighbor_sootnomad, sum_for_cells, get_or_create_pop, \
     get_pop_size, get_neighbors_with_lowest_density, order_neighbors_by
@@ -136,8 +135,8 @@ def migrate(pop, cell_buffer, grid_buffer):
         # get the equivalent cell from the new grid
         best_destinations = get_neighbors_with_lowest_density(pop.name, cell_buffer.old_neighbors)
         random = Random().randrange(0, len(best_destinations))
-        best_destination = best_destinations[random]
-        best_destination = grid_buffer.grid.cells[best_destination.x][best_destination.y]
+        best_destination_old = best_destinations[random]
+        best_destination = grid_buffer.grid.cells[best_destination_old.x][best_destination_old.y]
         pop_at_destination = get_or_create_pop(pop.name, best_destination)
         migration = round((pop.size / capacity) * num * 0.2)
         pop.size -= migration
@@ -331,3 +330,21 @@ def grass_grow(pop, cell_buffer, grid_buffer):
 def wheat_grow(pop, cell_buffer, grid_buffer):
     num = get_pop_size('wheat', cell_buffer.old_cell)
     pop.size -= num
+
+
+def steppe_herders_grow(pop, cell_buffer, grid_buffer):
+    num = get_pop_size('steppe_herders', cell_buffer.old_cell)
+    sheep_num = get_pop_size('sheep', cell_buffer.old_cell)
+    capacity = sheep_num * 0.1
+
+    pop.size += util.growth_with_capacity(num, capacity, 0.05)
+
+
+def sheep_grow(pop, cell_buffer, grid_buffer):
+    num = get_pop_size('sheep', cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.biome.get_capacity('sheep')
+
+    pop.size += util.growth_with_capacity(num, capacity, 0.2)
+
+# def mountain_herders_grow(pop, cell_buffer, grid_buffer):
+

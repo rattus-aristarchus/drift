@@ -7,3 +7,5 @@ cells:
     pops:
       - name: "steppe_herders"
         size: 1000
+      - name: "sheep"
+        size: 10000

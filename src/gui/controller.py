@@ -31,3 +31,4 @@ class Controller:
         if self.viewed_turn > 0:
             self.viewed_turn -= 1
             self.view.show_grid(self.history.state_at_turn(self.viewed_turn))
+

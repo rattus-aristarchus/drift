@@ -3,13 +3,13 @@ steppe_herders:
     name: "степные скотоводы"
     sapient: True
     type: "producer"
-    effects: []
+    effects: [steppe_herders_grow, migrate]
 sheep:
     id: "sheep"
     name: "овцы"
     sapient: False
     type: "livestock"
-    effects: []
+    effects: [sheep_grow, migrate]
 mountain_herders:
     id: "mountain_herders"
     name: "горные скотоводы"

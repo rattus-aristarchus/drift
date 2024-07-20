@@ -1,4 +1,7 @@
+import kivy.metrics
 from kivy.core.window import Window
+from kivy.uix.button import Button
+from kivy.uix.dropdown import DropDown
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.logger import Logger
@@ -39,6 +42,30 @@ class CellView(Label):
         pass
 
 
+class FilterDropdown(DropDown):
+    pass
+
+
+def init_filter_selector(main_button, map_filters, update_callback):
+
+    def dropdown_open(x):
+        kivy.clock.Clock.schedule_once(lambda dt: dropdown.open(main_button))
+
+    def change_filter(btn):
+        update_callback(btn.text)
+        dropdown.select(btn.text)
+
+    dropdown = FilterDropdown()
+
+    for map_filter in map_filters:
+        filter_button = Button(text=map_filter.name, size_hint_y=None, height=25)
+        filter_button.bind(on_release=change_filter)
+        dropdown.add_widget(filter_button)
+
+    main_button.bind(on_release=dropdown_open)
+    dropdown.bind(on_select=lambda instance, x: setattr(main_button, 'text', x))
+
+
 class View(BoxLayout):
 
     cells_x = NumericProperty(0)
@@ -50,8 +77,12 @@ class View(BoxLayout):
         self.controller = controller
         self.cells = {}
         self.filter = self.assets.get_map_filter("producers")
+        self.logical_grid = None
+        init_filter_selector(self.ids['filter_selector'], self.assets.map_filters, self.filter_changed)
 
     def create_grid(self, logical_grid, world_name):
+        self.logical_grid = logical_grid
+
         element = self.ids['grid']
         element.clear_widgets()
         self.size_check(logical_grid)
@@ -67,6 +98,10 @@ class View(BoxLayout):
                 element.add_widget(self.cells[x][y])
 
         self._set_background(world_name)
+
+    def filter_changed(self, new_filter):
+        self.view.filter = self.assets.get_map_filter(new_filter)
+        self.show_grid(self.logical_grid)
 
     def _set_background(self, world_name):
         element = self.ids['grid']
