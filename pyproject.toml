@@ -1,12 +1,18 @@
 [tool.poetry]
-name = "src"
+name = "drift"
 version = "0.1.0"
-description = ""
+description = "Modelling population dynamics"
 authors = ["rattus-aristarchus <lankin.m.a@gmail.com>"]
 readme = "README.md"
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12.4"
 pytest = "^7.4.3"
 kivy = "^2.3.0"
 pyyaml = "^6.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
