@@ -26,7 +26,7 @@ class PopModel(EffectModel):
 
 
 @dataclasses.dataclass
-class GroupModel(EffectModel):
+class StructureModel(EffectModel):
 
     name: str = ""
 
@@ -85,7 +85,7 @@ class ModelStorage:
     """
 
     pops: List[PopModel] = field(default_factory=lambda: [])
-    groups: List[GroupModel] = field(default_factory=lambda: [])
+    structures: List[StructureModel] = field(default_factory=lambda: [])
     resources: List[ResourceModel] = field(default_factory=lambda: [])
     biomes: List[BiomeModel] = field(default_factory=lambda: [])
     worlds: List[WorldModel] = field(default_factory=lambda: [])
@@ -94,8 +94,8 @@ class ModelStorage:
     def get_pop(self, id):
         return self.get(id, self.pops)
 
-    def get_group(self, id):
-        return self.get(id, self.groups)
+    def get_structure(self, id):
+        return self.get(id, self.structures)
 
     def get_res(self, id):
         return self.get(id, self.resources)

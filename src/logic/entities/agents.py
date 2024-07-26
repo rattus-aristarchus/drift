@@ -5,20 +5,20 @@ from typing import List, Dict
 from src.logic.models import ResourceModel
 
 
-def create_group(model, destination):
-    new_group = Group(name=model.id)
-    new_group.effects = list(model.effects)
-    destination.groups.append(new_group)
-    new_group.territory.append(destination)
-    return new_group
+def create_structure(model, destination):
+    new_structure = Structure(name=model.id)
+    new_structure.effects = list(model.effects)
+    destination.structures.append(new_structure)
+    new_structure.territory.append(destination)
+    return new_structure
 
 
-def copy_group(group, destination):
-    new_group = Group(name=group.name)
-    new_group.effects = list(group.effects)
-    destination.groups.append(new_group)
-    new_group.territory.append(destination)
-    return new_group
+def copy_structure(structure, destination):
+    result = Structure(name=structure.name)
+    result.effects = list(structure.effects)
+    destination.structures.append(result)
+    result.territory.append(destination)
+    return result
 
 
 def create_pop(model, destination=None):
@@ -39,7 +39,7 @@ def copy_pop(pop, destination):
     new_pop = Population(name=pop.name)
     new_pop.size = pop.size
     new_pop.age = pop.age
-    new_pop.group = pop.group
+    new_pop.structure = pop.structure
     new_pop.sapient = pop.sapient
     new_pop.type = pop.type
     new_pop.yearly_growth = pop.yearly_growth
@@ -74,23 +74,36 @@ def create_resource(model: ResourceModel, destination=None, group=None):
 
 @dataclasses.dataclass
 class Entity:
+    """
+    База
+    """
 
     name: str = ""
 
 
 @dataclasses.dataclass
-class Agent:
+class Agent(Entity):
+    """
+    Нечто, обладающее "эффектами" - уравнениями, которые
+    вычисляются в каждую итерацию системы.
+    """
 
-    name: str
     effects: List = field(default_factory=lambda: [])
 
     def do_effects(self, cell_buffer, grid_buffer):
+        """
+        Вызывается каждую итерацию.
+        """
         for func in self.effects:
             func(self, cell_buffer, grid_buffer)
 
 
 @dataclasses.dataclass
-class Group(Agent):
+class Structure(Agent):
+    """
+    Социальные структуры, состоящие из нескольких
+    популяций / территорий (города, государства, рынки).
+    """
 
     pops: List = field(default_factory=lambda: [])
     # a list of cells
@@ -103,13 +116,26 @@ class Group(Agent):
         for func in self.effects:
             func(self, cell_buffer, grid_buffer)
 
-    # TODO: fetcher methods for resources
+    def get_res(self, name):
+        for res in self.resources:
+            if res.name == name:
+                return res
+        return None
+
+    def get_pop(self, name):
+        for pop in self.pops:
+            if pop.name == name:
+                return pop
+        return None
 
 
 @dataclasses.dataclass
 class Population(Agent):
+    """
+    Популяция. Ну блин, когда у нас исчислимое нечто, и оно что-то делает.
+    """
 
-    group: Group = None
+    structure: Structure = None
     size: int = 0
     age: int = 0
     sapient: bool = False
@@ -120,6 +146,11 @@ class Population(Agent):
 
 @dataclasses.dataclass
 class Resource(Agent):
+    """
+    Ресурс. То, что используют популяции; то, что может быть собственностью;
+    то, чего может нехватать.
+    """
+
 
     size: int = 0
     owner: Agent = None

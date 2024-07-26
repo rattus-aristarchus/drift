@@ -6,11 +6,11 @@ from src.logic.entities import agents
 model_base = None
 
 
-def get_group(name, cell):
+def get_structure(name, cell):
     result = None
-    for group in cell.groups:
-        if group.name == name:
-            result = group
+    for structure in cell.structures:
+        if structure.name == name:
+            result = structure
             break
     return result
 

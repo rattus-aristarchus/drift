@@ -87,6 +87,10 @@ def create_with_generated_map(world_model, model_base):
 
 
 class History:
+    """
+    Все итерации модели. В сущности, список из Grid,
+    каждый из которых соответствует состоянию модели на определенный момент времени.
+    """
 
     def __init__(self, world_model):
         self.past_grids = []

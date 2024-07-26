@@ -105,12 +105,19 @@ def increase_age(grid, value=1):
 
 
 class Grid:
+    """
+    Карта по состоянию на определенную итерацию модели.
+    """
 
     def __init__(self, width, height, old_grid=None):
         self.width = width
         self.height = height
-        #dict of dicts
+        # клетки представлены словарём словарей, чтобы
+        # к ним можно было обращаться cells[x][y]
         self.cells = {}
+        # клетки "под наблюдением" - те, по которым мы
+        # выводим временные ряды в csv, чтобы их потом
+        # можно было отображать на графике
         self.watched_cells = []
 
         self.state = None

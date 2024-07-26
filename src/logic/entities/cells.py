@@ -22,29 +22,29 @@ def arrive_and_merge(pop, destination):
         present.size += pop.size
 
 
-def add_territory(cell, group):
-    if group not in cell.groups:
-        cell.groups.append(group)
-    if cell not in group.territory:
-        group.territory.append(cell)
+def add_territory(cell, structure):
+    if structure not in cell.structures:
+        cell.structures.append(structure)
+    if cell not in structure.territory:
+        structure.territory.append(cell)
 
 
 def copy_cell(old_cell):
     new_cell = Cell(old_cell.x, old_cell.y)
     new_cell.biome = old_cell.biome
     new_cell.effects = list(old_cell.effects)
-    for group in old_cell.groups:
-        agents.copy_group(group, new_cell)
+    for structure in old_cell.structures:
+        agents.copy_structure(structure, new_cell)
     for pop in old_cell.pops:
         new_pop = agents.copy_pop(pop, new_cell)
-        if pop.group is not None:
-            group = _find_group(pop.group.name, old_cell)
-            if group is None:
+        if pop.structure is not None:
+            structure = _find_group(pop.structure.name, old_cell)
+            if structure is None:
                 Logger.error(f"Copy of old pop {pop.name} at cell "
                              f"({old_cell.x},{old_cell.y}) has no "
-                             f"group (should be {pop.group.name})")
+                             f"group (should be {pop.structure.name})")
             else:
-                new_pop.group = group
+                new_pop.structure = structure
 
     for res in old_cell.resources:
         new_res = agents.copy_res(res, new_cell)
@@ -53,7 +53,7 @@ def copy_cell(old_cell):
 
 
 def _find_group(name, cell):
-    for group in cell.groups:
+    for group in cell.structures:
         if group.name == name:
             return group
     return None
@@ -79,12 +79,15 @@ def create_biome(biome_model):
 
 
 class Cell:
+    """
+    Клетка карты.
+    """
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.pops = []
-        self.groups = []
+        self.structures = []
         self.biome = None
         self.effects = []
         self.resources = []
@@ -94,7 +97,7 @@ class Cell:
             func(self, cell_buffer, grid_buffer)
         for pop in self.pops:
             pop.do_effects(cell_buffer, grid_buffer)
-        for group in self.groups:
+        for group in self.structures:
             group.do_effects(cell_buffer, grid_buffer)
         for resource in self.resources:
             resource.do_effects(cell_buffer, grid_buffer)
@@ -114,8 +117,12 @@ class Cell:
 
 @dataclasses.dataclass
 class Biome(Entity):
+    """
+    Экология клетки карты.
+    """
 
     model: BiomeModel = None
+    # сколько популяций или ресурсов может вместить данная клетка:
     capacity: Dict = dataclasses.field(default_factory=lambda: {})
 
     def get_capacity(self, pop_name):

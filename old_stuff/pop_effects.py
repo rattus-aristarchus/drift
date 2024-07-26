@@ -221,10 +221,10 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
     num = get_pop_size('wheatmen', cell_buffer.old_cell)
 
     # if not part of a community, farmers form a village
-    if pop.group is None:
-        model = util.model_base.get_group('settlement')
-        village = agents.create_group(model, cell_buffer.cell)
-        pop.group = village
+    if pop.structure is None:
+        model = util.model_base.get_structure('settlement')
+        village = agents.create_structure(model, cell_buffer.cell)
+        pop.structure = village
         village.pops.append(pop)
 
     # farmers farm
@@ -280,7 +280,7 @@ def wheatmen_mig(pop, cell_buffer, grid_buffer):
         def filter_occupied(destinations):
             filtered = []
             for i in range(len(destinations)):
-                whos_territory = get_group('settlement', destinations[i])
+                whos_territory = get_structure('settlement', destinations[i])
                 if whos_territory is None:
                     filtered.append(destinations[i])
             return filtered

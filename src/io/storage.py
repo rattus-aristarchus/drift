@@ -7,12 +7,12 @@ from kivy import Logger
 
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
-from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel, GridModel, \
+from src.logic.models import ModelStorage, PopModel, BiomeModel, StructureModel, WorldModel, EffectModel, GridModel, \
     CellModel, ResourceModel
 
 # the following methods are required to load effects into models
 get_pop_effect = None
-get_group_effect = None
+get_structure_effect = None
 get_cell_effect = None
 get_world_effect = None
 get_resource_effect = None
@@ -24,7 +24,7 @@ def load_models(entities_dir, worlds_dir, maps_dir):
 
     biomes = yaml.safe_load(open(entities_dir + "/biomes.yml", "r", encoding="utf-8"))
     pops = yaml.safe_load(open(entities_dir + "/pops.yml", "r", encoding="utf-8"))
-    groups = yaml.safe_load(open(entities_dir + "/groups.yml", "r", encoding="utf-8"))
+    structures = yaml.safe_load(open(entities_dir + "/structures.yml", "r", encoding="utf-8"))
     resources = yaml.safe_load(open(entities_dir + "/resources.yml", "r", encoding="utf-8"))
 
     worlds = {}
@@ -43,9 +43,9 @@ def load_models(entities_dir, worlds_dir, maps_dir):
         model = PopModel(**content)
         result.pops.append(model)
 
-    for name, content in groups.items():
-        model = GroupModel(**content)
-        result.groups.append(model)
+    for name, content in structures.items():
+        model = StructureModel(**content)
+        result.structures.append(model)
 
     for name, content in biomes.items():
         model = BiomeModel(**content)
@@ -73,7 +73,7 @@ def load_models(entities_dir, worlds_dir, maps_dir):
     # replace effect names with effect functions from effect modules
 
     _replace_effects(result.pops, get_pop_effect)
-    _replace_effects(result.groups, get_group_effect)
+    _replace_effects(result.structures, get_structure_effect)
     _replace_effects(result.biomes, get_cell_effect)
     _replace_effects(result.worlds, get_world_effect)
     _replace_effects(result.resources, get_resource_effect)
