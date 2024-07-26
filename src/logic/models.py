@@ -32,6 +32,13 @@ class GroupModel(EffectModel):
 
 
 @dataclasses.dataclass
+class ResourceModel(EffectModel):
+
+    type: str = ""
+    yearly_growth: float = 0.0
+
+
+@dataclasses.dataclass
 class BiomeModel(EffectModel):
 
     capacity: dict = field(default_factory=lambda: {})
@@ -44,6 +51,7 @@ class CellModel(Model):
     x: int = 0
     y: int = 0
     biome: BiomeModel = None
+    resources: List = field(default_factory=lambda: [])
     pops: List = field(default_factory=lambda: [])
     groups: List = field(default_factory=lambda: [])
 
@@ -78,6 +86,7 @@ class ModelStorage:
 
     pops: List[PopModel] = field(default_factory=lambda: [])
     groups: List[GroupModel] = field(default_factory=lambda: [])
+    resources: List[ResourceModel] = field(default_factory=lambda: [])
     biomes: List[BiomeModel] = field(default_factory=lambda: [])
     worlds: List[WorldModel] = field(default_factory=lambda: [])
     maps: List[GridModel] = field(default_factory=lambda: [])
@@ -87,6 +96,9 @@ class ModelStorage:
 
     def get_group(self, id):
         return self.get(id, self.groups)
+
+    def get_res(self, id):
+        return self.get(id, self.resources)
 
     def get_biome(self, id):
         return self.get(id, self.biomes)

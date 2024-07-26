@@ -46,6 +46,9 @@ def copy_cell(old_cell):
             else:
                 new_pop.group = group
 
+    for res in old_cell.resources:
+        new_res = agents.copy_res(res, new_cell)
+
     return new_cell
 
 
@@ -84,6 +87,7 @@ class Cell:
         self.groups = []
         self.biome = None
         self.effects = []
+        self.resources = []
 
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:
@@ -92,11 +96,19 @@ class Cell:
             pop.do_effects(cell_buffer, grid_buffer)
         for group in self.groups:
             group.do_effects(cell_buffer, grid_buffer)
+        for resource in self.resources:
+            resource.do_effects(cell_buffer, grid_buffer)
 
     def get_pop(self, name):
         for pop in self.pops:
             if pop.name == name:
                 return pop
+        return None
+
+    def get_res(self, name):
+        for res in self.resources:
+            if res.name == name:
+                return res
         return None
 
 

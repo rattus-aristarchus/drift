@@ -2,21 +2,22 @@ import random
 from kivy.logger import Logger
 
 from src.logic.entities import histories, agents
+from src.logic.entities.agents import Resource
 
 
 def do(world_model, model_base):
     """
     This function is called once, at the beginning, creating the history
     object with the first grid.
-    :param world: a dictionary with the data used to generate the first grid
-    :model base: a base from which all entities in history will be generated
+    :param world_model: a model from which to generate the first grid
+    :param model_base: a base from which all entities in history will be generated
     :return: a history object
     """
 
-    history = histories.create_history(
-        world_model,
-        model_base,
-    )
+    if world_model.map != "":
+        history = histories.create_with_premade_map(world_model, model_base)
+    else:
+        history = histories.create_with_generated_map(world_model, model_base)
 
     grid = history.current_state()
 
@@ -73,12 +74,22 @@ def _retreive_cell(cell_dict, grid):
 
 
 def _populate_cell(cell, cell_dict, model_base):
-    for pop_dict in cell_dict['pops']:
-        pop_model = model_base.get_pop(pop_dict['name'])
-        pop = agents.create_pop(pop_model, cell)
-        pop.size = pop_dict['size']
-        Logger.debug("Control, populate_cell: created pop " + pop.name +
-                     " of size " + str(pop.size))
+    if 'pops' in cell_dict.keys():
+        for pop_dict in cell_dict['pops']:
+            pop_model = model_base.get_pop(pop_dict['name'])
+            pop = agents.create_pop(pop_model, cell)
+            pop.size = pop_dict['size']
+            Logger.debug("Populate_cell: created pop " + pop.name +
+                         " of size " + str(pop.size))
+
+    if 'resources' in cell_dict.keys():
+        for res_dict in cell_dict['resources']:
+            model = model_base.get_res(res_dict['name'])
+            resource = agents.create_resource(model, cell)
+            resource.size = res_dict['size']
+            cell.resources.append(resource)
+            Logger.debug("Populate_cell: created resource " + resource.name +
+                         " of size " + str(resource.size))
 
 
 def _rand_cell(map):

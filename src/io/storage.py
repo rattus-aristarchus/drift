@@ -8,13 +8,14 @@ from kivy import Logger
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.logic.models import ModelStorage, PopModel, BiomeModel, GroupModel, WorldModel, EffectModel, GridModel, \
-    CellModel
+    CellModel, ResourceModel
 
 # the following methods are required to load effects into models
 get_pop_effect = None
 get_group_effect = None
 get_cell_effect = None
 get_world_effect = None
+get_resource_effect = None
 
 
 def load_models(entities_dir, worlds_dir, maps_dir):
@@ -24,6 +25,7 @@ def load_models(entities_dir, worlds_dir, maps_dir):
     biomes = yaml.safe_load(open(entities_dir + "/biomes.yml", "r", encoding="utf-8"))
     pops = yaml.safe_load(open(entities_dir + "/pops.yml", "r", encoding="utf-8"))
     groups = yaml.safe_load(open(entities_dir + "/groups.yml", "r", encoding="utf-8"))
+    resources = yaml.safe_load(open(entities_dir + "/resources.yml", "r", encoding="utf-8"))
 
     worlds = {}
 
@@ -54,6 +56,11 @@ def load_models(entities_dir, worlds_dir, maps_dir):
         model.id = name
         result.worlds.append(model)
 
+    for name, content in resources.items():
+        model = ResourceModel(**content)
+        model.id = name
+        result.resources.append(model)
+
     # load maps
 
     maps = []
@@ -69,6 +76,7 @@ def load_models(entities_dir, worlds_dir, maps_dir):
     _replace_effects(result.groups, get_group_effect)
     _replace_effects(result.biomes, get_cell_effect)
     _replace_effects(result.worlds, get_world_effect)
+    _replace_effects(result.resources, get_resource_effect)
     _replace_maps(result.worlds, maps)
 
     return result

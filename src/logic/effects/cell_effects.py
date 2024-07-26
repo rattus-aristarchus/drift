@@ -1,5 +1,16 @@
+"""
+Общее правило: все чтения состояния должны производиться из
+состояния предшествующего хода, запись состояния делается
+в текущий ход. Таким образом, последовательность выполнения
+эффектов в данном ходу не влияет на результат.
+"""
+
 
 def get_effect(func_name):
+    """
+    This function is injected into modules that need to use
+    effect. Don't worry about it.
+    """
     return eval(func_name)
 
 

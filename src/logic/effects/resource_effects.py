@@ -4,10 +4,7 @@
 в текущий ход. Таким образом, последовательность выполнения
 эффектов в данном ходу не влияет на результат.
 """
-
-import math
-
-from src.logic.buffers import GridBuffer
+from src.logic.effects import util
 
 
 def get_effect(func_name):
@@ -18,18 +15,8 @@ def get_effect(func_name):
     return eval(func_name)
 
 
-"""
-All world effects accept two parameteres:
-- history
-- the grid buffer
-"""
+def default_grow(res, cell_buffer, grid_buffer):
+    num = util.get_res_size(res.name, cell_buffer.old_cell)
+    capacity = cell_buffer.old_cell.biome.get_capacity(res.name)
 
-
-def climate(history, grid_buffer: GridBuffer):
-    age = grid_buffer.grid.state.age
-    mean = history.world_model.mean_temp
-
-    temp = mean + math.sin(age / 5) / 2
-    grid_buffer.grid.state.temperature = temp
-    grid_buffer.temp_deviation = history.world_model.mean_temp - temp
-
+    res.size += util.growth_with_capacity(num, capacity, res.yearly_growth)

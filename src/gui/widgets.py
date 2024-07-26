@@ -146,8 +146,15 @@ def _get_cell_representation(cell, filter, assets):
     elif filter.accept_type == "pop":
         entity = _get_max_viewable_pop(cell, filter)
         if entity:
-            text = _get_text_for_pop(entity)
+            text = _get_text_for_entity(entity)
             image = _get_image(entity, assets)
+            return text, image
+
+    elif filter.accept_type == "res":
+        res = _get_max_viewable_res(cell, filter)
+        if res:
+            text = _get_text_for_entity(res)
+            image = _get_image(res, assets)
             return text, image
 
     elif filter.accept_type == "biome" or filter.accept_type == "":
@@ -178,16 +185,16 @@ def _get_image(entity, assets):
     return assets.get_icon_name(img_name)
 
 
-def _get_text_for_pop(max_pop):
-    if max_pop == None:
+def _get_text_for_entity(entity):
+    if entity == None:
         return ""
 
-    if max_pop.size < 1000:
-        result = str(max_pop.size)
-    elif max_pop.size < 1000000:
-        result = str(round(max_pop.size / 1000)) + "k"
+    if entity.size < 1000:
+        result = str(entity.size)
+    elif entity.size < 1000000:
+        result = str(round(entity.size / 1000)) + "k"
     else:
-        result = str(round(max_pop.size / 1000000)) + "m"
+        result = str(round(entity.size / 1000000)) + "m"
 
     return result
 
@@ -203,6 +210,20 @@ def _get_max_viewable_pop(cell, map_filter):
         if pop.size >= max_num and _should_view(pop, map_filter):
             max = pop
             max_num = pop.size
+    return max
+
+
+def _get_max_viewable_res(cell, map_filter):
+    """
+    Compares all resources in a cell that the current map filter
+    allows us to view.
+    """
+    max_num = 0
+    max = None
+    for res in cell.resources:
+        if res.size >= max_num and _should_view(res, map_filter):
+            max = res
+            max_num = res.size
     return max
 
 

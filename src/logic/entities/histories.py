@@ -19,8 +19,6 @@ def do_turn(history):
 
     _do_effects(history, new_grid, old_grid)
 
-
-
     _write_output(new_grid)
 
 
@@ -48,13 +46,20 @@ def _do_effects(history, new_grid, old_grid):
         # this is the main call that calls do_effects for all agents in a cell
         cell.do_effects(cell_buffer, grid_buffer)
 
-        # remove pops that have died out
+        # remove pops and resources that have died out or been emptied out
         to_remove = []
         for pop in cell.pops:
             if pop.size <= 0:
                 to_remove.append(pop)
         for pop in to_remove:
             cell.pops.remove(pop)
+
+        to_remove = []
+        for res in cell.resources:
+            if res.size <= 0:
+                to_remove.append(res)
+        for res in to_remove:
+            cell.resources.remove(res)
 
 
 def _write_output(new_grid):
@@ -65,18 +70,7 @@ def _write_output(new_grid):
     output.write_end_of_turn()
 
 
-def create_history(world_model, model_base):
-    result = None
-
-    if world_model.map != "":
-        result = _with_premade_map(world_model, model_base)
-    else:
-        result = _with_generated_map(world_model, model_base)
-
-    return result
-
-
-def _with_premade_map(world_model, model_base):
+def create_with_premade_map(world_model, model_base):
     result = History(world_model)
     first_grid = grids.create_grid_from_model(world_model.map, model_base, world_model.age)
     result.past_grids.append(first_grid)
@@ -84,7 +78,7 @@ def _with_premade_map(world_model, model_base):
     return result
 
 
-def _with_generated_map(world_model, model_base):
+def create_with_generated_map(world_model, model_base):
     result = History(world_model)
     first_grid = grids.create_grid(world_model.width, world_model.height, model_base.get_biome('basic'))
     result.past_grids.append(first_grid)

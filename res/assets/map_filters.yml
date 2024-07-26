@@ -7,7 +7,7 @@
 1:
     name: "food"
     can_be_empty: True
-    accept_type: "pop"
+    accept_type: "res"
     accept_key: "type"
     accept_values: ["livestock", "crop"]
 2:

@@ -61,12 +61,29 @@ def get_or_create_pop(name, cell):
     return check_pop
 
 
+def get_or_create_res(name, cell):
+    check_res = cell.get_res(name)
+    if check_res is None:
+        model = model_base.get_res(name)
+        check_res = agents.create_resource(model, cell)
+    return check_res
+
+
 def get_pop_size(pop_name, cell):
     pop = cell.get_pop(pop_name)
     if pop is None:
         num = 0
     else:
         num = pop.size
+    return num
+
+
+def get_res_size(res_name, cell):
+    res = cell.get_res(res_name)
+    if res is None:
+        num = 0
+    else:
+        num = res.size
     return num
 
 

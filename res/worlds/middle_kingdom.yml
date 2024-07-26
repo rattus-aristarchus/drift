@@ -9,23 +9,27 @@ cells:
     pops:
       - name: "steppe_herders"
         size: 1000
+    resources:
       - name: "sheep"
         size: 10000
   - location: [7, 8]
     pops:
       - name: "mountain_herders"
         size: 500
+    resources:
       - name: "yaks"
         size: 2500
   - location: [17, 7]
     pops:
       - name: "northern_farmers"
         size: 5000
+    resources:
       - name: "millet"
         size: 50000
   - location: [21, 9]
     pops:
       - name: "rice_growers"
         size: 5000
+    resources:
       - name: "rice"
         size: 50000

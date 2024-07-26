@@ -1,0 +1,20 @@
+yaks:
+    id: "yaks"
+    type: "livestock"
+    yearly_growth: 0.1
+    effects: [default_grow]
+millet:
+    id: "millet"
+    type: "crop"
+    yearly_growth: 0.2
+    effects: [default_grow]
+rice:
+    id: "rice"
+    type: "crop"
+    yearly_growth: 0.2
+    effects: [default_grow]
+sheep:
+    id: "sheep"
+    type: "livestock"
+    yearly_growth: 0.4
+    effects: [default_grow]

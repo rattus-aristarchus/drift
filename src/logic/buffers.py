@@ -10,7 +10,7 @@ class GridBuffer:
         self.old_grid = old_grid
         self.history = history
 
-        self.temp_deviation = history.world_model.mean_temp - grid.state.temperature
+        self.temp_deviation = 0
 
      #   self.all_sootnomads = sum_for_cells('soot_nomads', old_grid.cells_as_list())
 

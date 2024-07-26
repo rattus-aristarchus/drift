@@ -43,6 +43,10 @@ def create_cell_from_dict(x, y, cell_data, model_base: ModelStorage):
             Logger.error(f"bad biome name '{cell_data["biome"]}' for cell ({x}, {y})")
 
     # TODO
+    if "resources" in cell_data:
+        pass
+
+    # TODO
     if "pops" in cell_data:
         pass
 
@@ -57,6 +61,10 @@ def create_cell_from_model(model: CellModel):
     result = None
     if model.biome:
         result = cells.create_cell(model.x, model.y, model.biome)
+
+    # TODO
+    if len(model.resources) > 0:
+        pass
 
     # TODO
     if len(model.pops) > 0:
