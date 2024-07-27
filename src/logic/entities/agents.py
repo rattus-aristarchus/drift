@@ -1,8 +1,8 @@
 import dataclasses
 from dataclasses import field
 from typing import List, Dict
-
 from src.logic.models import ResourceModel
+from src.logic import util
 
 
 def create_structure(model, destination):
@@ -14,8 +14,8 @@ def create_structure(model, destination):
 
 
 def copy_structure(structure, destination):
-    result = Structure(name=structure.name)
-    result.effects = list(structure.effects)
+    result = util.copy_dataclass_with_collections(structure)
+
     destination.structures.append(result)
     result.territory.append(destination)
     return result
@@ -36,21 +36,19 @@ def create_pop(model, destination=None):
 
 
 def copy_pop(pop, destination):
-    new_pop = Population(name=pop.name)
-    new_pop.size = pop.size
-    new_pop.age = pop.age
-    new_pop.structure = pop.structure
-    new_pop.sapient = pop.sapient
-    new_pop.type = pop.type
-    new_pop.yearly_growth = pop.yearly_growth
-    new_pop.effects = list(pop.effects)
-    new_pop.sustained_by = dict(pop.sustained_by)
+    """
+    The copy of the pop refers to the same structures
+    as the old one.
+    """
+
+    new_pop = util.copy_dataclass_with_collections(pop)
     destination.pops.append(new_pop)
     return new_pop
 
 
 def copy_res(res, destination, new_owner=None):
-    copy = dataclasses.replace(res)
+    copy = util.copy_dataclass_with_collections(res)
+    res.last_copy = copy
     destination.resources.append(copy)
     if new_owner:
         copy.owner = new_owner
@@ -79,6 +77,10 @@ class Entity:
     """
 
     name: str = ""
+    # при создании новой итерации модели все сущности
+    # копируются в нее; last_copy - ссылка на сущность
+    # в прошлой итерации
+    last_copy = None
 
 
 @dataclasses.dataclass
@@ -135,13 +137,13 @@ class Population(Agent):
     Популяция. Ну блин, когда у нас исчислимое нечто, и оно что-то делает.
     """
 
-    structure: Structure = None
     size: int = 0
     age: int = 0
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
-    sustained_by: Dict = field(default_factory=lambda: {})
+    sustained_by: dict = field(default_factory=lambda: {})
+    structures: list[Structure] = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -150,7 +152,6 @@ class Resource(Agent):
     Ресурс. То, что используют популяции; то, что может быть собственностью;
     то, чего может нехватать.
     """
-
 
     size: int = 0
     owner: Agent = None

@@ -24,7 +24,7 @@ def do_turn(history):
 
 def _create_new_turn_grid(history):
     old_grid = history.past_grids[-1]
-    new_grid = grids.copy(old_grid)
+    new_grid = grids.copy_grid(old_grid)
     grids.increase_age(new_grid)
     history.past_grids.append(new_grid)
     return new_grid

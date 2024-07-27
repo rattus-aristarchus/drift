@@ -221,10 +221,10 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
     num = get_pop_size('wheatmen', cell_buffer.old_cell)
 
     # if not part of a community, farmers form a village
-    if pop.structure is None:
+    if len(pop.structures) == 0:
         model = util.model_base.get_structure('settlement')
         village = agents.create_structure(model, cell_buffer.cell)
-        pop.structure = village
+        pop.structures.append(village)
         village.pops.append(pop)
 
     # farmers farm

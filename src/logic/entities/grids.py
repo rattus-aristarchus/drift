@@ -1,6 +1,6 @@
 import dataclasses
-import ast
 from kivy import Logger
+from src.logic import util
 from src.logic.entities import cells
 from src.logic.entities.cells import Cell
 from src.logic.models import GridModel, ModelStorage, CellModel
@@ -77,11 +77,11 @@ def create_cell_from_model(model: CellModel):
     return result
 
 
-def copy(grid):
+def copy_grid(grid):
     result = Grid(grid.width,
                   grid.height,
                   old_grid=grid)
-    result.state = dataclasses.replace(grid.state)
+    result.state = util.copy_dataclass_with_collections(grid.state)
 
     for x in range(0, result.width):
         result.cells[x] = {}

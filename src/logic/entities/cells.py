@@ -1,6 +1,6 @@
 import dataclasses
-from typing import List, Dict
-
+from dataclasses import field
+from src.logic import util
 from src.logic.entities import agents
 from src.logic.entities.agents import Entity
 from src.logic.models import BiomeModel
@@ -30,29 +30,41 @@ def add_territory(cell, structure):
 
 
 def copy_cell(old_cell):
-    new_cell = Cell(old_cell.x, old_cell.y)
-    new_cell.biome = old_cell.biome
-    new_cell.effects = list(old_cell.effects)
+    new_cell = util.copy_dataclass_with_collections(old_cell)
+    new_cell.biome = copy_biome(old_cell.biome)
+
+    new_cell.structures = []
     for structure in old_cell.structures:
         agents.copy_structure(structure, new_cell)
-    for pop in old_cell.pops:
-        new_pop = agents.copy_pop(pop, new_cell)
-        if pop.structure is not None:
-            structure = _find_group(pop.structure.name, old_cell)
-            if structure is None:
-                Logger.error(f"Copy of old pop {pop.name} at cell "
-                             f"({old_cell.x},{old_cell.y}) has no "
-                             f"group (should be {pop.structure.name})")
-            else:
-                new_pop.structure = structure
 
+    new_cell.pops = []
+    for old_pop in old_cell.pops:
+        # this does not replace structures that are not
+        # part of this particular cell
+        new_pop = agents.copy_pop(old_pop, new_cell)
+        if len(old_pop.structures) > 0:
+            for old_structure in old_pop.structures:
+                structure = _find_structure(old_structure.name, old_cell)
+                if structure is None:
+                    Logger.error(f"Copy of old pop {old_pop.name} at cell "
+                                 f"({old_cell.x},{old_cell.y}) has no "
+                                 f"group (should be {old_pop.structures.name})")
+                else:
+                    new_pop.structures.append(structure)
+
+    new_cell.resources = []
     for res in old_cell.resources:
         new_res = agents.copy_res(res, new_cell)
 
     return new_cell
 
 
-def _find_group(name, cell):
+def copy_biome(old_biome):
+    result = util.copy_dataclass_with_collections(old_biome)
+    return result
+
+
+def _find_structure(name, cell):
     for group in cell.structures:
         if group.name == name:
             return group
@@ -78,19 +90,36 @@ def create_biome(biome_model):
     return result
 
 
+@dataclasses.dataclass
+class Biome(Entity):
+    """
+    Экология клетки карты.
+    """
+
+    model: BiomeModel = None
+    # сколько популяций или ресурсов может вместить данная клетка:
+    capacity: dict = dataclasses.field(default_factory=lambda: {})
+
+    def get_capacity(self, pop_name):
+        if pop_name in self.capacity.keys():
+            return self.capacity[pop_name]
+        else:
+            return 0
+
+
+@dataclasses.dataclass
 class Cell:
     """
     Клетка карты.
     """
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.pops = []
-        self.structures = []
-        self.biome = None
-        self.effects = []
-        self.resources = []
+    x: int = 0
+    y: int = 0
+    pops: list = field(default_factory=lambda: [])
+    structures: list = field(default_factory=lambda: [])
+    effects: list = field(default_factory=lambda: [])
+    resources: list = field(default_factory=lambda: [])
+    biome = Biome
 
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:
@@ -115,18 +144,3 @@ class Cell:
         return None
 
 
-@dataclasses.dataclass
-class Biome(Entity):
-    """
-    Экология клетки карты.
-    """
-
-    model: BiomeModel = None
-    # сколько популяций или ресурсов может вместить данная клетка:
-    capacity: Dict = dataclasses.field(default_factory=lambda: {})
-
-    def get_capacity(self, pop_name):
-        if pop_name in self.capacity.keys():
-            return self.capacity[pop_name]
-        else:
-            return 0
