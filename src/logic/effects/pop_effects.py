@@ -22,20 +22,23 @@ def get_effect(func_name):
 
 
 def producer_grow(pop, cell_buffer, grid_buffer):
-    num = util.get_pop_size(pop.name, cell_buffer.old_cell)
-    cap = util.get_cap_for_pop(pop, cell_buffer.old_cell)
+    num = pop.last_copy.size
+    cap = util.get_cap_for_pop(pop, cell_buffer.cell.last_copy)
 
     pop.size += util.growth_with_capacity(num, cap, pop.yearly_growth)
 
 
 def producer_mig(pop, cell_buffer, grid_buffer):
-    num = util.get_pop_size(pop.name, cell_buffer.old_cell)
+    num = pop.last_copy.size
 
-    # тут вопрос. мы меряем пока станет тесно кочевникам или овцам? пока кочевникам
-    cap = util.get_cap_for_pop(pop, cell_buffer.old_cell)
+    # тут вопрос. мы меряем пока станет тесно кочевникам
+    # или овцам? пока кочевникам
+    cap = util.get_cap_for_pop(pop, cell_buffer.cell.last_copy)
 
+    # если численность приближается к потолку, мигрируем
     if num > cap / 2:
 
+        # какие ресурсы можем взять с собой
         res_to_migrate = []
         for food_name in pop.sustained_by.keys():
             sustains_pop = cell_buffer.cell.get_res(food_name)
@@ -46,16 +49,20 @@ def producer_mig(pop, cell_buffer, grid_buffer):
         # something to sustain it
         all_destinations = []
 
+        # мигрируем каждый ресурс
         for res_to_migrate in res_to_migrate:
             old_destinations = util.get_available_neighbors(res_to_migrate.name, cell_buffer.old_neighbors)
             destinations = util.find_equivalent_cells(old_destinations, grid_buffer.grid)
-            old_size = util.get_res_size(res_to_migrate.name, cell_buffer.old_cell)
-            _migrate_res(res_to_migrate, destinations, old_size, 0.2)
+
+            if len(destinations) > 0:
+                old_size = util.get_res_size(res_to_migrate.name, cell_buffer.cell.last_copy)
+                _migrate_res(res_to_migrate, destinations, old_size, 0.2)
 
             for destination in destinations:
                 if destination not in all_destinations:
                     all_destinations.append(destination)
 
+        # мигрируем саму популяцию
         if len(all_destinations) > 0:
             _migrate_pop(pop, all_destinations, num, 0.2)
 

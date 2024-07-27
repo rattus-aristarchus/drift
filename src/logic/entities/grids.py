@@ -1,13 +1,15 @@
 import dataclasses
+from dataclasses import field
 from kivy import Logger
 from src.logic import util
-from src.logic.entities import cells
+from src.logic.entities import cells, agents
+from src.logic.entities.agents import Entity
 from src.logic.entities.cells import Cell
 from src.logic.models import GridModel, ModelStorage, CellModel
 
 
 def create_grid(width, height, default_biome, age=0):
-    result = Grid(width, height)
+    result = Grid(width=width, height=height)
     result.state = GridState(age=age)
 
     for x in range(0, result.width):
@@ -21,7 +23,10 @@ def create_grid(width, height, default_biome, age=0):
 def create_grid_from_model(grid_model: GridModel, model_base: ModelStorage, age=0):
     height = len(grid_model.cell_matrix[0])
     width = len(grid_model.cell_matrix)
-    result = Grid(width, height)
+    result = Grid(
+        width=width,
+        height=height
+    )
     result.state = GridState(age=age)
 
     for x in range(0, width):
@@ -78,9 +83,11 @@ def create_cell_from_model(model: CellModel):
 
 
 def copy_grid(grid):
-    result = Grid(grid.width,
-                  grid.height,
-                  old_grid=grid)
+    result = Grid(
+        width=grid.width,
+        height=grid.height
+    )
+    result.last_copy = grid
     result.state = util.copy_dataclass_with_collections(grid.state)
 
     for x in range(0, result.width):
@@ -104,33 +111,32 @@ def increase_age(grid, value=1):
             cells.increase_age(grid.cells[x][y], value)
 
 
-class Grid:
+@dataclasses.dataclass
+class GridState:
+
+    age: int = 0
+    temperature: int = 0
+
+
+@dataclasses.dataclass
+class Grid(Entity):
     """
     Карта по состоянию на определенную итерацию модели.
     """
 
-    def __init__(self, width, height, old_grid=None):
-        self.width = width
-        self.height = height
+    width: int = 0
+    height: int = 0
         # клетки представлены словарём словарей, чтобы
         # к ним можно было обращаться cells[x][y]
-        self.cells = {}
+    cells: dict = field(default_factory=lambda: {})
         # клетки "под наблюдением" - те, по которым мы
         # выводим временные ряды в csv, чтобы их потом
         # можно было отображать на графике
-        self.watched_cells = []
-
-        self.state = None
+    watched_cells: list = field(default_factory=lambda: [])
+    state: GridState = None
 
     def cells_as_list(self):
         result = []
         for column in self.cells.values():
             result += column.values()
         return result
-
-
-@dataclasses.dataclass
-class GridState:
-
-    age: int = 0
-    temperature: int = 0

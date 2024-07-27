@@ -14,8 +14,7 @@ def create_structure(model, destination):
 
 
 def copy_structure(structure, destination):
-    result = util.copy_dataclass_with_collections(structure)
-
+    result = copy_entity(structure)
     destination.structures.append(result)
     result.territory.append(destination)
     return result
@@ -41,14 +40,13 @@ def copy_pop(pop, destination):
     as the old one.
     """
 
-    new_pop = util.copy_dataclass_with_collections(pop)
+    new_pop = copy_entity(pop)
     destination.pops.append(new_pop)
     return new_pop
 
 
 def copy_res(res, destination, new_owner=None):
-    copy = util.copy_dataclass_with_collections(res)
-    res.last_copy = copy
+    copy = copy_entity(res)
     destination.resources.append(copy)
     if new_owner:
         copy.owner = new_owner
@@ -68,6 +66,12 @@ def create_resource(model: ResourceModel, destination=None, group=None):
     elif group:
         group.resources.append(result)
     return result
+
+
+def copy_entity(entity):
+    copy = util.copy_dataclass_with_collections(entity)
+    copy.last_copy = entity
+    return copy
 
 
 @dataclasses.dataclass

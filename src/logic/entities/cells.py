@@ -30,7 +30,7 @@ def add_territory(cell, structure):
 
 
 def copy_cell(old_cell):
-    new_cell = util.copy_dataclass_with_collections(old_cell)
+    new_cell = agents.copy_entity(old_cell)
     new_cell.biome = copy_biome(old_cell.biome)
 
     new_cell.structures = []
@@ -60,7 +60,7 @@ def copy_cell(old_cell):
 
 
 def copy_biome(old_biome):
-    result = util.copy_dataclass_with_collections(old_biome)
+    result = agents.copy_entity(old_biome)
     return result
 
 
@@ -77,7 +77,7 @@ def increase_age(cell, value=1):
 
 
 def create_cell(x, y, biome_model: BiomeModel):
-    result = Cell(x, y)
+    result = Cell(x=x, y=y)
     result.effects = biome_model.effects
     result.biome = create_biome(biome_model)
     return result
@@ -108,7 +108,7 @@ class Biome(Entity):
 
 
 @dataclasses.dataclass
-class Cell:
+class Cell(Entity):
     """
     Клетка карты.
     """
@@ -125,11 +125,14 @@ class Cell:
         for func in self.effects:
             func(self, cell_buffer, grid_buffer)
         for pop in self.pops:
-            pop.do_effects(cell_buffer, grid_buffer)
+            if pop.last_copy:
+                pop.do_effects(cell_buffer, grid_buffer)
         for group in self.structures:
-            group.do_effects(cell_buffer, grid_buffer)
+            if group.last_copy:
+                group.do_effects(cell_buffer, grid_buffer)
         for resource in self.resources:
-            resource.do_effects(cell_buffer, grid_buffer)
+            if resource.last_copy:
+                resource.do_effects(cell_buffer, grid_buffer)
 
     def get_pop(self, name):
         for pop in self.pops:

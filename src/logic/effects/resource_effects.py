@@ -16,7 +16,7 @@ def get_effect(func_name):
 
 
 def default_grow(res, cell_buffer, grid_buffer):
-    num = util.get_res_size(res.name, cell_buffer.old_cell)
-    capacity = cell_buffer.old_cell.biome.get_capacity(res.name)
+    num = res.last_copy.size
+    capacity = cell_buffer.cell.last_copy.biome.get_capacity(res.name)
 
     res.size += util.growth_with_capacity(num, capacity, res.yearly_growth)
