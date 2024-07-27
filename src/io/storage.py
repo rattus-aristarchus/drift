@@ -21,12 +21,44 @@ get_resource_effect = None
 def load_models(entities_dir, worlds_dir, maps_dir):
 
     # load all the stuff
+    biomes, pops, structures, resources = _load_dicts_from_yaml(entities_dir)
+    worlds = _load_worlds(worlds_dir)
 
+    # now, create models
+    result = _create_models_and_put_in_storage(resources=resources,
+                                               pops=pops,
+                                               biomes=biomes,
+                                               structures=structures,
+                                               worlds=worlds)
+
+    _update_model_links(result)
+
+    # load maps
+
+    maps = _load_maps(maps_dir, result)
+    result.maps = maps
+
+    # replace effect names with effect functions from effect modules
+
+    _replace_effects(result.pops, get_pop_effect)
+    _replace_effects(result.structures, get_structure_effect)
+    _replace_effects(result.biomes, get_cell_effect)
+    _replace_effects(result.worlds, get_world_effect)
+    _replace_effects(result.resources, get_resource_effect)
+    _replace_maps(result.worlds, maps)
+
+    return result
+
+
+def _load_dicts_from_yaml(entities_dir):
     biomes = yaml.safe_load(open(entities_dir + "/biomes.yml", "r", encoding="utf-8"))
     pops = yaml.safe_load(open(entities_dir + "/pops.yml", "r", encoding="utf-8"))
     structures = yaml.safe_load(open(entities_dir + "/structures.yml", "r", encoding="utf-8"))
     resources = yaml.safe_load(open(entities_dir + "/resources.yml", "r", encoding="utf-8"))
+    return biomes, pops, structures, resources
 
+
+def _load_worlds(worlds_dir):
     worlds = {}
 
     for element in os.listdir(worlds_dir):
@@ -36,9 +68,20 @@ def load_models(entities_dir, worlds_dir, maps_dir):
             world_name = os.path.splitext(element)[0]
             worlds[world_name] = world
 
-    # now, create models
+    return worlds
 
+
+def _create_models_and_put_in_storage(resources,
+                                      pops,
+                                      structures,
+                                      biomes,
+                                      worlds):
     result = ModelStorage()
+    for name, content in resources.items():
+        model = ResourceModel(**content)
+        model.id = name
+        result.resources.append(model)
+
     for name, content in pops.items():
         model = PopModel(**content)
         result.pops.append(model)
@@ -56,30 +99,52 @@ def load_models(entities_dir, worlds_dir, maps_dir):
         model.id = name
         result.worlds.append(model)
 
-    for name, content in resources.items():
-        model = ResourceModel(**content)
-        model.id = name
-        result.resources.append(model)
+    return result
 
-    # load maps
 
+def _update_model_links(model_storage: ModelStorage):
+    """
+    Ссылки на другие модели лежат в yaml-файлах в качестве
+    тупо строк. Эти строки надо заменить правльиными ссылками.
+    """
+    for pop_model in model_storage.pops:
+        outputs = []
+        for res_name in pop_model.produces:
+            output = model_storage.get_res(res_name)
+            _check(output, pop_model.id, res_name)
+            outputs.append(output)
+        pop_model.produces = outputs
+
+    for biome_model in model_storage.biomes:
+        resources = []
+        for res_list in biome_model.resources:
+            res_model = model_storage.get_res(res_list[0])
+            size = res_list[1]
+            resources.append((res_model, size))
+        biome_model.resources = resources
+
+    for resource_model in model_storage.resources:
+        inputs = []
+        for input_name in resource_model.inputs:
+            input = model_storage.get_res(input_name)
+            _check(input, resource_model.id, input_name)
+            inputs.append(input)
+        resource_model.inputs = inputs
+
+
+def _check(to_check, model_name, bad_name):
+    if input is None:
+        Logger.error(f"Wrong resource name for input for {model_name}: {bad_name}")
+
+
+def _load_maps(maps_dir, model_storage):
     maps = []
     for file in os.listdir(maps_dir):
         file_path = os.path.join(maps_dir, file)
         if os.path.isfile(file_path) and os.path.splitext(file)[1] == ".csv":
-            maps.append(_load_map_from_tiled(file_path, result))
-    result.maps = maps
+            maps.append(_load_map_from_tiled(file_path, model_storage))
 
-    # replace effect names with effect functions from effect modules
-
-    _replace_effects(result.pops, get_pop_effect)
-    _replace_effects(result.structures, get_structure_effect)
-    _replace_effects(result.biomes, get_cell_effect)
-    _replace_effects(result.worlds, get_world_effect)
-    _replace_effects(result.resources, get_resource_effect)
-    _replace_maps(result.worlds, maps)
-
-    return result
+    return maps
 
 
 def load_assets(assets_dir):

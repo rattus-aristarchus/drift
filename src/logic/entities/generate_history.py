@@ -79,7 +79,7 @@ def _populate_cell(cell, cell_dict, model_base):
             pop_model = model_base.get_pop(pop_dict['name'])
             pop = agents.create_pop(pop_model, cell)
             pop.size = pop_dict['size']
-            Logger.debug("Populate_cell: created pop " + pop.name +
+            Logger.debug(f"{__name__}: created pop " + pop.name +
                          " of size " + str(pop.size))
 
     if 'resources' in cell_dict.keys():
@@ -88,8 +88,8 @@ def _populate_cell(cell, cell_dict, model_base):
             resource = agents.create_resource(model, cell)
             resource.size = res_dict['size']
             cell.resources.append(resource)
-            Logger.debug("Populate_cell: created resource " + resource.name +
-                         " of size " + str(resource.size))
+            Logger.debug(f"{__name__}: created resource {resource.name}" +
+                         f" of size {str(resource.size)}")
 
 
 def _rand_cell(map):

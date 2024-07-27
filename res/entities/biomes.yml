@@ -1,15 +1,3 @@
-basic:
-    id: "basic"
-    effects:
-    capacity:
-        soot_nomads: 10000
-        flamesheep: 100000
-        rice_growers: 8000000
-        rats: 25000
-        lynxes: 7000
-        steppe_grass: 100000
-        wheat: 100000
-
 sea:
     id: "sea"
     moisture: "wet"
@@ -21,7 +9,8 @@ mountains:
     effects: [temp_change]
     capacity:
         yaks: 10000
-        millet: 5000
+    resources:
+        - ["millet_land", 500]
 
 tibet:
     id: "tibet"
@@ -39,8 +28,8 @@ mountain_forest:
     id: "mountain_forest"
     moisture: "wet"
     effects: [temp_change]
-    capacity:
-        millet: 10000
+    resources:
+        - ["millet_land", 1000]
 
 steppe:
     id: "steppe"
@@ -54,24 +43,27 @@ loess_plateau:
     moisture: "wet"
     effects: [temp_change]
     capacity:
-        millet: 250000
         sheep: 25000
+    resources:
+        - ["millet_land", 25000]
 
 temperate_river_valley:
     id: "temperate_river_valley"
     moisture: "wet"
     effects: [temp_change]
     capacity:
-        millet: 500000
         sheep: 50000
+    resources:
+        - ["millet_land", 50000]
 
 tropical_river_valley:
     id: "tropical_river_valley"
     moisture: "wet"
     effects: [temp_change]
     capacity:
-        rice: 750000
         sheep: 10000
+    resources:
+        - ["rice_land", 15000]
 
 desert:
     id: "desert"
@@ -91,22 +83,25 @@ plains:
     moisture: "wet"
     effects: [temp_change]
     capacity:
-        millet: 100000
         sheep: 50000
+    resources:
+        - ["millet_land", 10000]
 
 chernozem:
     id: "chernozem"
     moisture: "wet"
     effects: [temp_change]
     capacity:
-        millet: 250000
         sheep: 50000
+    resources:
+        - ["millet_land", 25000]
 
 hills:
     id: "hills"
     moisture: "wet"
     effects: [temp_change]
     capacity:
-        millet: 50000
-        rice: 50000
         sheep: 50000
+    resources:
+        - ["millet_land", 5000]
+        - ["rice_land", 1000]

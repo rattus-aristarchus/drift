@@ -1,11 +1,12 @@
 import dataclasses
 from dataclasses import field
-from typing import List, Dict
-from src.logic.models import ResourceModel
-from src.logic import util
+from typing import List
+from src.logic.entities import entities
+from src.logic.entities.entities import Entity
+from src.logic.models import ResourceModel, PopModel, StructureModel
 
 
-def create_structure(model, destination):
+def create_structure(model: StructureModel, destination):
     new_structure = Structure(name=model.id)
     new_structure.effects = list(model.effects)
     destination.structures.append(new_structure)
@@ -14,19 +15,22 @@ def create_structure(model, destination):
 
 
 def copy_structure(structure, destination):
-    result = copy_entity(structure)
+    result = entities.copy_entity(structure)
     destination.structures.append(result)
     result.territory.append(destination)
     return result
 
 
-def create_pop(model, destination=None):
-    new_pop = Population(name=model.id)
-    new_pop.effects = list(model.effects)
-    new_pop.sapient = model.sapient
-    new_pop.type = model.type
-    new_pop.sustained_by = model.sustained_by
-    new_pop.yearly_growth = model.yearly_growth
+def create_pop(model: PopModel, destination=None):
+    new_pop = Population(
+        name=model.id,
+        effects=list(model.effects),
+        sapient=model.sapient,
+        type=model.type,
+        sustained_by=model.sustained_by,
+        yearly_growth=model.yearly_growth
+    )
+    new_pop.model = model
 
     if destination:
         destination.pops.append(new_pop)
@@ -40,16 +44,16 @@ def copy_pop(pop, destination):
     as the old one.
     """
 
-    new_pop = copy_entity(pop)
+    new_pop = entities.copy_entity(pop)
     destination.pops.append(new_pop)
     return new_pop
 
 
 def copy_res(res, destination, new_owner=None):
-    copy = copy_entity(res)
+    copy = entities.copy_entity(res)
     destination.resources.append(copy)
     if new_owner:
-        copy.owner = new_owner
+        copy.owners = new_owner
 
     return copy
 
@@ -61,30 +65,12 @@ def create_resource(model: ResourceModel, destination=None, group=None):
         yearly_growth=model.yearly_growth,
         type=model.type
     )
+    result.model = model
     if destination:
         destination.resources.append(result)
     elif group:
         group.resources.append(result)
     return result
-
-
-def copy_entity(entity):
-    copy = util.copy_dataclass_with_collections(entity)
-    copy.last_copy = entity
-    return copy
-
-
-@dataclasses.dataclass
-class Entity:
-    """
-    База
-    """
-
-    name: str = ""
-    # при создании новой итерации модели все сущности
-    # копируются в нее; last_copy - ссылка на сущность
-    # в прошлой итерации
-    last_copy = None
 
 
 @dataclasses.dataclass
@@ -96,7 +82,7 @@ class Agent(Entity):
 
     effects: List = field(default_factory=lambda: [])
 
-    def do_effects(self, cell_buffer, grid_buffer):
+    def do_effects(self, cell_buffer=None, grid_buffer=None):
         """
         Вызывается каждую итерацию.
         """
@@ -105,7 +91,7 @@ class Agent(Entity):
 
 
 @dataclasses.dataclass
-class Structure(Entity):
+class Structure(Agent):
     """
     Социальные структуры, состоящие из нескольких
     популяций / территорий (города, государства, рынки).
@@ -117,7 +103,7 @@ class Structure(Entity):
     territory: List = field(default_factory=lambda: [])
     resources: List = field(default_factory=lambda: [])
 
-    def do_effects(self, grid_buffer):
+    def do_effects(self, cell_buffer=None, grid_buffer=None):
         for func in self.effects:
             func(self, grid_buffer)
 
@@ -145,6 +131,8 @@ class Population(Agent):
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
+    # from 0 to 1:
+    hunger: float = 0
     sustained_by: dict = field(default_factory=lambda: {})
     structures: list[Structure] = field(default_factory=lambda: [])
 
@@ -157,6 +145,13 @@ class Resource(Agent):
     """
 
     size: int = 0
-    owner: Agent = None
+    # пары из агент + количество (кто сколько владеет)
+    owners: dict = field(default_factory=lambda: {})
     yearly_growth: float = 0.0
     type: str = ""
+
+    def set_owner(self, agent, amount):
+        if amount <= 0:
+            self.owners.pop(agent.name, None)
+        else:
+            self.owners[agent.name] = amount

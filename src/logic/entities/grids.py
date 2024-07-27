@@ -4,7 +4,7 @@ from kivy import Logger
 from src.logic import util
 from src.logic.buffers import CellBuffer
 from src.logic.entities import cells, agents
-from src.logic.entities.agents import Entity
+from src.logic.entities.entities import Entity
 from src.logic.entities.cells import Cell
 from src.logic.models import GridModel, ModelStorage, CellModel
 
@@ -146,7 +146,7 @@ class Grid(Entity):
     def do_effects(self, grid_buffer):
 
         for structure in self.structures:
-            structure.do_effects(grid_buffer)
+            structure.do_effects(grid_buffer=grid_buffer)
 
         for cell in self.cells_as_list():
             cell_buffer = CellBuffer(cell, grid_buffer)

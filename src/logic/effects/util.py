@@ -192,6 +192,8 @@ def growth_with_capacity(number, capacity, growth):
     return result
 
 
+
+
 def get_cap_for_pop(pop, cell):
     """
     Returns the capacity of this cell for this population

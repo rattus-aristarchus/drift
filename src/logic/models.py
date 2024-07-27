@@ -23,6 +23,8 @@ class PopModel(EffectModel):
     type: str = ""
     yearly_growth: float = 0.0
     sustained_by: dict = field(default_factory=lambda: {})
+    # loaded as strings, replaced with resource_model
+    produces: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -36,12 +38,16 @@ class ResourceModel(EffectModel):
 
     type: str = ""
     yearly_growth: float = 0.0
+    inputs: list = field(default_factory=lambda: [])
+    optimum_labor: int = 0
 
 
 @dataclasses.dataclass
 class BiomeModel(EffectModel):
 
     capacity: dict = field(default_factory=lambda: {})
+    # список из пар модель ресурса + количество
+    resources: list = field(default_factory=lambda: [])
     moisture: str = ""
 
 

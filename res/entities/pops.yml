@@ -6,7 +6,7 @@ steppe_herders:
     yearly_growth: 0.1
     sustained_by:
         "sheep": 10
-    effects: [producer_grow, producer_mig]
+    effects:
 mountain_herders:
     id: "mountain_herders"
     name: "горные скотоводы"
@@ -15,7 +15,7 @@ mountain_herders:
     yearly_growth: 0.1
     sustained_by:
         "yaks": 5
-    effects: [producer_grow, producer_mig]
+    effects:
 northern_farmers:
     id: "northern_farmers"
     name: "крестьяне севера"
@@ -23,9 +23,9 @@ northern_farmers:
     type: "producer"
     yearly_growth: 0.1
     sustained_by:
-        "millet": 10
-    effects: [producer_grow, producer_mig]
-
+        "millet": 1
+    produces: ["millet"]
+    effects: [producer_grow, agricultural_output]
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
@@ -33,9 +33,9 @@ rice_growers:
     type: "producer"
     yearly_growth: 0.1
     sustained_by:
-        "rice": 10
-    effects: [producer_grow, producer_mig]
-
+        "rice": 1
+    produces: ["rice"]
+    effects: [producer_grow, agricultural_output]
 blacksmiths:
     id: "blacksmiths"
     name: "кузнецы"

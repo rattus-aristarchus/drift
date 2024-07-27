@@ -3,6 +3,7 @@ import pytest
 from src.logic.entities import cells
 from src.logic.entities.agents import Population, Structure
 from src.logic.entities.cells import Cell, Biome
+from src.logic.models import BiomeModel, ResourceModel
 
 
 @pytest.fixture
@@ -11,6 +12,23 @@ def cell_with_pop():
     pop = Population(name="test_pop")
     cell.pops.append(pop)
     return cell
+
+
+def test_resources_are_created():
+    resource_model = ResourceModel(
+        id="test_resource"
+    )
+    biome_model = BiomeModel(
+        resources=[
+            (resource_model, 5)
+        ]
+    )
+
+    cell = cells.create_cell(0, 0, biome_model)
+
+    assert len(cell.resources) > 0
+    assert cell.resources[0].name == "test_resource"
+    assert cell.resources[0].size == 5
 
 
 def test_copy_cell_is_different(cell_with_pop):

@@ -3,18 +3,26 @@ yaks:
     type: "livestock"
     yearly_growth: 0.1
     effects: [default_grow]
-millet:
-    id: "millet"
-    type: "crop"
-    yearly_growth: 0.2
-    effects: [default_grow]
-rice:
-    id: "rice"
-    type: "crop"
-    yearly_growth: 0.2
-    effects: [default_grow]
 sheep:
     id: "sheep"
     type: "livestock"
     yearly_growth: 0.4
     effects: [default_grow]
+surplus:
+    id: "surplus"
+millet:
+    id: "millet"
+    type: "crop"
+    inputs: ["millet_land"]
+rice:
+    id: "rice"
+    type: "crop"
+    inputs: ["rice_land"]
+millet_land:
+    id: "millet_land"
+    type: "land"
+    optimum_labor: 10
+rice_land:
+    id: "rice_land"
+    type: "land"
+    optimum_labor: 50

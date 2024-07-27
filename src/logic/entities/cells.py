@@ -1,8 +1,10 @@
 import dataclasses
 from dataclasses import field
+
+import src.logic.entities.entities
 from src.logic import util
 from src.logic.entities import agents
-from src.logic.entities.agents import Entity
+from src.logic.entities.entities import Entity
 from src.logic.models import BiomeModel
 
 from kivy.logger import Logger
@@ -30,7 +32,7 @@ def add_territory(cell, structure):
 
 
 def copy_cell(old_cell):
-    new_cell = agents.copy_entity(old_cell)
+    new_cell = src.logic.entities.entities.copy_entity(old_cell)
     new_cell.biome = copy_biome(old_cell.biome)
 
     new_cell.structures = []
@@ -60,7 +62,7 @@ def copy_cell(old_cell):
 
 
 def copy_biome(old_biome):
-    result = agents.copy_entity(old_biome)
+    result = src.logic.entities.entities.copy_entity(old_biome)
     return result
 
 
@@ -80,6 +82,9 @@ def create_cell(x, y, biome_model: BiomeModel):
     result = Cell(x=x, y=y)
     result.effects = biome_model.effects
     result.biome = create_biome(biome_model)
+    for res_model, size in biome_model.resources:
+        resource = agents.create_resource(res_model, result)
+        resource.size = size
     return result
 
 
@@ -131,10 +136,6 @@ class Cell(Entity):
             # не нужно
             if pop.last_copy:
                 pop.do_effects(cell_buffer, grid_buffer)
-
-        for structure in self.structures:
-            if structure.last_copy:
-                structure.do_effects(cell_buffer, grid_buffer)
 
         for resource in self.resources:
             if resource.last_copy:
