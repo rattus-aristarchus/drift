@@ -105,22 +105,21 @@ class Agent(Entity):
 
 
 @dataclasses.dataclass
-class Structure(Agent):
+class Structure(Entity):
     """
     Социальные структуры, состоящие из нескольких
     популяций / территорий (города, государства, рынки).
     """
 
+    effects: List = field(default_factory=lambda: [])
     pops: List = field(default_factory=lambda: [])
     # a list of cells
     territory: List = field(default_factory=lambda: [])
     resources: List = field(default_factory=lambda: [])
 
-    def do_effects(self, cell_buffer, grid_buffer):
-        for resource in self.resources:
-            resource.do_effects()
+    def do_effects(self, grid_buffer):
         for func in self.effects:
-            func(self, cell_buffer, grid_buffer)
+            func(self, grid_buffer)
 
     def get_res(self, name):
         for res in self.resources:

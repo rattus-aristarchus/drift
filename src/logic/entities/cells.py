@@ -124,12 +124,18 @@ class Cell(Entity):
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:
             func(self, cell_buffer, grid_buffer)
+
         for pop in self.pops:
+            # если ссылка на last_copy отсутстввует, эта популяция
+            # была создана в эту итерацию, и вычислять ее эффекты
+            # не нужно
             if pop.last_copy:
                 pop.do_effects(cell_buffer, grid_buffer)
-        for group in self.structures:
-            if group.last_copy:
-                group.do_effects(cell_buffer, grid_buffer)
+
+        for structure in self.structures:
+            if structure.last_copy:
+                structure.do_effects(cell_buffer, grid_buffer)
+
         for resource in self.resources:
             if resource.last_copy:
                 resource.do_effects(cell_buffer, grid_buffer)

@@ -40,26 +40,7 @@ def _do_effects(history, new_grid, old_grid):
                 f" is {new_grid.state.temperature}. It deviates from"
                 f" mean by {grid_buffer.temp_deviation}.")
 
-    for cell in new_grid.cells_as_list():
-        cell_buffer = CellBuffer(cell, grid_buffer)
-
-        # this is the main call that calls do_effects for all agents in a cell
-        cell.do_effects(cell_buffer, grid_buffer)
-
-        # remove pops and resources that have died out or been emptied out
-        to_remove = []
-        for pop in cell.pops:
-            if pop.size <= 0:
-                to_remove.append(pop)
-        for pop in to_remove:
-            cell.pops.remove(pop)
-
-        to_remove = []
-        for res in cell.resources:
-            if res.size <= 0:
-                to_remove.append(res)
-        for res in to_remove:
-            cell.resources.remove(res)
+    new_grid.do_effects(grid_buffer)
 
 
 def _write_output(new_grid):

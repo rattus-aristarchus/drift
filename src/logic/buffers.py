@@ -21,7 +21,8 @@ class CellBuffer:
         self.cell = cell
         if grid_buffer:
             self.neighbors = get_neighbors(cell.x, cell.y, grid_buffer.grid)
-            self.old_neighbors = get_neighbors(cell.x, cell.y, grid_buffer.old_grid)
+            if grid_buffer.old_grid:
+                self.old_neighbors = get_neighbors(cell.x, cell.y, grid_buffer.old_grid)
 
         # self.nomad_capacity = round(get_pop_num('steppe_grass', cell) / 10 - get_pop_num('soot_nomads', cell))
         # self.wheatmen_capacity = round(get_pop_num('wheat', cell) / 2 - get_pop_num('wheatmen', cell))

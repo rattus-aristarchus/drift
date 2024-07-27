@@ -2,6 +2,7 @@ import dataclasses
 from dataclasses import field
 from kivy import Logger
 from src.logic import util
+from src.logic.buffers import CellBuffer
 from src.logic.entities import cells, agents
 from src.logic.entities.agents import Entity
 from src.logic.entities.cells import Cell
@@ -133,6 +134,7 @@ class Grid(Entity):
         # выводим временные ряды в csv, чтобы их потом
         # можно было отображать на графике
     watched_cells: list = field(default_factory=lambda: [])
+    structures: list = field(default_factory=lambda: [])
     state: GridState = None
 
     def cells_as_list(self):
@@ -140,3 +142,30 @@ class Grid(Entity):
         for column in self.cells.values():
             result += column.values()
         return result
+
+    def do_effects(self, grid_buffer):
+
+        for structure in self.structures:
+            structure.do_effects(grid_buffer)
+
+        for cell in self.cells_as_list():
+            cell_buffer = CellBuffer(cell, grid_buffer)
+
+            # this is the main call that calls do_effects for all agents in a cell
+            cell.do_effects(cell_buffer, grid_buffer)
+
+            # remove pops that have died out
+            to_remove = []
+            for pop in cell.pops:
+                if pop.size <= 0:
+                    to_remove.append(pop)
+            for pop in to_remove:
+                cell.pops.remove(pop)
+
+            # remove resources that have been emptied out
+            to_remove = []
+            for res in cell.resources:
+                if res.size <= 0:
+                    to_remove.append(res)
+            for res in to_remove:
+                cell.resources.remove(res)
