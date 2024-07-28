@@ -25,6 +25,7 @@ class PopModel(EffectModel):
     sustained_by: dict = field(default_factory=lambda: {})
     # loaded as strings, replaced with resource_model
     produces: list = field(default_factory=lambda: [])
+    looks_for: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
