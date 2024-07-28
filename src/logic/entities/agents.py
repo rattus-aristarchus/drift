@@ -110,3 +110,12 @@ class Resource(Agent):
             self.owners.pop(agent.name, None)
         else:
             self.owners[agent.name] = amount
+
+    def get_free_amount(self):
+        free = self.size
+        for name, amount in self.owners.items():
+            free -= amount
+        if free < 0:
+            free = 0
+        return free
+

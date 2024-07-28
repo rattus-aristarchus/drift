@@ -21,11 +21,13 @@ def get_effect(func_name):
     return eval(func_name)
 
 
-def producer_grow_old(pop, cell_buffer, grid_buffer):
+"""
+def producer_grow(pop, cell_buffer, grid_buffer):
     num = pop.last_copy.size
     cap = util.get_cap_for_pop(pop, cell_buffer.cell.last_copy)
 
     pop.size += util.growth_with_capacity(num, cap, pop.yearly_growth)
+"""
 
 
 def producer_grow(pop, cell_buffer, grid_buffer):
@@ -41,43 +43,17 @@ def producer_grow(pop, cell_buffer, grid_buffer):
     pop.size += change
 
 
+# TODO: this was written in the middle of the night
+# because I couldn't sleep, so needs to be checked,
+# and also extended to work for nomads
 def producer_mig(pop, cell_buffer, grid_buffer):
-    num = pop.last_copy.size
+    if pop.last_copy.hunger > 0:
+        # note: this only looks for one resource
+        old_destinations = util.get_neighbors_with_res(pop.model.looks_for[0], cell_buffer.old_neighbors)
+        destinations = util.find_equivalent_cells(old_destinations, grid_buffer.grid)
 
-    # тут вопрос. мы меряем пока станет тесно кочевникам
-    # или овцам? пока кочевникам
-    cap = util.get_cap_for_pop(pop, cell_buffer.cell.last_copy)
-
-    # если численность приближается к потолку, мигрируем
-    if num > cap / 2:
-
-        # какие ресурсы можем взять с собой
-        res_to_migrate = []
-        for food_name in pop.sustained_by.keys():
-            sustains_pop = cell_buffer.cell.get_res(food_name)
-            if sustains_pop:
-                res_to_migrate.append(sustains_pop)
-
-        # a list of all cells where the main pop has
-        # something to sustain it
-        all_destinations = []
-
-        # мигрируем каждый ресурс
-        for res_to_migrate in res_to_migrate:
-            old_destinations = util.get_available_neighbors(res_to_migrate.name, cell_buffer.old_neighbors)
-            destinations = util.find_equivalent_cells(old_destinations, grid_buffer.grid)
-
-            if len(destinations) > 0:
-                old_size = util.get_res_size(res_to_migrate.name, cell_buffer.cell.last_copy)
-                _migrate_res(res_to_migrate, destinations, old_size, 0.2)
-
-            for destination in destinations:
-                if destination not in all_destinations:
-                    all_destinations.append(destination)
-
-        # мигрируем саму популяцию
-        if len(all_destinations) > 0:
-            _migrate_pop(pop, all_destinations, num, 0.2)
+        if len(destinations) > 0:
+            _migrate_pop(pop, destinations, pop.last_copy.size, 0.2)
 
 
 def _migrate_pop(pop, destinations, old_size, fraction_to_migrate):

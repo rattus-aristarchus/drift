@@ -162,10 +162,19 @@ def order_neighbors_by_descending(retreive_parameter, neighbors):
     return ordered
 
 
-def get_available_neighbors(pop_name, neighbors):
+def get_neighbors_with_pop_capacity(pop_name, neighbors):
     result = []
     for neighbor in neighbors:
         if pop_name in neighbor.biome.capacity.keys():
+            result.append(neighbor)
+    return result
+
+
+def get_neighbors_with_res(res_name, neighbors):
+    result = []
+    for neighbor in neighbors:
+        res = neighbor.get_res(res_name)
+        if res and res.get_free_amount() > 0:
             result.append(neighbor)
     return result
 
