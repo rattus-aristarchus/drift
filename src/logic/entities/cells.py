@@ -31,32 +31,21 @@ def add_territory(cell, structure):
         structure.territory.append(cell)
 
 
-def copy_cell(old_cell):
+def copy_cell_without_structures(old_cell):
     new_cell = src.logic.entities.entities.copy_entity(old_cell)
     new_cell.biome = copy_biome(old_cell.biome)
 
-    new_cell.structures = []
-    for structure in old_cell.structures:
-        agents.copy_structure(structure, new_cell)
+    # тут такой момент:
+    # структуры могут принадлежать нескольким клеткам; так что их
+    # правильнее копировать в grid
 
     new_cell.pops = []
     for old_pop in old_cell.pops:
-        # this does not replace structures that are not
-        # part of this particular cell
-        new_pop = agents.copy_pop(old_pop, new_cell)
-        if len(old_pop.structures) > 0:
-            for old_structure in old_pop.structures:
-                structure = _find_structure(old_structure.name, old_cell)
-                if structure is None:
-                    Logger.error(f"Copy of old pop {old_pop.name} at cell "
-                                 f"({old_cell.x},{old_cell.y}) has no "
-                                 f"group (should be {old_pop.structures.name})")
-                else:
-                    new_pop.structures.append(structure)
+        agents.copy_pop(old_pop, new_cell)
 
     new_cell.resources = []
     for res in old_cell.resources:
-        new_res = agents.copy_res(res, new_cell)
+        agents.copy_res(res, new_cell)
 
     return new_cell
 

@@ -3,22 +3,7 @@ from dataclasses import field
 from typing import List
 from src.logic.entities import entities
 from src.logic.entities.entities import Entity
-from src.logic.models import ResourceModel, PopModel, StructureModel
-
-
-def create_structure(model: StructureModel, destination):
-    new_structure = Structure(name=model.id)
-    new_structure.effects = list(model.effects)
-    destination.structures.append(new_structure)
-    new_structure.territory.append(destination)
-    return new_structure
-
-
-def copy_structure(structure, destination):
-    result = entities.copy_entity(structure)
-    destination.structures.append(result)
-    result.territory.append(destination)
-    return result
+from src.logic.models import ResourceModel, PopModel
 
 
 def create_pop(model: PopModel, destination=None):
@@ -91,36 +76,6 @@ class Agent(Entity):
 
 
 @dataclasses.dataclass
-class Structure(Agent):
-    """
-    Социальные структуры, состоящие из нескольких
-    популяций / территорий (города, государства, рынки).
-    """
-
-    effects: List = field(default_factory=lambda: [])
-    pops: List = field(default_factory=lambda: [])
-    # a list of cells
-    territory: List = field(default_factory=lambda: [])
-    resources: List = field(default_factory=lambda: [])
-
-    def do_effects(self, cell_buffer=None, grid_buffer=None):
-        for func in self.effects:
-            func(self, grid_buffer)
-
-    def get_res(self, name):
-        for res in self.resources:
-            if res.name == name:
-                return res
-        return None
-
-    def get_pop(self, name):
-        for pop in self.pops:
-            if pop.name == name:
-                return pop
-        return None
-
-
-@dataclasses.dataclass
 class Population(Agent):
     """
     Популяция. Ну блин, когда у нас исчислимое нечто, и оно что-то делает.
@@ -134,7 +89,7 @@ class Population(Agent):
     # from 0 to 1:
     hunger: float = 0
     sustained_by: dict = field(default_factory=lambda: {})
-    structures: list[Structure] = field(default_factory=lambda: [])
+    structures: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass

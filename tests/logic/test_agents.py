@@ -5,7 +5,8 @@ from typing import List
 import pytest
 
 from src.logic.entities import agents
-from src.logic.entities.agents import Population, Structure
+from src.logic.entities.agents import Population
+from src.logic.entities.structures import Structure
 from src.logic.entities.cells import Cell
 
 

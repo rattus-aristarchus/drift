@@ -1,7 +1,8 @@
 import pytest
 
 from src.logic.entities import cells
-from src.logic.entities.agents import Population, Structure
+from src.logic.entities.agents import Population
+from src.logic.entities.structures import Structure
 from src.logic.entities.cells import Cell, Biome
 from src.logic.models import BiomeModel, ResourceModel
 
@@ -41,12 +42,12 @@ def test_copy_cell_is_different(cell_with_pop):
     cell_with_pop.biome = test_biome
 
     # act
-    copy = cells.copy_cell(cell_with_pop)
+    copy = cells.copy_cell_without_structures(cell_with_pop)
     copy.structures[0].name = "old_structure"
     copy.biome.capacity["test_pop"] += 1
 
     # make sure originals haven't changed
     assert copy.get_pop("test_pop").size == 5
     assert len(copy.get_pop("test_pop").structures) > 0
-    assert not copy.structures[0] == test_struct
+    assert copy.structures[0] == test_struct
     assert test_biome.capacity["test_pop"] == 1

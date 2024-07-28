@@ -1,3 +1,4 @@
+import src.logic.entities.structures
 
 
 def flamesheep_inc(pop, cell_buffer, grid_buffer):
@@ -223,7 +224,7 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
     # if not part of a community, farmers form a village
     if len(pop.structures) == 0:
         model = util.model_base.get_structure('settlement')
-        village = agents.create_structure(model, cell_buffer.cell)
+        village = src.logic.entities.structures.create_structure(model, cell_buffer.cell)
         pop.structures.append(village)
         village.pops.append(pop)
 

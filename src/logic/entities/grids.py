@@ -1,6 +1,8 @@
 import dataclasses
 from dataclasses import field
 from kivy import Logger
+
+import src.logic.entities.structures
 from src.logic import util
 from src.logic.buffers import CellBuffer
 from src.logic.entities import cells, agents
@@ -94,8 +96,11 @@ def copy_grid(grid):
     for x in range(0, result.width):
         result.cells[x] = {}
         for y in range(0, result.height):
-            new_cell = cells.copy_cell(grid.cells[x][y])
+            new_cell = cells.copy_cell_without_structures(grid.cells[x][y])
             result.cells[x][y] = new_cell
+
+    for structure in grid.structures:
+        src.logic.entities.structures.copy_structure(structure, grid)
 
     for watched_cell in grid.watched_cells:
         result.watched_cells.append(
