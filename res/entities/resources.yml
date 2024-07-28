@@ -21,8 +21,8 @@ rice:
 millet_land:
     id: "millet_land"
     type: "land"
-    optimum_labor: 10
+    labor_limit: 10
 rice_land:
     id: "rice_land"
     type: "land"
-    optimum_labor: 50
+    labor_limit: 50

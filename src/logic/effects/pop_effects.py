@@ -80,29 +80,29 @@ def agricultural_output(pop, cell_buffer, grid_buffer):
     product_model = pop.model.produces[0]
     land_name = product_model.inputs[0].id
     land = cell_buffer.cell.last_copy.get_res(land_name)
-    people = pop.last_copy.size
+    people_num = pop.last_copy.size
 
     if product_model.id in pop.sustained_by.keys():
         need_per_person = pop.sustained_by[product_model.id]
     else:
+        # TODO: это дает нам дальше ошибку деления на нуль
         need_per_person = 0
 
     if land:
         land_size = land.size
-        labor_per_land = people / land_size
+        labor_per_land = people_num / land_size
         # если земли слишком много, ее не пытаются обработать:
-        if labor_per_land < 1:
-            labor_per_land = 1
-            land_used = people
+        if labor_per_land < 0.1:
+            labor_per_land = 0.1
+            land_used = people_num
         else:
             land_used = land_size
-        optimum = land.model.optimum_labor
+        limit = land.model.labor_limit
 
-        output_per_land = - round(optimum / labor_per_land) + optimum + 1
-        output = output_per_land * land_used
+        output = hyperbolic_function(limit, labor_per_land, land_used)
 
         # subtract needs
-        needs = need_per_person * people
+        needs = need_per_person * people_num
         if needs < output:
             hunger = 0
             surplus = output - needs
@@ -129,7 +129,11 @@ def agricultural_output(pop, cell_buffer, grid_buffer):
 
     land.set_owner(pop, land_used)
 
-    Logger.debug(f"{__name__}: {pop.name} of size {str(people)} with {str(land_used)} "
+    Logger.debug(f"{__name__}: {pop.name} of size {str(people_num)} with {str(land_used)} "
                  f"land (total land: {land_size}) produced {str(output)}; surplus "
                  f"{str(surplus)}, hunger {str(hunger)}")
 
+
+def hyperbolic_function(limit, labor_per_land, land_used):
+    output_per_land = - limit / (labor_per_land + 1) + limit
+    return round(output_per_land * land_used)
