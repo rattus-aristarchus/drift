@@ -8,6 +8,7 @@ from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ColorProperty, ObjectProperty, NumericProperty, StringProperty
 from kivy.clock import Clock
+from kivy.uix.treeview import TreeViewLabel, TreeView
 
 
 class Tooltip(Label):
@@ -17,29 +18,24 @@ class Tooltip(Label):
 class CellView(Label):
 
     icon_source = StringProperty("empty.png")
-    tooltip = Tooltip(text='Hello world')
+    # попытки заставвить этот тултип заработать
+    # удачей не окончились
+    on_click = None
+    x_coord = NumericProperty(0)
+    y_coord = NumericProperty(0)
 
-    def __init__(self, **kwargs):
-        Window.bind(mouse_pos=self.on_mouse_pos)
-        self.cell = None
-        super().__init__(**kwargs)
-
-    def on_mouse_pos(self, *args):
-        if not self.get_root_window():
-            return
-        pos = args[1]
-        self.tooltip.pos = pos
-        Clock.unschedule(self.display_tooltip)  # cancel scheduled event since I moved the cursor
-        self.close_tooltip()  # close if it's opened
-        if self.collide_point(*self.to_widget(*pos)):
-            Clock.schedule_once(self.display_tooltip, 0.5)
-
-    def close_tooltip(self, *args):
-        Window.remove_widget(self.tooltip)
-
-    def display_tooltip(self, *args):
-        # Window.add_widget(self.tooltip)
-        pass
+    def on_touch_down(self, touch):
+        # В своей гениальности разработчики киви решили, что при щелчке
+        # мышью по элементу on_touch будет вызываться не только для
+        # этого элемента, но и для ВСЕХ элементов этого типа на экране.
+        # Поэтому нам надо убедиться, что событие касается таки этого
+        # элемента.
+        if (
+            self.collide_point(touch.x, touch.y)
+            and touch.is_touch
+            and self.on_click
+        ):
+            self.on_click(self.x_coord, self.y_coord)
 
 
 class FilterDropdown(DropDown):
@@ -70,6 +66,7 @@ class View(BoxLayout):
 
     cells_x = NumericProperty(0)
     cells_y = NumericProperty(0)
+    displayed_cell = None
 
     def __init__(self, controller, assets, **kwargs):
         super().__init__(**kwargs)
@@ -90,7 +87,12 @@ class View(BoxLayout):
         for x in range(0, logical_grid.width):
             self.cells[x] = {}
             for y in range(0, logical_grid.height):
-                label = CellView(text="")
+                label = CellView(
+                    text="",
+                    x_coord=x,
+                    y_coord=y
+                )
+                label.on_click = self.display_cell_from_current_grid
                 self.cells[x][y] = label
 
         for y in range(0, logical_grid.height):
@@ -98,6 +100,13 @@ class View(BoxLayout):
                 element.add_widget(self.cells[x][y])
 
         self._set_background(world_name)
+
+    def display_cell_from_current_grid(self, x, y):
+        self.displayed_cell = self.logical_grid.cells[x][y]
+
+        cell_display = self.ids['cell_display']
+        cell_display.clear()
+        cell_display.display_cell(self.displayed_cell)
 
     def filter_changed(self, new_filter):
         self.filter = self.assets.get_map_filter(new_filter)
@@ -129,6 +138,12 @@ class View(BoxLayout):
                 text, icon_file = _get_cell_representation(cell, self.filter, self.assets)
                 label.text = text
                 label.icon_source = icon_file
+
+        if self.displayed_cell:
+            self.display_cell_from_current_grid(
+                self.displayed_cell.x,
+                self.displayed_cell.y
+            )
 
 
 def _get_cell_representation(cell, filter, assets):
@@ -240,3 +255,81 @@ class Map(GridLayout):
     background_name = StringProperty("empty.png")
     background_width = NumericProperty(0)
     background_height = NumericProperty(0)
+
+
+class CellDisplay(TreeView):
+
+    def __init__(self, **kwargs):
+        super().__init__(root_options=dict(text='Отображение региона'), **kwargs)
+
+    def clear(self):
+        """
+        Remove all content.
+        """
+        for node in [i for i in self.iterate_all_nodes()]:
+            self.remove_node(node)
+
+    def display_cell(self, cell):
+
+        # location
+        self.add_node(
+            TreeViewLabel(text=f"местоположение: ({cell.x}, {cell.y})")
+        )
+
+        # biome
+        if cell.biome:
+            self.add_node(
+                TreeViewLabel(text=f"природа: {cell.biome.name}")
+            )
+
+        # resources
+        if len(cell.resources) > 0:
+            base_node = TreeViewLabel(text=f"ресурсы:")
+            self.add_node(base_node)
+            for resource in cell.resources:
+                if resource.type == "":
+                    text = f"{resource.name}: {resource.size}"
+                else:
+                    text = f"{resource.name} ({resource.type}) : {resource.size}"
+                res_node = TreeViewLabel(
+                    text=text
+                )
+                self.add_node(res_node, base_node)
+                if len(resource.owners) > 0:
+                    ownership_node = TreeViewLabel(text=f"владельцы:")
+                    self.add_node(ownership_node, res_node)
+                    for owner, amount in resource.owners.items():
+                        self.add_node(
+                            TreeViewLabel(text=f"{owner}: {amount}"),
+                            ownership_node
+                        )
+
+        # populations
+        if len(cell.pops) > 0:
+            base_node = TreeViewLabel(text=f"популяции:")
+            self.add_node(base_node)
+            for pop in cell.pops:
+                if pop.type == "":
+                    text = f"{pop.name}: {pop.size}"
+                else:
+                    text = f"{pop.name} ({pop.type}) : {pop.size}"
+                pop_node = TreeViewLabel(
+                    text=f"{pop.name} ({pop.type}) : {pop.size}"
+                )
+                self.add_node(pop_node, base_node)
+                properties_node = TreeViewLabel(text=f"свойства:")
+                self.add_node(properties_node, pop_node)
+                self.add_node(
+                    TreeViewLabel(text=f"голод: {round(pop.hunger, 2)}"),
+                    properties_node
+                )
+                self.add_node(
+                    TreeViewLabel(text=f"возраст: {pop.age}"),
+                    properties_node
+                )
+
+        # structures
+        for structure in cell.structures:
+            pass
+
+

@@ -62,6 +62,7 @@ def get_pop(name, pop_list):
             return check
     return None
 
+
 def copy_biome(old_biome):
     result = src.logic.entities.entities.copy_entity(old_biome)
     return result
@@ -125,7 +126,7 @@ class Cell(Entity):
     structures: list = field(default_factory=lambda: [])
     effects: list = field(default_factory=lambda: [])
     resources: list = field(default_factory=lambda: [])
-    biome = Biome
+    biome: Biome = None
 
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:
