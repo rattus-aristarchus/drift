@@ -1,4 +1,5 @@
 import dataclasses
+import os
 from dataclasses import field
 from typing import List
 from src.logic.entities import entities
@@ -104,6 +105,16 @@ class Population(Agent):
     structures: list = field(default_factory=lambda: [])
     owned_resources: list = field(default_factory=lambda: [])
 
+    def __str__(self):
+        if type == "":
+            title = f"{self.name}"
+        else:
+            title = f"{self.name} ({self.type})"
+        description = (
+            f"{title}: {self.size}{os.linesep}"
+            f"возраст: {self.age}; голод: {self.hunger}")
+        return description
+
 
 @dataclasses.dataclass
 class Resource(Agent):
@@ -117,6 +128,20 @@ class Resource(Agent):
     owners: dict = field(default_factory=lambda: {})
     yearly_growth: float = 0.0
     type: str = ""
+
+    def __str__(self):
+        if type == "":
+            title = f"{self.name}"
+        else:
+            title = f"{self.name} ({self.type})"
+        description = (
+            f"{title}: {self.size}"
+        )
+        if len(self.owners) > 0:
+            description += f"{os.linesep}владельцы:"
+            for owner, amount in self.owners.items():
+                description += f"{os.linesep}{owner}: {amount}"
+        return description
 
     def set_owner(self, agent, amount=-1):
         if amount == -1:

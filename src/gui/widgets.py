@@ -279,7 +279,7 @@ class CellDisplay(TreeView):
         # biome
         if cell.biome:
             self.add_node(
-                TreeViewLabel(text=f"природа: {cell.biome.name}")
+                TreeViewLabel(text=str(cell.biome))
             )
 
         # resources
@@ -287,45 +287,19 @@ class CellDisplay(TreeView):
             base_node = TreeViewLabel(text=f"ресурсы:")
             self.add_node(base_node)
             for resource in cell.resources:
-                if resource.type == "":
-                    text = f"{resource.name}: {resource.size}"
-                else:
-                    text = f"{resource.name} ({resource.type}) : {resource.size}"
                 res_node = TreeViewLabel(
-                    text=text
+                    text=str(resource)
                 )
                 self.add_node(res_node, base_node)
-                if len(resource.owners) > 0:
-                    ownership_node = TreeViewLabel(text=f"владельцы:")
-                    self.add_node(ownership_node, res_node)
-                    for owner, amount in resource.owners.items():
-                        self.add_node(
-                            TreeViewLabel(text=f"{owner}: {amount}"),
-                            ownership_node
-                        )
 
         # populations
         if len(cell.pops) > 0:
             base_node = TreeViewLabel(text=f"популяции:")
             self.add_node(base_node)
             for pop in cell.pops:
-                if pop.type == "":
-                    text = f"{pop.name}: {pop.size}"
-                else:
-                    text = f"{pop.name} ({pop.type}) : {pop.size}"
-                pop_node = TreeViewLabel(
-                    text=f"{pop.name} ({pop.type}) : {pop.size}"
-                )
-                self.add_node(pop_node, base_node)
-                properties_node = TreeViewLabel(text=f"свойства:")
-                self.add_node(properties_node, pop_node)
                 self.add_node(
-                    TreeViewLabel(text=f"голод: {round(pop.hunger, 2)}"),
-                    properties_node
-                )
-                self.add_node(
-                    TreeViewLabel(text=f"возраст: {pop.age}"),
-                    properties_node
+                    TreeViewLabel(text=str(pop)),
+                    base_node
                 )
 
         # structures

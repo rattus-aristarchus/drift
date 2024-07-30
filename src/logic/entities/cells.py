@@ -1,4 +1,5 @@
 import dataclasses
+import os
 from dataclasses import field
 
 import src.logic.entities.entities
@@ -106,6 +107,15 @@ class Biome(Entity):
     model: BiomeModel = None
     # сколько популяций или ресурсов может вместить данная клетка:
     capacity: dict = dataclasses.field(default_factory=lambda: {})
+
+
+    def __str__(self):
+        description = self.name
+        if len(self.capacity) > 0:
+            description += f"{os.linesep}вместимость:"
+            for pop_type, amount in self.capacity.items():
+                description += f"{os.linesep}{pop_type}: {amount}"
+        return description
 
     def get_capacity(self, pop_name):
         if pop_name in self.capacity.keys():
