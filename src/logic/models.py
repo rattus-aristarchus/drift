@@ -40,7 +40,9 @@ class ResourceModel(EffectModel):
     type: str = ""
     yearly_growth: float = 0.0
     inputs: list = field(default_factory=lambda: [])
-    labor_limit: int = 0
+    min_labor: int = 0
+    max_labor: int = 0
+    max_labor_share: float = 0.0
 
 
 @dataclasses.dataclass

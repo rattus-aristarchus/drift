@@ -41,14 +41,26 @@ def copy_cell_without_structures(old_cell):
 
     new_cell.pops = []
     for old_pop in old_cell.pops:
-        agents.copy_pop(old_pop, new_cell)
+        new_pop = agents.copy_pop_without_owned(old_pop, new_cell)
+        new_pop.owned_resources = []
 
     new_cell.resources = []
     for res in old_cell.resources:
-        agents.copy_res(res, new_cell)
+        new_res = agents.copy_res_without_owners(res, new_cell)
+        old_owners = new_res.owners
+        new_res.owners = {}
+        for owner_name, amount in old_owners.items():
+            new_owner = get_pop(owner_name, new_cell.pops)
+            agents.set_ownership(new_owner, res, amount)
 
     return new_cell
 
+
+def get_pop(name, pop_list):
+    for check in pop_list:
+        if check.name == name:
+            return check
+    return None
 
 def copy_biome(old_biome):
     result = src.logic.entities.entities.copy_entity(old_biome)

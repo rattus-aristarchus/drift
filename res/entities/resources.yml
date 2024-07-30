@@ -12,17 +12,21 @@ surplus:
     id: "surplus"
 millet:
     id: "millet"
-    type: "crop"
+    type: "food"
+    max_labor_share: 0.25
     inputs: ["millet_land"]
 rice:
     id: "rice"
-    type: "crop"
+    type: "food"
+    max_labor_share: 0.25
     inputs: ["rice_land"]
 millet_land:
     id: "millet_land"
     type: "land"
-    labor_limit: 10
+    min_labor: 0.25
+    max_labor: 3
 rice_land:
     id: "rice_land"
     type: "land"
-    labor_limit: 50
+    min_labor: 0.5
+    max_labor: 6

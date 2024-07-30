@@ -23,7 +23,7 @@ def create_pop(model: PopModel, destination=None):
     return new_pop
 
 
-def copy_pop(pop, destination):
+def copy_pop_without_owned(pop, destination):
     """
     The copy of the pop refers to the same structures
     as the old one.
@@ -34,12 +34,9 @@ def copy_pop(pop, destination):
     return new_pop
 
 
-def copy_res(res, destination, new_owner=None):
+def copy_res_without_owners(res, destination):
     copy = entities.copy_entity(res)
     destination.resources.append(copy)
-    if new_owner:
-        copy.owners = new_owner
-
     return copy
 
 
@@ -56,6 +53,21 @@ def create_resource(model: ResourceModel, destination=None, group=None):
     elif group:
         group.resources.append(result)
     return result
+
+
+def set_ownership(population, resource, amount=-1):
+    if amount == -1:
+        resource.set_owner(population)
+    else:
+        resource.set_owner(population, amount)
+    if resource not in population.owned_resources:
+        population.owned_resources.append(resource)
+
+
+def remove_ownership(population, resource):
+    resource.set_owner(population, 0)
+    if resource in population.owned_resources:
+        population.owned_resources.remove(resource)
 
 
 @dataclasses.dataclass
@@ -90,6 +102,7 @@ class Population(Agent):
     hunger: float = 0
     sustained_by: dict = field(default_factory=lambda: {})
     structures: list = field(default_factory=lambda: [])
+    owned_resources: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -100,12 +113,15 @@ class Resource(Agent):
     """
 
     size: int = 0
-    # пары из агент + количество (кто сколько владеет)
+    # пары из имя агента + количество (кто сколько владеет)
     owners: dict = field(default_factory=lambda: {})
     yearly_growth: float = 0.0
     type: str = ""
 
-    def set_owner(self, agent, amount):
+    def set_owner(self, agent, amount=-1):
+        if amount == -1:
+            amount = self.size
+
         if amount <= 0:
             self.owners.pop(agent.name, None)
         else:

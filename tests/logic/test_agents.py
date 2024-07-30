@@ -36,7 +36,7 @@ def test_copy_pop_is_different(sample_cell, sample_struct, sample_struct_1):
 
     pop.size = 5
 
-    copy_pop = agents.copy_pop(pop, sample_cell)
+    copy_pop = agents.copy_pop_without_owned(pop, sample_cell)
     copy_pop.structures.append(sample_struct_1)
     copy_pop.size += 1
 

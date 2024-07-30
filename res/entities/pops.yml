@@ -26,7 +26,7 @@ northern_farmers:
         "millet": 1
     produces: ["millet"]
     looks_for: ["millet_land"]
-    effects: [producer_grow, agricultural_output, producer_mig]
+    effects: [produce, do_food, producer_grow, producer_mig]
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
@@ -37,7 +37,7 @@ rice_growers:
         "rice": 1
     produces: ["rice"]
     looks_for: ["rice_land"]
-    effects: [producer_grow, agricultural_output, producer_mig]
+    effects: [produce, do_food, producer_grow, producer_mig]
 blacksmiths:
     id: "blacksmiths"
     name: "кузнецы"
