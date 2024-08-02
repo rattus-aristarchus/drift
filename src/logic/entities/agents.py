@@ -110,19 +110,11 @@ class Resource(Agent):
                 description += f"{os.linesep}{owner}: {amount}"
         return description
 
-    def set_owner(self, agent, amount=-1):
-        if amount == -1:
-            amount = self.size
-
-        if amount <= 0:
-            self.owners.pop(agent.name, None)
-        else:
-            self.owners[agent.name] = amount
-
     def get_free_amount(self):
         free = self.size
         for name, amount in self.owners.items():
-            free -= amount
+            if amount > 0:
+                free -= amount
         if free < 0:
             free = 0
         return free
@@ -189,19 +181,34 @@ def create_resource(model: ResourceModel, destination=None, group=None):
     return result
 
 
-def set_ownership(population, resource, amount=-1):
-    if amount == -1:
-        resource.set_owner(population)
+def set_ownership(agent, resource, amount=None):
+    """
+    Сделать agent владельцем amount ресурса resource.
+
+    Сумма количеств по всем ресурсам никак не контролируется,
+    она может оказаться больше общего количества ресурса (при
+    ошибке в подсчетах).
+    """
+
+    if amount is None:
+        resource.owners[agent.name] = resource.size
+        if resource not in agent.owned_resources:
+            agent.owned_resources.append(resource)
+
+    elif amount <= 0:
+        resource.owners.pop(agent.name, None)
+        if resource in agent.owned_resources:
+            agent.owned_resources.remove(resource)
+
     else:
-        resource.set_owner(population, amount)
-    if resource not in population.owned_resources:
-        population.owned_resources.append(resource)
+        resource.owners[agent.name] = amount
+        if resource not in agent.owned_resources:
+            agent.owned_resources.append(resource)
 
 
 def remove_ownership(population, resource):
-    resource.set_owner(population, 0)
-    if resource in population.owned_resources:
-        population.owned_resources.remove(resource)
+    set_ownership(population, resource, 0)
 
-
-
+#    resource.set_owner(population, 0)
+#    if resource in population.owned_resources:
+#        population.owned_resources.remove(resource)

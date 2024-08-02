@@ -5,6 +5,32 @@ from src.logic.buffers import GridBuffer, CellBuffer
 from src.io.output import Output
 
 
+class History:
+    """
+    Все итерации модели. В сущности, список из Grid,
+    каждый из которых соответствует состоянию модели на определенный момент времени.
+    """
+
+    def __init__(self, world_model):
+        self.past_grids = []
+        self.turn = 0
+        self.world_model = world_model
+        self.effects = []
+
+    def current_state(self):
+        return self.past_grids[-1]
+
+    def state_at_turn(self, turn):
+        if turn < len(self.past_grids):
+            return self.past_grids[turn]
+        else:
+            return None
+
+    def do_effects(self, grid_buffer):
+        for func in self.effects:
+            func(self, grid_buffer)
+
+
 def do_turn(history):
     """
     Executes one turn by creating a new grid object and adding it to the
@@ -65,29 +91,3 @@ def create_with_generated_map(world_model, model_base):
     result.past_grids.append(first_grid)
     result.effects = list(world_model.effects)
     return result
-
-
-class History:
-    """
-    Все итерации модели. В сущности, список из Grid,
-    каждый из которых соответствует состоянию модели на определенный момент времени.
-    """
-
-    def __init__(self, world_model):
-        self.past_grids = []
-        self.turn = 0
-        self.world_model = world_model
-        self.effects = []
-
-    def current_state(self):
-        return self.past_grids[-1]
-
-    def state_at_turn(self, turn):
-        if turn < len(self.past_grids):
-            return self.past_grids[turn]
-        else:
-            return None
-
-    def do_effects(self, grid_buffer):
-        for func in self.effects:
-            func(self, grid_buffer)

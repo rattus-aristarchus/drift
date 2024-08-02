@@ -7,6 +7,7 @@ from src.logic.entities import grids
 from src.logic.entities.structures import Structure
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
+from src.logic.models import GridModel, CellModel, ModelStorage
 
 
 def test_increase_grid_age(fresh_grid):
@@ -58,3 +59,19 @@ def test_effect_calls_for_structures_are_not_repeated(effect_spy):
     grid.do_effects(buffer)
 
     assert spy.calls == 1
+
+
+def test_create_grid_from_model_right_shape():
+    model = GridModel()
+    model.cell_matrix = [
+        [CellModel(x=0, y=0)],
+        [CellModel(x=1, y=0)]
+    ]
+
+    grid = grids.create_grid_from_model(model, ModelStorage())
+
+    assert grid.height == 1
+    assert grid.width == 2
+
+
+

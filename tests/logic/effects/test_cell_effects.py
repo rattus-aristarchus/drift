@@ -33,7 +33,6 @@ def grid_buffer(steppe_model):
 
 
 def test_temp_change(grid_buffer):
-    cell_buffer = CellBuffer(None)
     cell = grid_buffer.grid.cells[0][0]
     grid_buffer.grid.state.temperature = 6
     grid_buffer.history.world_model.mean_temp = 7
@@ -41,6 +40,6 @@ def test_temp_change(grid_buffer):
     grid_buffer.history.world_model.deviation_50 = 1
 
 
-    temp_change(cell, cell_buffer=cell_buffer, grid_buffer=grid_buffer)
+    temp_change(cell, grid_buffer=grid_buffer)
 
     assert cell.biome.capacity['sheep'] == 75000

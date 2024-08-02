@@ -4,13 +4,6 @@ from src.logic import util
 from src.logic.models import Model
 
 
-def copy_entity(entity):
-    copy = util.copy_dataclass_with_collections(entity)
-    copy.last_copy = entity
-    entity.next_copy = copy
-    return copy
-
-
 @dataclasses.dataclass
 class Entity:
     """
@@ -25,3 +18,10 @@ class Entity:
     last_copy = None
     next_copy = None
     model: Model = None
+
+
+def copy_entity(entity):
+    copy = util.copy_dataclass_with_collections(entity)
+    copy.last_copy = entity
+    entity.next_copy = copy
+    return copy

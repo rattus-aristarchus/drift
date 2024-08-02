@@ -11,6 +11,65 @@ from src.logic.entities.cells import Cell
 from src.logic.models import GridModel, ModelStorage, CellModel
 
 
+@dataclasses.dataclass
+class GridState:
+
+    age: int = 0
+    temperature: int = 0
+
+
+@dataclasses.dataclass
+class Grid(Entity):
+    """
+    Карта по состоянию на определенную итерацию модели.
+    """
+
+    width: int = 0
+    height: int = 0
+        # клетки представлены словарём словарей, чтобы
+        # к ним можно было обращаться cells[x][y]
+    cells: dict = field(default_factory=lambda: {})
+        # клетки "под наблюдением" - те, по которым мы
+        # выводим временные ряды в csv, чтобы их потом
+        # можно было отображать на графике
+    watched_cells: list = field(default_factory=lambda: [])
+    structures: list = field(default_factory=lambda: [])
+    state: GridState = None
+
+    def cells_as_list(self):
+        result = []
+        for column in self.cells.values():
+            result += column.values()
+        return result
+
+    def do_effects(self, grid_buffer):
+
+        for structure in self.structures:
+            structure.do_effects(grid_buffer=grid_buffer)
+
+        for cell in self.cells_as_list():
+            cell_buffer = CellBuffer(cell, grid_buffer)
+
+            # this is the main call that calls do_effects for all agents in a cell
+            cell.do_effects(cell_buffer, grid_buffer)
+
+            # remove pops that have died out
+            to_remove = []
+            for pop in cell.pops:
+                if pop.size <= 0:
+                    to_remove.append(pop)
+            for pop in to_remove:
+                cell.pops.remove(pop)
+
+            # remove resources that have been emptied out
+            to_remove = []
+            for res in cell.resources:
+                if res.size <= 0:
+                    to_remove.append(res)
+            for res in to_remove:
+                cell.resources.remove(res)
+
+
 def create_grid(width, height, default_biome, age=0):
     result = Grid(width=width, height=height)
     result.state = GridState(age=age)
@@ -115,62 +174,3 @@ def increase_age(grid, value=1):
     for x in range(0, grid.width):
         for y in range(0, grid.height):
             cells.increase_age(grid.cells[x][y], value)
-
-
-@dataclasses.dataclass
-class GridState:
-
-    age: int = 0
-    temperature: int = 0
-
-
-@dataclasses.dataclass
-class Grid(Entity):
-    """
-    Карта по состоянию на определенную итерацию модели.
-    """
-
-    width: int = 0
-    height: int = 0
-        # клетки представлены словарём словарей, чтобы
-        # к ним можно было обращаться cells[x][y]
-    cells: dict = field(default_factory=lambda: {})
-        # клетки "под наблюдением" - те, по которым мы
-        # выводим временные ряды в csv, чтобы их потом
-        # можно было отображать на графике
-    watched_cells: list = field(default_factory=lambda: [])
-    structures: list = field(default_factory=lambda: [])
-    state: GridState = None
-
-    def cells_as_list(self):
-        result = []
-        for column in self.cells.values():
-            result += column.values()
-        return result
-
-    def do_effects(self, grid_buffer):
-
-        for structure in self.structures:
-            structure.do_effects(grid_buffer=grid_buffer)
-
-        for cell in self.cells_as_list():
-            cell_buffer = CellBuffer(cell, grid_buffer)
-
-            # this is the main call that calls do_effects for all agents in a cell
-            cell.do_effects(cell_buffer, grid_buffer)
-
-            # remove pops that have died out
-            to_remove = []
-            for pop in cell.pops:
-                if pop.size <= 0:
-                    to_remove.append(pop)
-            for pop in to_remove:
-                cell.pops.remove(pop)
-
-            # remove resources that have been emptied out
-            to_remove = []
-            for res in cell.resources:
-                if res.size <= 0:
-                    to_remove.append(res)
-            for res in to_remove:
-                cell.resources.remove(res)
