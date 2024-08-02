@@ -30,3 +30,13 @@ rice_land:
     type: "land"
     min_labor: 0.5
     max_labor: 6
+basic_copper_tools:
+    id: "basic_copper_tools"
+    type: "tools"
+    max_labor_share: 0.1
+    inputs: ["surface_copper"]
+surface_copper:
+    id: "surface_copper"
+    type: "ore"
+    min_labor: 0.25
+    max_labor: 3

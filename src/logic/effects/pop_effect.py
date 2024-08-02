@@ -30,7 +30,11 @@ def producer_mig(pop, cell_buffer, grid_buffer):
 
 def basic_agriculture(pop, cell_buffer, grid_buffer):
     product = pop.model.produces[0]
-    production.agriculture(pop, product, cell_buffer.cell)
+    production.natural_resource_exploitation(pop, product, cell_buffer.cell)
+
+
+def produce(pop, cell_buffer, grid_buffer):
+    production.produce(pop, cell_buffer.cell)
 
 
 def do_food(pop, cell_buffer, grid_buffer):

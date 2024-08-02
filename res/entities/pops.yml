@@ -27,9 +27,9 @@ northern_farmers:
     needs:
         - type: "food"
           per_1000: 1000
-    produces: ["millet"]
+    produces: ["millet", "basic_copper_tools"]
     looks_for: ["millet_land"]
-    effects: [basic_agriculture, do_food, producer_grow, producer_mig]
+    effects: [produce, do_food, producer_grow, producer_mig]
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
@@ -39,9 +39,9 @@ rice_growers:
     needs:
         - type: "food"
           per_1000: 1000
-    produces: ["rice"]
+    produces: ["rice", "basic_copper_tools"]
     looks_for: ["rice_land"]
-    effects: [basic_agriculture, do_food, producer_grow, producer_mig]
+    effects: [produce, do_food, producer_grow, producer_mig]
 blacksmiths:
     id: "blacksmiths"
     name: "кузнецы"

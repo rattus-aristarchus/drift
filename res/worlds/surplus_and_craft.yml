@@ -12,6 +12,8 @@ cells:
     resources:
       - name: "millet"
         size: 50000
+      - name: "surface_copper"
+        size: 1000
   - location: [21, 9]
     pops:
       - name: "rice_growers"
@@ -19,3 +21,5 @@ cells:
     resources:
       - name: "rice"
         size: 50000
+      - name: "surface_copper"
+        size: 1000

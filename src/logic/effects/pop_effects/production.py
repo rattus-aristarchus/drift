@@ -4,7 +4,13 @@ from src.logic.effects import util
 from src.logic.entities import agents
 
 
-def produce(pop, cell_buffer, grid_buffer):
+def produce_for_surplus(pop, cell_buffer, grid_buffer):
+    """
+    Это недописанная и совершенно непроверенная функция.
+    Производство на рынок. Мысль: сравниваем излишек на
+    вложенные усилия, и перераспределяем усилия туда,
+    где больше излишка.
+    """
 
     product_vs_share_vs_surplus = []
     for product_model in pop.model.produces:
@@ -58,11 +64,15 @@ def _get_max_effort(product_model, ttl_labor, cell):
         return if_infinite_inputs
 
 
-def do_industry(pop, product_model, cell):
-    pass
+def produce(pop, cell):
+    for output_model in pop.model.produces:
+        if output_model.type == "food":
+            natural_resource_exploitation(pop, output_model, cell)
+        elif output_model.type == "tools":
+            natural_resource_exploitation(pop, output_model, cell)
 
 
-def agriculture(pop, product_model, cell):
+def natural_resource_exploitation(pop, product_model, cell):
     land_name = product_model.inputs[0].id
     old_land = cell.last_copy.get_res(land_name)
 
@@ -90,7 +100,8 @@ def agriculture(pop, product_model, cell):
     agents.set_ownership(pop, land, land_used)
 
     Logger.debug(f"{__name__}: {pop.name} of size {str(people_num)} with {str(round(land_used))} "
-                 f"land (of total {land_size} land) produced {str(output)}")
+                 f"{land_name} "
+                 f"(of total {land_size}) produced {str(output)} {product_model.id}")
 
 
 def hyperbolic_function(limit, labor_per_land, land_used):
