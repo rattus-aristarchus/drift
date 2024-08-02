@@ -1,6 +1,6 @@
 import csv
 import os
-import sys
+import ast
 from typing import List
 import yaml
 from kivy import Logger
@@ -8,7 +8,7 @@ from kivy import Logger
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.logic.models import ModelStorage, PopModel, BiomeModel, StructureModel, WorldModel, EffectModel, GridModel, \
-    CellModel, ResourceModel
+    CellModel, ResourceModel, NeedModel
 
 # the following methods are required to load effects into models
 get_pop_effect = None
@@ -52,9 +52,17 @@ def load_models(entities_dir, worlds_dir, maps_dir):
 
 def _load_dicts_from_yaml(entities_dir):
     biomes = yaml.safe_load(open(entities_dir + "/biomes.yml", "r", encoding="utf-8"))
+    if not biomes:
+        biomes = {}
     pops = yaml.safe_load(open(entities_dir + "/pops.yml", "r", encoding="utf-8"))
+    if not pops:
+        pops = {}
     structures = yaml.safe_load(open(entities_dir + "/structures.yml", "r", encoding="utf-8"))
+    if not structures:
+        structures = {}
     resources = yaml.safe_load(open(entities_dir + "/resources.yml", "r", encoding="utf-8"))
+    if not resources:
+        resources = {}
     return biomes, pops, structures, resources
 
 
@@ -114,6 +122,13 @@ def _update_model_links(model_storage: ModelStorage):
             _check(output, pop_model.id, res_name)
             outputs.append(output)
         pop_model.produces = outputs
+
+        needs = []
+        for need_dict in pop_model.needs:
+            need = NeedModel(**need_dict)
+            need.resource = model_storage.get_res(need.resource)
+            needs.append(need)
+        pop_model.needs = needs
 
     for biome_model in model_storage.biomes:
         resources = []

@@ -1,5 +1,6 @@
 import pytest
-from src.logic.effects import util, pop_effects
+from src.logic.effects import util
+from src.logic.effects.pop_effects import production
 
 
 def test_growth_with_capacity():
@@ -18,5 +19,5 @@ test_data = [
 
 @pytest.mark.parametrize("optimum,labor_per_land,land_used,expected_result", test_data)
 def test_hyperbolic(optimum, labor_per_land, land_used, expected_result):
-    result = pop_effects.hyperbolic_function(optimum, labor_per_land, land_used)
+    result = production.hyperbolic_function(optimum, labor_per_land, land_used)
     assert result == expected_result

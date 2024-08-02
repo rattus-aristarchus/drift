@@ -1,0 +1,7 @@
+test_pop:
+    id: "test_pop"
+    name: "тестовая популяция"
+    produces: ["test_output"]
+    needs:
+        - type: "test_food"
+          per_1000: 1000

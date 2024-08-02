@@ -1,5 +1,9 @@
 import src.logic.entities.structures
 
+"""
+Это из позапрошлогодней итерации модели, и давно не проверялось
+"""
+
 
 def flamesheep_inc(pop, cell_buffer, grid_buffer):
     pass

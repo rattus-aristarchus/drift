@@ -1,5 +1,11 @@
 "backgrounds":
-    "middle_kingdom":
+    "basic_growth_and_migration":
+        name: "middle_kingdom.jpg"
+        size: [1041, 571]
+    "surplus_and_craft":
+        name: "middle_kingdom.jpg"
+        size: [1041, 571]
+    "farmers_and_herders":
         name: "middle_kingdom.jpg"
         size: [1041, 571]
 "icons":

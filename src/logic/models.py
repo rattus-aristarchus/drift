@@ -22,10 +22,10 @@ class PopModel(EffectModel):
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
-    sustained_by: dict = field(default_factory=lambda: {})
     # loaded as strings, replaced with resource_model
     produces: list = field(default_factory=lambda: [])
     looks_for: list = field(default_factory=lambda: [])
+    needs: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -43,6 +43,13 @@ class ResourceModel(EffectModel):
     min_labor: int = 0
     max_labor: int = 0
     max_labor_share: float = 0.0
+
+
+@dataclasses.dataclass
+class NeedModel(Model):
+    resource: ResourceModel = None
+    type: str = ""
+    per_1000: int = 0
 
 
 @dataclasses.dataclass

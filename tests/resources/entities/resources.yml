@@ -1,0 +1,7 @@
+test_output:
+    id: "test_output"
+    inputs: ["test_input"]
+test_input:
+    id: "test_input"
+test_food:
+    id: "test_food"

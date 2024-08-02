@@ -1,11 +1,4 @@
-basic:
-    id: "basic"
-    effects:
-    capacity:
-        soot_nomads: 10000
-        flamesheep: 100000
-        rice_growers: 8000000
-        rats: 25000
-        lynxes: 7000
-        steppe_grass: 100000
-        wheat: 100000
+test_biome:
+    id: "test_biome"
+    resources:
+        - ["test_input", 5000]

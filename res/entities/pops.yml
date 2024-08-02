@@ -4,8 +4,9 @@ steppe_herders:
     sapient: True
     type: "producer"
     yearly_growth: 0.1
-    sustained_by:
-        "sheep": 10
+    needs:
+        - type: "food"
+          per_1000: 1000
     effects:
 mountain_herders:
     id: "mountain_herders"
@@ -13,8 +14,9 @@ mountain_herders:
     sapient: True
     type: "producer"
     yearly_growth: 0.1
-    sustained_by:
-        "yaks": 5
+    needs:
+        - type: "food"
+          per_1000: 1000
     effects:
 northern_farmers:
     id: "northern_farmers"
@@ -22,28 +24,30 @@ northern_farmers:
     sapient: True
     type: "producer"
     yearly_growth: 0.1
-    sustained_by:
-        "millet": 1
+    needs:
+        - type: "food"
+          per_1000: 1000
     produces: ["millet"]
     looks_for: ["millet_land"]
-    effects: [produce, do_food, producer_grow, producer_mig]
+    effects: [basic_agriculture, do_food, producer_grow, producer_mig]
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
     sapient: True
     type: "producer"
     yearly_growth: 0.1
-    sustained_by:
-        "rice": 1
+    needs:
+        - type: "food"
+          per_1000: 1000
     produces: ["rice"]
     looks_for: ["rice_land"]
-    effects: [produce, do_food, producer_grow, producer_mig]
+    effects: [basic_agriculture, do_food, producer_grow, producer_mig]
 blacksmiths:
     id: "blacksmiths"
     name: "кузнецы"
     sapient: True
     type: "secondary_producers"
     yearly_growth: 0.1
-    sustained_by:
-        "rice": 10
-        "millet": 10
+    needs:
+        - type: "food"
+          per_1000: 1000
