@@ -6,15 +6,7 @@
 """
 
 
-def get_effect(func_name):
-    """
-    This function is injected into modules that need to use
-    effect. Don't worry about it.
-    """
-    return eval(func_name)
-
-
-def temp_change(cell, cell_buffer, grid_buffer):
+def temp_change(cell, grid_buffer):
     if not cell.biome.model.capacity:
         return
 

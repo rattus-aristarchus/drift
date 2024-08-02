@@ -80,7 +80,7 @@ class Need(Entity):
     # сколько нужно на 1000 популяции
     per_1000: int = 0
     # сколько реально есть
-    fulfilment: int = 0
+    actual: int = 0
 
 
 @dataclasses.dataclass

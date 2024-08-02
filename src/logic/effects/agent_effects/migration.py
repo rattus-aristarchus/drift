@@ -5,7 +5,9 @@ from src.logic.effects import util
 # because I couldn't sleep, so needs to be checked,
 # and also extended to work for nomads
 def producer_mig(pop, cell_buffer, grid_buffer):
-    if pop.last_copy.hunger > 0:
+    food_need = pop.last_copy.get_need("food")
+
+    if food_need.actual < food_need.per_1000:
         # note: this only looks for one resource
         old_destinations = util.get_neighbors_with_res(pop.model.looks_for[0], cell_buffer.old_neighbors)
         destinations = util.find_equivalent_cells(old_destinations, grid_buffer.grid)

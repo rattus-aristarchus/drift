@@ -1,6 +1,6 @@
 import pytest
 from src.logic.effects import util
-from src.logic.effects.pop_effects import production
+from src.logic.effects.agent_effects import production
 
 
 def test_growth_with_capacity():

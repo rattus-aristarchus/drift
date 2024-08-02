@@ -10,21 +10,6 @@ import math
 from src.logic.buffers import GridBuffer
 
 
-def get_effect(func_name):
-    """
-    This function is injected into modules that need to use
-    effect. Don't worry about it.
-    """
-    return eval(func_name)
-
-
-"""
-All world effects accept two parameteres:
-- history
-- the grid buffer
-"""
-
-
 def climate(history, grid_buffer: GridBuffer):
     age = grid_buffer.grid.state.age
     mean = history.world_model.mean_temp

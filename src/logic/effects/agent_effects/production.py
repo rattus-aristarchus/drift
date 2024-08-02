@@ -66,6 +66,8 @@ def _get_max_effort(product_model, ttl_labor, cell):
 
 def produce(pop, cell):
     for output_model in pop.model.produces:
+        if not output_model:
+            pass
         if output_model.type == "food":
             natural_resource_exploitation(pop, output_model, cell)
         elif output_model.type == "tools":
@@ -75,6 +77,9 @@ def produce(pop, cell):
 def natural_resource_exploitation(pop, product_model, cell):
     land_name = product_model.inputs[0].id
     old_land = cell.last_copy.get_res(land_name)
+    # без земли делать нечего
+    if not old_land:
+        return
 
     people_num = pop.last_copy.size
     if old_land:

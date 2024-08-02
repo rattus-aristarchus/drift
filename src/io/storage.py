@@ -11,11 +11,7 @@ from src.logic.models import ModelStorage, PopModel, BiomeModel, StructureModel,
     CellModel, ResourceModel, NeedModel
 
 # the following methods are required to load effects into models
-get_pop_effect = None
-get_structure_effect = None
-get_cell_effect = None
-get_world_effect = None
-get_resource_effect = None
+get_effect = None
 
 
 def load_models(entities_dir, worlds_dir, maps_dir):
@@ -40,11 +36,11 @@ def load_models(entities_dir, worlds_dir, maps_dir):
 
     # replace effect names with effect functions from effect modules
 
-    _replace_effects(result.pops, get_pop_effect)
-    _replace_effects(result.structures, get_structure_effect)
-    _replace_effects(result.biomes, get_cell_effect)
-    _replace_effects(result.worlds, get_world_effect)
-    _replace_effects(result.resources, get_resource_effect)
+    _replace_effects(result.pops, get_effect)
+    _replace_effects(result.structures, get_effect)
+    _replace_effects(result.biomes, get_effect)
+    _replace_effects(result.worlds, get_effect)
+    _replace_effects(result.resources, get_effect)
     _replace_maps(result.worlds, maps)
 
     return result
@@ -87,7 +83,6 @@ def _create_models_and_put_in_storage(resources,
     result = ModelStorage()
     for name, content in resources.items():
         model = ResourceModel(**content)
-        model.id = name
         result.resources.append(model)
 
     for name, content in pops.items():

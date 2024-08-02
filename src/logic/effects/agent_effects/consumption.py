@@ -10,11 +10,18 @@ def producer_grow(pop, cell_buffer, grid_buffer):
 """
 
 
+def resource_grow(res, cell):
+    num = res.last_copy.size
+    capacity = cell.last_copy.biome.get_capacity(res.name)
+
+    res.size += util.growth_with_capacity(num, capacity, res.yearly_growth)
+
+
 def producer_grow(pop, cell_buffer, grid_buffer):
     num = pop.last_copy.size
     growth_rate = pop.model.yearly_growth
     food_need = pop.last_copy.get_need("food")
-    hunger = 1 - food_need.fulfilment / food_need.per_1000
+    hunger = 1 - food_need.actual / food_need.per_1000
 
     if hunger <= 0:
         change = round(num * growth_rate)
@@ -52,7 +59,7 @@ def do_food(pop, cell_buffer, grid_buffer):
     surplus_obj.size += surplus
 
     food_need = pop.get_need("food")
-    food_need.fulfilment = fulfilment * 1000
+    food_need.actual = fulfilment * 1000
 
     Logger.debug(f"{__name__}: {pop.name} ate {ttl_food - surplus}, "
                  f"surplus is {str(surplus)}, hunger fulfilled by {str(round(fulfilment, 2))} (0-1)")
