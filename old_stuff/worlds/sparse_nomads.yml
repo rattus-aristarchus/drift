@@ -1,6 +1,6 @@
 width: 15
 height: 15
-cells:
+cell_instructions:
     - location: everywhere
       pops:
           - name: 'steppe_grass'

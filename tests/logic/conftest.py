@@ -17,7 +17,7 @@ def model_base():
 @pytest.fixture
 def history():
     wm = WorldModel(width=5, height=5)
-    output = History(wm)
+    output = History(wm, lambda *args: None)
     return output
 
 

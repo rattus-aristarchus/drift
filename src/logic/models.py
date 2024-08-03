@@ -84,7 +84,8 @@ class WorldModel(EffectModel):
     deviation_50: float = 1
 
     map: str = ""
-    cells: dict = field(default_factory=lambda: {})
+    # инструкции для наполнения регионов
+    cell_instructions: dict = field(default_factory=lambda: {})
 
 
 @dataclasses.dataclass

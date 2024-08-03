@@ -4,21 +4,7 @@ height: 14
 mean_temp: 7
 deviation_50: 1
 effects: [climate]
-cells:
-  - location: [1, 1]
-    pops:
-      - name: "steppe_herders"
-        size: 1000
-    resources:
-      - name: "sheep"
-        size: 10000
-  - location: [7, 8]
-    pops:
-      - name: "mountain_herders"
-        size: 500
-    resources:
-      - name: "yaks"
-        size: 2500
+cell_instructions:
   - location: [17, 7]
     pops:
       - name: "northern_farmers"
@@ -26,6 +12,7 @@ cells:
     resources:
       - name: "millet"
         size: 50000
+    watch: True
   - location: [21, 9]
     pops:
       - name: "rice_growers"
@@ -33,3 +20,4 @@ cells:
     resources:
       - name: "rice"
         size: 50000
+    watch: True

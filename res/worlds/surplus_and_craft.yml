@@ -4,7 +4,7 @@ height: 14
 mean_temp: 7
 deviation_50: 1
 effects: [climate]
-cells:
+cell_instructions:
   - location: [17, 7]
     pops:
       - name: "northern_farmers"

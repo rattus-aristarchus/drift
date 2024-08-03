@@ -11,11 +11,12 @@ class History:
     каждый из которых соответствует состоянию модели на определенный момент времени.
     """
 
-    def __init__(self, world_model):
+    def __init__(self, world_model, write_output):
         self.past_grids = []
         self.turn = 0
         self.world_model = world_model
         self.effects = []
+        self.write_output = write_output
 
     def current_state(self):
         return self.past_grids[-1]
@@ -45,7 +46,7 @@ def do_turn(history):
 
     _do_effects(history, new_grid, old_grid)
 
-    _write_output(new_grid)
+    history.write_output(new_grid)
 
 
 def _create_new_turn_grid(history):
@@ -69,24 +70,16 @@ def _do_effects(history, new_grid, old_grid):
     new_grid.do_effects(grid_buffer)
 
 
-def _write_output(new_grid):
-    # this is bad
-    output = Output()
-    for cell in new_grid.watched_cells:
-        output.write_cell(cell)
-    output.write_end_of_turn()
-
-
-def create_with_premade_map(world_model, model_base):
-    result = History(world_model)
+def create_with_premade_map(world_model, model_base, write_output):
+    result = History(world_model, write_output)
     first_grid = grids.create_grid_from_model(world_model.map, model_base, world_model.age)
     result.past_grids.append(first_grid)
     result.effects = list(world_model.effects)
     return result
 
 
-def create_with_generated_map(world_model, model_base):
-    result = History(world_model)
+def create_with_generated_map(world_model, model_base, write_output):
+    result = History(world_model, write_output)
     first_grid = grids.create_grid(world_model.width, world_model.height, model_base.get_biome('basic'))
     result.past_grids.append(first_grid)
     result.effects = list(world_model.effects)

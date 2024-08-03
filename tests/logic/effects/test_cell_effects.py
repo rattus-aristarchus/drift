@@ -26,7 +26,7 @@ def grid_buffer(steppe_model):
     old_grid = grids.create_grid(1, 1, steppe_model)
 
     world_model = WorldModel()
-    history = History(world_model)
+    history = History(world_model, lambda *args: None)
 
     result = GridBuffer(grid, old_grid, history)
     return result

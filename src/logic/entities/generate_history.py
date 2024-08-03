@@ -2,29 +2,30 @@ import random
 from kivy.logger import Logger
 
 from src.logic.entities import histories, agents
-from src.logic.entities.agents import Resource
+from src.logic.models import WorldModel, ModelStorage
 
 
-def do(world_model, model_base):
+def do(world_model: WorldModel, model_storage: ModelStorage, write_output):
     """
     This function is called once, at the beginning, creating the history
     object with the first grid.
     :param world_model: a model from which to generate the first grid
-    :param model_base: a base from which all entities in history will be generated
+    :param model_storage: a base from which all entities in history will be generated
     :return: a history object
+    :write_output: a callback to write a grid to disk
     """
 
     if world_model.map != "":
-        history = histories.create_with_premade_map(world_model, model_base)
+        history = histories.create_with_premade_map(world_model, model_storage, write_output)
     else:
-        history = histories.create_with_generated_map(world_model, model_base)
+        history = histories.create_with_generated_map(world_model, model_storage, write_output)
 
     grid = history.current_state()
 
-    for cell_dict in world_model.cells:
+    for cell_dict in world_model.cell_instructions:
         # the world model contains a list of instructions for
         # populating cells
-        _do_populate_instruction(cell_dict, grid, model_base)
+        _do_populate_instruction(cell_dict, grid, model_storage)
 
     return history
 
