@@ -2,8 +2,10 @@ import math
 from kivy import Logger
 
 from src.logic.entities import agents
+from src.logic.models import ModelStorage
 
-model_base = None
+# эта штука выставляется статически при запуске программы
+model_base: ModelStorage = None
 
 
 def get_structure(name, cell):
@@ -12,25 +14,6 @@ def get_structure(name, cell):
         if structure.name == name:
             result = structure
             break
-    return result
-
-
-def has_neighbor_sootnomad(neighbors):
-    for next in neighbors:
-        nomads = next.get_pop("коптеводы")
-        if nomads is not None:
-            return True
-    return False
-
-
-def sum_for_cells(pop_name, cells):
-    result = 0
-    for neighbor in cells:
-        pop = neighbor.get_pop(pop_name)
-        if pop is not None:
-            Logger.debug("found neighboring " + pop.name + ", numbering " + str(pop.size) +
-                         " in cell x " + str(neighbor.x) + ", y " + str(neighbor.y))
-            result += pop.size
     return result
 
 
@@ -199,8 +182,6 @@ def growth_with_capacity(number, capacity, growth):
     else:
         result = - round((number - capacity) / 2)
     return result
-
-
 
 
 def get_cap_for_pop(pop, cell):

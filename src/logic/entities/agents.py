@@ -206,6 +206,25 @@ def set_ownership(agent, resource, amount=None):
             agent.owned_resources.append(resource)
 
 
+def add_ownership(agent, resource, amount):
+    if agent.name not in resource.owners.keys():
+        resource.owners[agent.name] = 0
+    resource.owners[agent.name] += amount
+
+    if resource not in agent.owned_resources:
+        agent.owned_resources.append(resource)
+
+
+def subtract_ownership(agent, resource, amount):
+    current = resource.owners[agent.name]
+
+    if current <= amount:
+        resource.owners.pop(agent.name, None)
+        agent.owned_resources.remove(resource)
+    else:
+        resource.owners[agent.name] -= amount
+
+
 def remove_ownership(population, resource):
     set_ownership(population, resource, 0)
 

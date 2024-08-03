@@ -2,7 +2,7 @@ steppe_herders:
     id: "steppe_herders"
     name: "степные скотоводы"
     sapient: True
-    type: "producer"
+    type: "producers"
     yearly_growth: 0.1
     needs:
         - type: "food"
@@ -12,7 +12,7 @@ mountain_herders:
     id: "mountain_herders"
     name: "горные скотоводы"
     sapient: True
-    type: "producer"
+    type: "producers"
     yearly_growth: 0.1
     needs:
         - type: "food"
@@ -22,26 +22,30 @@ northern_farmers:
     id: "northern_farmers"
     name: "крестьяне севера"
     sapient: True
-    type: "producer"
+    type: "producers"
     yearly_growth: 0.1
     needs:
         - type: "food"
           per_1000: 1000
+        - type: "tools"
+          per_1000: 1000
     produces: ["millet", "basic_copper_tools"]
     looks_for: ["millet_land"]
-    effects: [produce, do_food, producer_grow, producer_mig]
+    effects: [produce, do_food, producer_grow, producer_mig, social_mobility, pop_to_market]
 rice_growers:
     id: "rice_growers"
     name: "рисоводы"
     sapient: True
-    type: "producer"
+    type: "producers"
     yearly_growth: 0.1
     needs:
         - type: "food"
           per_1000: 1000
+        - type: "tools"
+          per_1000: 1000
     produces: ["rice", "basic_copper_tools"]
     looks_for: ["rice_land"]
-    effects: [produce, do_food, producer_grow, producer_mig]
+    effects: [produce, do_food, producer_grow, producer_mig, social_mobility, pop_to_market]
 blacksmiths:
     id: "blacksmiths"
     name: "кузнецы"
@@ -51,3 +55,6 @@ blacksmiths:
     needs:
         - type: "food"
           per_1000: 1000
+    produces: ["advanced_copper_tools"]
+    sells: ["advanced_copper_tools"]
+    effects: [produce, pop_to_market]

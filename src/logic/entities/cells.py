@@ -21,7 +21,6 @@ class Biome(Entity):
     # сколько популяций или ресурсов может вместить данная клетка:
     capacity: dict = dataclasses.field(default_factory=lambda: {})
 
-
     def __str__(self):
         description = self.name
         if len(self.capacity) > 0:
@@ -50,6 +49,7 @@ class Cell(Entity):
     effects: list = field(default_factory=lambda: [])
     resources: list = field(default_factory=lambda: [])
     biome: Biome = None
+    markets: list = field(default_factory=lambda: [])
 
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:
@@ -66,6 +66,9 @@ class Cell(Entity):
             if resource.last_copy:
                 resource.do_effects(cell_buffer, grid_buffer)
 
+        for market in self.markets:
+            market.do_effects(cell_buffer, grid_buffer)
+
     def get_pop(self, name):
         for pop in self.pops:
             if pop.name == name:
@@ -77,6 +80,12 @@ class Cell(Entity):
             if res.name == name:
                 return res
         return None
+
+    def has_res(self, type):
+        for res in self.resources:
+            if res.type == type:
+                return True
+        return False
 
 
 def migrate_and_merge(pop, start, destination):
@@ -121,8 +130,10 @@ def copy_cell_without_structures(old_cell):
         new_res.owners = {}
         for owner_name, amount in old_owners.items():
             new_owner = get_pop(owner_name, new_cell.pops)
-            agents.set_ownership(new_owner, res, amount)
+            agents.set_ownership(new_owner, new_res, amount)
 
+    # рынкам ничего от прошлой итерации сохранять не нужно
+    new_cell.markets = []
     return new_cell
 
 

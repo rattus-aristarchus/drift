@@ -5,7 +5,7 @@ get_effect.
 """
 from src.logic.buffers import GridBuffer
 from src.logic.effects import world_effects, cell_effects, structure_effects
-from src.logic.effects.agent_effects import migration, production, consumption
+from src.logic.effects.agent_effects import migration, production, consumption, social
 
 
 def get_effect(func_name):
@@ -41,20 +41,36 @@ def basic_agriculture(pop, cell_buffer, grid_buffer):
 
 
 def produce(pop, cell_buffer, grid_buffer):
-    production.produce(pop, cell_buffer.cell)
+    production.produce(pop, cell_buffer.cell, grid_buffer)
 
 
 def do_food(pop, cell_buffer, grid_buffer):
     consumption.do_food(pop, cell_buffer, grid_buffer)
 
 
+def social_mobility(pop, cell_buffer, grid_buffer):
+    social.social_mobility(pop, cell_buffer.cell)
+
+
+def exchange(market, cell_buffer, grid_buffer):
+    structure_effects.exchange(market)
+
+
+def pop_to_market(pop, cell_buffer, grid_buffer):
+    social.sell(pop, cell_buffer.cell)
+    social.buy(pop, cell_buffer.cell)
+
 """
 Эффекты ресурсов
 """
 
 
-def default_grow(res, cell_buffer, grid_buffer):
-    consumption.resource_grow(res, cell_buffer.cell)
+def grow_natural(res, cell_buffer, grid_buffer):
+    consumption.natural_growth(res, cell_buffer.cell)
+
+
+def grow(res, cell_buffer, grid_buffer):
+    consumption.growth(res)
 
 
 """

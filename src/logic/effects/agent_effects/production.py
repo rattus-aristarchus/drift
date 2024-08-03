@@ -64,17 +64,17 @@ def _get_max_effort(product_model, ttl_labor, cell):
         return if_infinite_inputs
 
 
-def produce(pop, cell):
+def produce(pop, cell, grid_buffer):
     for output_model in pop.model.produces:
         if not output_model:
             pass
         if output_model.type == "food":
-            natural_resource_exploitation(pop, output_model, cell)
+            natural_resource_exploitation(pop, output_model, cell, grid_buffer)
         elif output_model.type == "tools":
-            natural_resource_exploitation(pop, output_model, cell)
+            natural_resource_exploitation(pop, output_model, cell, grid_buffer)
 
 
-def natural_resource_exploitation(pop, product_model, cell):
+def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
     land_name = product_model.inputs[0].id
     old_land = cell.last_copy.get_res(land_name)
     # без земли делать нечего
@@ -89,26 +89,60 @@ def natural_resource_exploitation(pop, product_model, cell):
         if labor_per_land < old_land.model.min_labor:
             labor_per_land = old_land.model.min_labor
         land_used = people_num / labor_per_land
-        limit = old_land.model.max_labor
+        tech_factor = get_tech_factor(pop.last_copy)
+        limit = _resource_productivity(old_land, grid_buffer, tech_factor)
 
         output = hyperbolic_function(limit, labor_per_land, land_used)
     else:
         land_size = 0
         land_used = 0
+        limit = 0
         output = 0
+        tech_factor = 0
 
     product = util.get_or_create_res(product_model.id, cell)
-    product.size = output
+    product.size += output
     agents.set_ownership(pop, product)
 
     land = cell.get_res(land_name)
     agents.set_ownership(pop, land, land_used)
 
     Logger.debug(f"{__name__}: {pop.name} of size {str(people_num)} with {str(round(land_used))} "
-                 f"{land_name} "
-                 f"(of total {land_size}) produced {str(output)} {product_model.id}")
+                 f"{land_name} (of total {land_size}) and {str(limit)} productivity cap (with "
+                 f"{str(tech_factor)} tech factor) produced "
+                 f"{str(output)} {product_model.id}")
 
 
+# вот тут вопрос. стоит ли различать трудосберегающие технологии
+# и трудоинтенсивные технологии? первое можно преставить как
+# коэффициент, который тупо умножает общий результат, второе -
+# как увеличение limit
 def hyperbolic_function(limit, labor_per_land, land_used):
     output_per_land = - limit / (labor_per_land + 1) + limit
     return round(output_per_land * land_used)
+
+
+def _resource_productivity(resource, grid_buffer, tech_factor):
+    result = resource.model.max_labor * tech_factor
+
+    if resource.type == "land":
+        deviation_factor = grid_buffer.temp_deviation / grid_buffer.history.world_model.deviation_50
+        if deviation_factor >= 0:
+            result *= (1 + deviation_factor)
+        else:
+            result *= (1 / 1 - deviation_factor)
+
+    return result
+
+
+def get_tech_factor(pop):
+    result = 1
+    for resource in pop.owned_resources:
+        if resource.type == "tools":
+            availability = resource.size / pop.size
+            if availability > 1:
+                availability = 1
+            # если производительность инструмента 2, и он есть у 50%
+            # населения, то производительность должна вырости в 1.5 раза
+            result += (resource.model.productivity - 1) * availability
+    return result

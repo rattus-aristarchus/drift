@@ -3,7 +3,7 @@ width: 26
 height: 14
 mean_temp: 7
 deviation_50: 1
-effects: [climate]
+effects: []
 cell_instructions:
   - location: [17, 7]
     pops:
@@ -14,6 +14,7 @@ cell_instructions:
         size: 50000
       - name: "surface_copper"
         size: 1000
+    watch: True
   - location: [21, 9]
     pops:
       - name: "rice_growers"
@@ -23,3 +24,4 @@ cell_instructions:
         size: 50000
       - name: "surface_copper"
         size: 1000
+    watch: True
