@@ -1,4 +1,4 @@
-from src.logic.effects.util import sum_for_cells, get_neighbors
+from src.logic.effects.util import get_neighbors
 
 # TODO: both these buffers obviously need to be re-written, the calculations shouldn't be hard-coded
 

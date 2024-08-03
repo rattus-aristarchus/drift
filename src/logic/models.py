@@ -24,6 +24,7 @@ class PopModel(EffectModel):
     yearly_growth: float = 0.0
     # loaded as strings, replaced with resource_model
     produces: list = field(default_factory=lambda: [])
+    sells: list = field(default_factory=lambda: [])
     looks_for: list = field(default_factory=lambda: [])
     needs: list = field(default_factory=lambda: [])
 
@@ -43,6 +44,7 @@ class ResourceModel(EffectModel):
     min_labor: int = 0
     max_labor: int = 0
     max_labor_share: float = 0.0
+    productivity: float = 1.0
 
 
 @dataclasses.dataclass

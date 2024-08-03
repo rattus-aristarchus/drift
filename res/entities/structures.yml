@@ -2,3 +2,6 @@ settlement:
     id: "settlement"
     name: "поселение"
     effects: [settlement]
+market:
+    id: "market"
+    effects: [exchange]

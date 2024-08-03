@@ -3,7 +3,7 @@
     can_be_empty: True
     accept_type: "pop"
     accept_key: "type"
-    accept_values: "producer"
+    accept_values: "producers"
 1:
     name: "surplus"
     can_be_empty: True

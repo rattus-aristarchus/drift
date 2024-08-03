@@ -7,7 +7,8 @@
 
 from random import Random
 
-from src.logic.entities import cells
+from src.logic.entities import cells, agents
+from src.logic.entities.structures import Structure, Market
 
 
 def get_effect(func_name):
@@ -32,3 +33,45 @@ def settlement(structure, grid_buffer):
 
     # TODO: so here we obviously need a more fundamental mechanism for
     # how the farmers would expand into more territory
+
+
+def exchange(market: Market):
+    # для каждого продукта существует отдельный рынок
+
+    # подразумевается, что все покупатели приходят
+    # с одним товаром - surplus
+    ttl_demand = 0
+    for purchase in market.purchases:
+        ttl_demand += purchase.amount
+
+    if ttl_demand <= 0 or not market.sale or market.sale.amount <= 0:
+        return
+
+    price = ttl_demand / market.sale.amount
+    market.price = price
+
+    for purchase in market.purchases:
+        if purchase.amount <= 0:
+            continue
+
+        agents.add_ownership(
+            purchase.seller,
+            market.product,
+            round(purchase.amount / price)
+        )
+        agents.subtract_ownership(
+            purchase.seller,
+            market.exchange,
+            purchase.amount
+        )
+
+    agents.add_ownership(
+        market.sale.seller,
+        market.exchange,
+        round(market.sale.amount * price)
+    )
+    agents.subtract_ownership(
+        market.sale.seller,
+        market.product,
+        market.sale.amount
+    )

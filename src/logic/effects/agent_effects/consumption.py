@@ -1,5 +1,6 @@
 from kivy import Logger
 from src.logic.effects import util
+from src.logic.entities import agents
 
 """
 def producer_grow(pop, cell_buffer, grid_buffer):
@@ -10,11 +11,23 @@ def producer_grow(pop, cell_buffer, grid_buffer):
 """
 
 
-def resource_grow(res, cell):
+def natural_growth(res, cell):
     num = res.last_copy.size
     capacity = cell.last_copy.biome.get_capacity(res.name)
 
     res.size += util.growth_with_capacity(num, capacity, res.yearly_growth)
+
+
+def growth(res):
+    old_res = res.last_copy
+    growth = old_res.model.yearly_growth
+    num = old_res.size
+
+    res.size += round(num * growth)
+
+    for owner, amount in old_res.owners.items():
+        res.owners[owner] += round(amount * growth)
+        # TODO: здесь из-за округления суммы будут не сходиться
 
 
 def producer_grow(pop, cell_buffer, grid_buffer):
@@ -57,6 +70,7 @@ def do_food(pop, cell_buffer, grid_buffer):
 
     surplus_obj = util.get_or_create_res('surplus', cell_buffer.cell)
     surplus_obj.size += surplus
+    agents.add_ownership(pop, surplus_obj, surplus)
 
     food_need = pop.get_need("food")
     food_need.actual = fulfilment * 1000

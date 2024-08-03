@@ -118,6 +118,13 @@ def _update_model_links(model_storage: ModelStorage):
             outputs.append(output)
         pop_model.produces = outputs
 
+        sells = []
+        for res_name in pop_model.sells:
+            sell_model = model_storage.get_res(res_name)
+            _check(sell_model, pop_model.id, res_name)
+            sells.append(sell_model)
+        pop_model.sells = sells
+
         needs = []
         for need_dict in pop_model.needs:
             need = NeedModel(**need_dict)

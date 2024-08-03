@@ -19,13 +19,12 @@ def temp_change(cell, grid_buffer):
     if cell.biome.model.moisture == "dry":
         deviation_factor = -deviation_factor
 
-    # deviation_50 means at that deviation the capacities have to be reduced/increased by 50%
+    # deviation_50 means the capacities have to be reduced/increased by 50%
     # positive deviation_factor - too hot; negative - too cold
     if deviation_factor > 0:
         multiplier = 1 + deviation_factor / (deviation_factor + 1)
     else:
         multiplier = 1 + deviation_factor / (1 - deviation_factor)
-
 
     # multiplier is how much the capacities are changed
     for name, mean_cap in cell.biome.model.capacity.items():
