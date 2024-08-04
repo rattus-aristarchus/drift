@@ -1,16 +1,21 @@
 import pytest
 
+from src.logic.effects import effects, util
 from src.logic.entities import grids
 from src.logic.entities.agents import Population
 from src.logic.entities.histories import History
-from src.logic.models import ModelStorage, BiomeModel, WorldModel
+from src.logic.models import ModelStorage, BiomeModel, WorldModel, StructureModel
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def model_base():
     result = ModelStorage()
     biome_model = BiomeModel("test_biome")
     result.biomes.append(biome_model)
+    market_model = StructureModel("market")
+    market_model.effects.append(effects.exchange)
+    result.structures.append(market_model)
+    util.model_base = result
     return result
 
 

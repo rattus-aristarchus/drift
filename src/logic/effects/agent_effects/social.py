@@ -10,6 +10,7 @@ def social_mobility(pop, cell):
             destination=cell
         )
         blacksmiths.size = 1000
+        pop.size -= 1000
 
 
 def buy(pop, cell):
@@ -17,13 +18,13 @@ def buy(pop, cell):
 
     for need in old_pop.needs:
         if need.actual < need.per_1000:
-            if need.model.resource:
-                market = get_market(need.model.resource.id, cell)
-            else:
-                market = get_or_create_market_by_type(need.model.type, cell)
-            if market:
-                surplus, amount = available_surplus(pop)
-                if surplus and amount > 0:
+            surplus, amount = available_surplus(pop)
+            if surplus and amount > 0:
+                if need.model.resource:
+                    market = get_market(need.model.resource.id, cell)
+                else:
+                    market = get_or_create_market_by_type(need.model.type, cell)
+                if market:
                     market.exchange = surplus
                     market.purchases.append(
                         Commodity(pop, amount)

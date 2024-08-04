@@ -1,13 +1,14 @@
 import copy
 import dataclasses
 from typing import List
-
 import pytest
-
+from src.logic.effects import util
+from src.logic.effects.agent_effects import social
 from src.logic.entities import agents
-from src.logic.entities.agents import Population, Resource
+from src.logic.entities.agents import Population, Resource, Need
 from src.logic.entities.structures import Structure
 from src.logic.entities.cells import Cell
+from src.logic.models import NeedModel, ModelStorage
 
 
 def sample_effect():
@@ -89,3 +90,34 @@ def test_set_ownership_to_full():
     assert len(res.owners) == 1
     assert pop.name in res.owners.keys()
     assert res.owners["test_pop"] == 100
+
+
+def test_buy_happy_path(model_base):
+    buyer = Population()
+    old_buyer = Population()
+    buyer.last_copy = old_buyer
+    need_model = NeedModel(
+        id="test_need",
+        type="test_commodity"
+    )
+    need = Need(
+        per_1000=1000,
+        actual=500
+    )
+    need.model = need_model
+    old_buyer.needs.append(
+        need
+    )
+    surplus = Resource(
+        name="surplus",
+        size=500
+    )
+    agents.set_ownership(buyer, surplus)
+    cell = Cell()
+
+    social.buy(buyer, cell)
+
+    assert len(cell.markets) == 1
+    assert cell.markets[0].exchange is not None
+    assert len(cell.markets[0].purchases) == 1
+    assert cell.markets[0].purchases[0].amount == 500
