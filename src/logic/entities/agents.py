@@ -35,15 +35,14 @@ class Population(Agent):
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
-    # from 0 to 1:
-    hunger: float = 0
 
-    structures: list = field(default_factory=lambda: [])
+  #  structures: list = field(default_factory=lambda: [])
     owned_resources: list = field(default_factory=lambda: [])
-    # what fraction of labor is spent on what
-    effort: dict = field(default_factory=lambda: {})
-    # how much surplus did each production net
-    surplus: dict = field(default_factory=lambda: {})
+
+    # what fraction of labor is spent on what (not used right now)
+  #  effort: dict = field(default_factory=lambda: {})
+    # how much surplus did each production net (not used right now)
+  #  surplus: dict = field(default_factory=lambda: {})
 
     needs: list = field(default_factory=lambda: [])
 
@@ -54,7 +53,7 @@ class Population(Agent):
             title = f"{self.name} ({self.type})"
         description = (
             f"{title}: {self.size}{os.linesep}"
-            f"возраст: {self.age}; голод: {self.hunger}")
+            f"возраст: {self.age}")
         return description
 
     def get_need(self, need_type="", need_id=""):

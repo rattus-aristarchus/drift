@@ -108,15 +108,13 @@ def add_territory(cell, structure):
     if cell not in structure.territory:
         structure.territory.append(cell)
 
-
+# тут такой момент:
+# структуры могут принадлежать нескольким клеткам; так что их
+# правильнее копировать в grid
 def copy_cell_without_structures(old_cell):
     new_cell = src.logic.entities.entities.copy_entity(old_cell)
     if old_cell.biome:
         new_cell.biome = copy_biome(old_cell.biome)
-
-    # тут такой момент:
-    # структуры могут принадлежать нескольким клеткам; так что их
-    # правильнее копировать в grid
 
     new_cell.pops = []
     for old_pop in old_cell.pops:
