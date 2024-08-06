@@ -1,13 +1,11 @@
 import dataclasses
 import os
 from dataclasses import field
-
-import src.logic.entities.entities
+from src.logic.entities import entities
 from src.logic import util
 from src.logic.entities import agents
-from src.logic.entities.entities import Entity
+from src.logic.entities.entities import Entity, Recurrent
 from src.logic.models import BiomeModel
-
 from kivy.logger import Logger
 
 
@@ -37,19 +35,19 @@ class Biome(Entity):
 
 
 @dataclasses.dataclass
-class Cell(Entity):
+class Cell(Entity, Recurrent):
     """
     Клетка карты.
     """
 
     x: int = 0
     y: int = 0
-    pops: list = field(default_factory=lambda: [])
-    structures: list = field(default_factory=lambda: [])
     effects: list = field(default_factory=lambda: [])
-    resources: list = field(default_factory=lambda: [])
-    biome: Biome = None
     markets: list = field(default_factory=lambda: [])
+    pops: list = entities.relations_list()
+    structures: list = entities.relations_list()
+    resources: list = entities.relations_list()
+    biome: Biome = None
 
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:
@@ -68,6 +66,11 @@ class Cell(Entity):
 
         for market in self.markets:
             market.do_effects(cell_buffer, grid_buffer)
+
+    def on_copy(self, original, all_recurrents):
+        # рынкам ничего от прошлой итерации сохранять не нужно
+        self.markets = []
+        return all_recurrents
 
     def get_pop(self, name):
         for pop in self.pops:
@@ -108,43 +111,12 @@ def add_territory(cell, structure):
     if cell not in structure.territory:
         structure.territory.append(cell)
 
-# тут такой момент:
-# структуры могут принадлежать нескольким клеткам; так что их
-# правильнее копировать в grid
-def copy_cell_without_structures(old_cell):
-    new_cell = src.logic.entities.entities.copy_entity(old_cell)
-    if old_cell.biome:
-        new_cell.biome = copy_biome(old_cell.biome)
-
-    new_cell.pops = []
-    for old_pop in old_cell.pops:
-        new_pop = agents.copy_pop_without_owned(old_pop, new_cell)
-        new_pop.owned_resources = []
-
-    new_cell.resources = []
-    for res in old_cell.resources:
-        new_res = agents.copy_res_without_owners(res, new_cell)
-        old_owners = new_res.owners
-        new_res.owners = {}
-        for owner_name, amount in old_owners.items():
-            new_owner = get_pop(owner_name, new_cell.pops)
-            agents.set_ownership(new_owner, new_res, amount)
-
-    # рынкам ничего от прошлой итерации сохранять не нужно
-    new_cell.markets = []
-    return new_cell
-
 
 def get_pop(name, pop_list):
     for check in pop_list:
         if check.name == name:
             return check
     return None
-
-
-def copy_biome(old_biome):
-    result = src.logic.entities.entities.copy_entity(old_biome)
-    return result
 
 
 def _find_structure(name, cell):

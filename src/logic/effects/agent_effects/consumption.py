@@ -56,16 +56,16 @@ def do_food(pop, cell_buffer, grid_buffer):
     needs = pop.last_copy.size
 
     if pop.last_copy.age == 0:
-        fulfilment = 1
+        sated = 1
         surplus = 0
     elif needs < ttl_food:
-        fulfilment = 1
+        sated = 1
         surplus = ttl_food - needs
     elif ttl_food < 0:
-        fulfilment = 0
+        sated = 0
         surplus = 0
     else:
-        fulfilment = ttl_food / needs
+        sated = ttl_food / needs
         surplus = 0
 
     surplus_obj = util.get_or_create_res('surplus', cell_buffer.cell)
@@ -73,7 +73,7 @@ def do_food(pop, cell_buffer, grid_buffer):
     agents.add_ownership(pop, surplus_obj, surplus)
 
     food_need = pop.get_need("food")
-    food_need.actual = fulfilment * 1000
+    food_need.actual = sated * 1000
 
     Logger.debug(f"{__name__}: {pop.name} ate {ttl_food - surplus}, "
-                 f"surplus is {str(surplus)}, hunger fulfilled by {str(round(fulfilment, 2))} (0-1)")
+                 f"surplus is {str(surplus)}, satiation is {str(round(sated, 2))} (0-1)")

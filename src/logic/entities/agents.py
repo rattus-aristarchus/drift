@@ -3,7 +3,7 @@ import os
 from dataclasses import field
 from typing import List
 from src.logic.entities import entities
-from src.logic.entities.entities import Entity
+from src.logic.entities.entities import Entity, Recurrent
 from src.logic.models import ResourceModel, PopModel, NeedModel
 
 
@@ -14,7 +14,7 @@ class Agent(Entity):
     вычисляются в каждую итерацию системы.
     """
 
-    effects: List = field(default_factory=lambda: [])
+    effects: list = field(default_factory=lambda: [])
 
     def do_effects(self, cell_buffer=None, grid_buffer=None):
         """
@@ -25,7 +25,7 @@ class Agent(Entity):
 
 
 @dataclasses.dataclass
-class Population(Agent):
+class Population(Agent, Recurrent):
     """
     Популяция. Ну блин, когда у нас исчислимое нечто, и оно что-то делает.
     """
@@ -36,15 +36,14 @@ class Population(Agent):
     type: str = ""
     yearly_growth: float = 0.0
 
-  #  structures: list = field(default_factory=lambda: [])
-    owned_resources: list = field(default_factory=lambda: [])
+    owned_resources: list = entities.relations_list()
 
     # what fraction of labor is spent on what (not used right now)
   #  effort: dict = field(default_factory=lambda: {})
     # how much surplus did each production net (not used right now)
   #  surplus: dict = field(default_factory=lambda: {})
 
-    needs: list = field(default_factory=lambda: [])
+    needs: list = entities.deep_copy_list()
 
     def __str__(self):
         if self.type == "":
@@ -83,7 +82,7 @@ class Need(Entity):
 
 
 @dataclasses.dataclass
-class Resource(Agent):
+class Resource(Agent, Recurrent):
     """
     Ресурс. То, что используют популяции; то, что может быть собственностью;
     то, чего может нехватать.
@@ -142,27 +141,13 @@ def create_pop(model: PopModel, destination=None):
 
 def create_need(model: NeedModel):
     result = Need(
-        per_1000=model.per_1000
+        per_1000=model.per_1000,
+        # если не выставить actual, то нулевой год всегда
+        # будет адом
+        actual=model.per_1000
     )
     result.model = model
     return result
-
-
-def copy_pop_without_owned(pop, destination):
-    """
-    The copy of the pop refers to the same structures
-    as the old one.
-    """
-
-    new_pop = entities.copy_entity(pop)
-    destination.pops.append(new_pop)
-    return new_pop
-
-
-def copy_res_without_owners(res, destination):
-    copy = entities.copy_entity(res)
-    destination.resources.append(copy)
-    return copy
 
 
 def create_resource(model: ResourceModel, destination=None, group=None):

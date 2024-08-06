@@ -49,6 +49,7 @@ class ResourceModel(EffectModel):
 
 @dataclasses.dataclass
 class NeedModel(Model):
+
     resource: ResourceModel = None
     type: str = ""
     per_1000: int = 0

@@ -5,22 +5,22 @@ from typing import List
 from src.logic import util
 from src.logic.entities import entities
 from src.logic.entities.agents import Agent, Resource
-from src.logic.entities.entities import Entity
+from src.logic.entities.entities import Entity, Recurrent
 from src.logic.models import StructureModel, ResourceModel
 
 
 @dataclasses.dataclass
-class Structure(Agent):
+class Structure(Agent, Recurrent):
     """
     Социальные структуры, состоящие из нескольких
     популяций / территорий (города, государства, рынки).
     """
 
     effects: list = field(default_factory=lambda: [])
-    pops: list = field(default_factory=lambda: [])
+    pops: list = entities.relations_list()
     # a list of cells
-    territory: list = field(default_factory=lambda: [])
-    resources: list = field(default_factory=lambda: [])
+    territory: list = entities.relations_list()
+    resources: list = entities.relations_list()
 
     def do_effects(self, cell_buffer=None, grid_buffer=None):
         for func in self.effects:
@@ -78,36 +78,3 @@ def create_structure(model: StructureModel, destination=None, grid=None):
     if grid:
         grid.structures.append(result)
     return result
-
-
-def copy_structure(structure, destination=None, grid=None):
-    result = entities.copy_entity(structure)
-
-    if destination:
-        destination.structures.append(result)
-        result.territory.append(destination)
-
-    if grid:
-        grid.structures.append(result)
-
-        # what was copied was entities from the former
-        # iteration of the grid. now, we have to find
-        # their equivalents in the next iteration
-        territories = []
-        for territory in result.territory:
-            territories.append(territory.next_copy)
-        result.territory = territories
-
-        pops = []
-        for pop in result.pops:
-            pops.append(pop.next_copy)
-            pop.next_copy.structures.append(result)
-        result.pops = pops
-
-        resources = []
-        for res in result.resources:
-            resources.append(res.next_copy)
-        result.resources = resources
-
-    return result
-
