@@ -1,5 +1,7 @@
 import sys
 from kivy import Logger
+
+import src.logic.entities.agents.agents
 from src.logic.effects import util
 from src.logic.entities import agents
 
@@ -102,10 +104,10 @@ def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
 
     product = util.get_or_create_res(product_model.id, cell)
     product.size += output
-    agents.set_ownership(pop, product)
+    src.logic.entities.agents.agents.set_ownership(pop, product)
 
     land = cell.get_res(land_name)
-    agents.set_ownership(pop, land, land_used)
+    src.logic.entities.agents.agents.set_ownership(pop, land, land_used)
 
     Logger.debug(f"{__name__}: {pop.name} of size {str(people_num)} with {str(round(land_used))} "
                  f"{land_name} (of total {land_size}) and {str(limit)} productivity cap (with "

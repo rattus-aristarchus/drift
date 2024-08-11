@@ -2,7 +2,7 @@ import pytest
 
 from src.logic.effects import effects, util
 from src.logic.entities import grids
-from src.logic.entities.agents import Population
+from src.logic.entities.agents.populations import Population
 from src.logic.entities.histories import History
 from src.logic.models import ModelStorage, BiomeModel, WorldModel, StructureModel
 

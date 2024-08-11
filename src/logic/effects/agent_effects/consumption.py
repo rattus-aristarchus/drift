@@ -1,4 +1,6 @@
 from kivy import Logger
+
+import src.logic.entities.agents.agents
 from src.logic.effects import util
 from src.logic.entities import agents
 
@@ -70,7 +72,7 @@ def do_food(pop, cell_buffer, grid_buffer):
 
     surplus_obj = util.get_or_create_res('surplus', cell_buffer.cell)
     surplus_obj.size += surplus
-    agents.add_ownership(pop, surplus_obj, surplus)
+    src.logic.entities.agents.agents.add_ownership(pop, surplus_obj, surplus)
 
     food_need = pop.get_need("food")
     food_need.actual = sated * 1000

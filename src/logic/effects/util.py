@@ -1,6 +1,7 @@
 import math
 from kivy import Logger
 
+import src.logic.entities.agents.resources
 from src.logic.entities import agents
 from src.logic.models import ModelStorage
 
@@ -48,7 +49,7 @@ def get_or_create_res(name, cell):
     check_res = cell.get_res(name)
     if check_res is None:
         model = model_base.get_res(name)
-        check_res = agents.create_resource(model, cell)
+        check_res = src.logic.entities.agents.resources.create_resource(model, cell)
     return check_res
 
 

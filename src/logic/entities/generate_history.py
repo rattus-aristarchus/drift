@@ -1,7 +1,9 @@
 import random
 from kivy.logger import Logger
 
+import src.logic.entities.agents.resources
 from src.logic.entities import histories, agents
+from src.logic.entities.agents import populations
 from src.logic.models import WorldModel, ModelStorage
 
 
@@ -78,7 +80,7 @@ def _populate_cell(cell, cell_dict, model_base):
     if 'pops' in cell_dict.keys():
         for pop_dict in cell_dict['pops']:
             pop_model = model_base.get_pop(pop_dict['name'])
-            pop = agents.create_pop(pop_model, cell)
+            pop = populations.create_pop(pop_model, cell)
             pop.size = pop_dict['size']
             Logger.debug(f"{__name__}: created pop " + pop.name +
                          " of size " + str(pop.size))
@@ -86,7 +88,7 @@ def _populate_cell(cell, cell_dict, model_base):
     if 'resources' in cell_dict.keys():
         for res_dict in cell_dict['resources']:
             model = model_base.get_res(res_dict['name'])
-            resource = agents.create_resource(model, cell)
+            resource = src.logic.entities.agents.resources.create_resource(model, cell)
             resource.size = res_dict['size']
             Logger.debug(f"{__name__}: created resource {resource.name}" +
                          f" of size {str(resource.size)}")

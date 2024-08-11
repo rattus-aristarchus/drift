@@ -2,12 +2,12 @@ import dataclasses
 from dataclasses import field
 from kivy import Logger
 
-import src.logic.entities.structures
-from src.logic import util
+from src.logic.entities.basic import recurrents
+import src.logic.entities.agents.structures
 from src.logic.buffers import CellBuffer
-from src.logic.entities import cells, agents, entities
-from src.logic.entities.entities import Entity, Recurrent
-from src.logic.entities.cells import Cell
+from src.logic.entities import cells
+from src.logic.entities.basic.entities import Entity
+from src.logic.entities.basic.recurrents import Recurrent
 from src.logic.models import GridModel, ModelStorage, CellModel
 
 
@@ -32,8 +32,8 @@ class Grid(Entity, Recurrent):
         # клетки "под наблюдением" - те, по которым мы
         # выводим временные ряды в csv, чтобы их потом
         # можно было отображать на графике
-    watched_cells: list = entities.relations_list() # list = field(default_factory=lambda: [])
-    structures: list = entities.relations_list() # list = field(default_factory=lambda: [])
+    watched_cells: list = src.logic.entities.basic.recurrents.relations_list() # list = field(default_factory=lambda: [])
+    structures: list = src.logic.entities.basic.recurrents.relations_list() # list = field(default_factory=lambda: [])
     state: GridState = None
 
     def cells_as_list(self):
@@ -46,7 +46,7 @@ class Grid(Entity, Recurrent):
         for x in range(0, self.width):
             self.cells[x] = {}
             for y in range(0, self.height):
-                new_cell, all_recurrents = entities.copy_recurrent_and_add_to_list(
+                new_cell, all_recurrents = src.logic.entities.basic.recurrents.copy_recurrent_and_add_to_list(
                     original.cells[x][y],
                     all_recurrents
                 )

@@ -1,7 +1,8 @@
 import pytest
 from src.logic.effects import util
 from src.logic.effects.agent_effects import production
-from src.logic.entities.agents import Population, Resource
+from src.logic.entities.agents.populations import Population
+from src.logic.entities.agents.resources import Resource
 from src.logic.models import ResourceModel
 
 

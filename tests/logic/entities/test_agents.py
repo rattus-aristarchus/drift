@@ -1,14 +1,11 @@
-import copy
-import dataclasses
-from typing import List
 import pytest
-from src.logic.effects import util
+
 from src.logic.effects.agent_effects import social
-from src.logic.entities import agents, entities
-from src.logic.entities.agents import Population, Resource, Need
-from src.logic.entities.structures import Structure
+from src.logic.entities.agents import agents
+from src.logic.entities.agents.populations import Population, Need
+from src.logic.entities.agents.resources import Resource
 from src.logic.entities.cells import Cell
-from src.logic.models import NeedModel, ModelStorage
+from src.logic.models import NeedModel
 
 
 def sample_effect():

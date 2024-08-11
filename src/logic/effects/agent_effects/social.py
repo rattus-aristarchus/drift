@@ -1,6 +1,7 @@
-from src.logic.entities import agents, structures
+from src.logic.entities import agents
+from src.logic.entities.agents import structures
 from src.logic.effects import util
-from src.logic.entities.structures import Market, Commodity
+from src.logic.entities.agents.structures import Commodity
 
 
 def social_mobility(pop, cell):

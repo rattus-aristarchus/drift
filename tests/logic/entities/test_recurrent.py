@@ -1,19 +1,44 @@
 import dataclasses
 
-from src.logic.entities import entities, cells
-from src.logic.entities.agents import Population, Need
+from src.logic.entities.agents.populations import Population, Need
+from src.logic.entities.basic import recurrents
 from src.logic.entities.cells import Cell, Biome
-from src.logic.entities.entities import Entity, Recurrent
-from src.logic.entities.grids import Grid
-from src.logic.entities.structures import Structure
+from src.logic.entities.basic.entities import Entity
+from src.logic.entities.basic.recurrents import Recurrent
+from src.logic.entities.agents.structures import Structure
 from src.logic.models import NeedModel
+
+
+@dataclasses.dataclass
+class TestRecurrent0(Recurrent):
+
+    mutual_reference: list = recurrents.relations_list()
+
+
+@dataclasses.dataclass
+class TestRecurrent1(Recurrent):
+
+    mutual_reference: list = recurrents.relations_list()
+
+
+def test_copy_mutual_reference():
+    recurrent_0 = TestRecurrent0()
+    recurrent_1 = TestRecurrent1()
+    recurrent_0.mutual_reference.append(recurrent_1)
+    recurrent_1.mutual_reference.append(recurrent_0)
+
+    copy_0, all_recurrents = recurrents.copy_recurrent_and_add_to_list(recurrent_0, {})
+
+    # проверяем, что у нас по взаимной ссылке метод не был выполнен
+    # для первоначального объекта по второму разу
+    assert len(all_recurrents) == 2
 
 
 @dataclasses.dataclass
 class TestClass(Recurrent):
 
-    deep_list: list = entities.deep_copy_list()
-    deep_dict: dict = entities.deep_copy_dict()
+    deep_list: list = recurrents.deep_copy_list()
+    deep_dict: dict = recurrents.deep_copy_dict()
 
 
 def test_deep_copy_list_element_is_different():
@@ -21,7 +46,7 @@ def test_deep_copy_list_element_is_different():
     test_ent = Entity(name="unchanged")
     test_obj.deep_list.append(test_ent)
 
-    copy, all_recurrents = entities.copy_recurrent_and_add_to_list(test_obj, {})
+    copy, all_recurrents = recurrents.copy_recurrent_and_add_to_list(test_obj, {})
     copy.deep_list[0].name = "changed"
 
     assert test_ent.name == "unchanged"
@@ -44,7 +69,7 @@ def test_copy_pop_is_different():
     pop.size = 5
 
 #    copy_pop = agents.copy_pop_without_owned(pop, sample_cell)
-    copy_pop, all_recurrents = entities.copy_recurrent_and_add_to_list(pop, {})
+    copy_pop, all_recurrents = recurrents.copy_recurrent_and_add_to_list(pop, {})
     copy_pop.needs.append(test_need_1)
     copy_pop.size += 1
     copy_pop.get_need(need_id="test_need_model").per_1000 = 60
@@ -69,7 +94,7 @@ def test_copy_cell_is_different():
 
     # act
 #    copy = cells.copy_cell_without_structures(cell_with_pop)
-    copy, all_recurrents = entities.copy_recurrent_and_add_to_list(cell, {})
+    copy, all_recurrents = recurrents.copy_recurrent_and_add_to_list(cell, {})
     copy.structures[0].name = "new_structure"
     copy.get_pop("test_pop").size += 1
     copy.biome.capacity["test_pop"] += 1
