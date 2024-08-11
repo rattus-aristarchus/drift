@@ -1,14 +1,11 @@
-import copy
-import dataclasses
-from typing import List
 import pytest
-from src.logic.effects import util
+
+import src.logic.entities.agents.agents
 from src.logic.effects.agent_effects import social
-from src.logic.entities import agents, entities
+from src.logic.entities import agents
 from src.logic.entities.agents import Population, Resource, Need
-from src.logic.entities.structures import Structure
 from src.logic.entities.cells import Cell
-from src.logic.models import NeedModel, ModelStorage
+from src.logic.models import NeedModel
 
 
 def sample_effect():
@@ -40,7 +37,7 @@ def test_set_ownership_to_zero():
     pop.owned_resources.append(res)
     res.owners[pop.name] = 100
 
-    agents.set_ownership(pop, res, 0)
+    src.logic.entities.agents.agents.set_ownership(pop, res, 0)
 
     assert len(pop.owned_resources) == 0
     assert len(res.owners) == 0
@@ -54,7 +51,7 @@ def test_set_ownership_to_full():
         size=100
     )
 
-    agents.set_ownership(pop, res)
+    src.logic.entities.agents.agents.set_ownership(pop, res)
 
     assert len(pop.owned_resources) == 1
     assert len(res.owners) == 1
@@ -82,7 +79,7 @@ def test_buy_happy_path(model_base):
         name="surplus",
         size=500
     )
-    agents.set_ownership(buyer, surplus)
+    src.logic.entities.agents.agents.set_ownership(buyer, surplus)
     cell = Cell()
 
     social.buy(buyer, cell)

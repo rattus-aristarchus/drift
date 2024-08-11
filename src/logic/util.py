@@ -5,10 +5,10 @@ from dataclasses import fields
 def copy_dataclass_with_collections(to_copy):
     """
     Функция dataclass.replace() копирует списки и словари
-    ссылкой. Нам нужны не ссылки, а копии, их делает этот
-    метод.
+    ссылкой. Нам нужны не ссылки, а копии, их делает эта
+    функция.
 
-    to_copy - копируемый объект; должен быть dataclass,
+    :to_copy: копируемый объект; должен быть dataclass,
     иначе все упадет и я не виноват.
     """
 

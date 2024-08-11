@@ -1,4 +1,4 @@
-import src.logic.entities.structures
+import src.logic.entities.agents.structures
 
 """
 Это из позапрошлогодней итерации модели, и давно не проверялось
@@ -228,7 +228,7 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
     # if not part of a community, farmers form a village
     if len(pop.structures) == 0:
         model = util.model_base.get_structure('settlement')
-        village = src.logic.entities.structures.create_structure(model, cell_buffer.cell)
+        village = src.logic.entities.agents.structures.create_structure(model, cell_buffer.cell)
         pop.structures.append(village)
         village.pops.append(pop)
 

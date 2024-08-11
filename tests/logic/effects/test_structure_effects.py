@@ -1,9 +1,7 @@
-import pytest
-
+import src.logic.entities.agents.agents
 from src.logic.effects import structure_effects
-from src.logic.entities import agents
 from src.logic.entities.agents import Resource, Population
-from src.logic.entities.structures import Market, Commodity
+from src.logic.entities.agents.structures import Market, Commodity
 
 
 def test_exchange_happy_path():
@@ -15,13 +13,13 @@ def test_exchange_happy_path():
         size=100,
         name="stuff"
     )
-    agents.set_ownership(seller, market.product, 100)
+    src.logic.entities.agents.agents.set_ownership(seller, market.product, 100)
     market.exchange = Resource(
         size=1000,
         name="surplus"
     )
-    agents.set_ownership(buyer_0, market.exchange, 500)
-    agents.set_ownership(buyer_1, market.exchange, 500)
+    src.logic.entities.agents.agents.set_ownership(buyer_0, market.exchange, 500)
+    src.logic.entities.agents.agents.set_ownership(buyer_1, market.exchange, 500)
     market.sale = Commodity(
         seller=seller,
         amount=100

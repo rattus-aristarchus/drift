@@ -1,9 +1,6 @@
 import pytest
 
-from src.logic.entities import cells, entities
-from src.logic.entities.agents import Population
-from src.logic.entities.structures import Structure
-from src.logic.entities.cells import Cell, Biome
+from src.logic.entities import cells
 from src.logic.models import BiomeModel, ResourceModel
 
 

@@ -1,8 +1,8 @@
 from kivy import Logger
 
-from src.logic.entities import grids, entities
-from src.logic.buffers import GridBuffer, CellBuffer
-from src.io.output import Output
+from src.logic.entities.basic import recurrents
+from src.logic.entities import grids
+from src.logic.buffers import GridBuffer
 
 
 class History:
@@ -51,7 +51,7 @@ def do_turn(history):
 
 def _create_new_turn_grid(history):
     old_grid = history.past_grids[-1]
-    new_grid, all_recurrents = entities.copy_recurrent_and_add_to_list(old_grid, {})
+    new_grid, all_recurrents = recurrents.copy_recurrent_and_add_to_list(old_grid, {})
     grids.increase_age(new_grid)
     history.past_grids.append(new_grid)
     return new_grid
