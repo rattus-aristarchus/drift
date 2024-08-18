@@ -1,4 +1,5 @@
 import csv
+import dataclasses
 import os
 import ast
 from typing import List
@@ -8,18 +9,56 @@ from kivy import Logger
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.logic.models import ModelStorage, PopModel, BiomeModel, StructureModel, WorldModel, EffectModel, GridModel, \
-    CellModel, ResourceModel, NeedModel
+    CellModel, ResourceModel, NeedModel, Model
 
 # the following methods are required to load effects into models
 get_effect = None
 
 
-def sort_model_links(model_storage):
+def sort_model_links(all_models):
     """
     For models that refer to other models, replace string pointers
     with actual links.
     """
-    pass
+
+    effect_models = []
+    for model in all_models:
+        if isinstance(model, EffectModel):
+            effect_models.append(model)
+
+    _replace_effects(effect_models, get_effect)
+
+    for model in all_models:
+        # обходим поля класса, для каждого поля получаем его значение
+        _class = type(model)
+        for field in dataclasses.fields(_class):
+            if (
+                    field.metadata
+                    and 'type' in field.metadata.keys()
+                    and field.metadata['type'] == "model_list"
+            ):
+                _replace_ids_with_links(model, field.name, all_models)
+
+    return all_models
+
+
+def _find_model(model_id, all_models):
+    for model in all_models:
+        if model.id == model_id:
+            return model
+    return None
+
+
+def _replace_ids_with_links(model, field_name, all_models):
+    link_list = getattr(model, field_name)
+    model_list = []
+    for link in link_list:
+        link_model = _find_model(link, all_models)
+        if link_model:
+            model_list.append(link_model)
+        else:
+            Logger.error(f"Model {model.id} has a bad link: {link}")
+    setattr(model, field_name, model_list)
 
 
 def make_model_storage(models):
@@ -58,8 +97,13 @@ def load_all_models(path):
             file_path = os.path.join(root, file)
             if ext == ".yml" or ext == ".yaml":
                 result.extend(load_models_from_yaml(file_path))
-            elif ext == ".csv":
-                result.extend(load_map_model_from_csv(file_path))
+         #   загружать .csv наверное лучше когда все остальное уже
+         #   загружено. либо переписать файл загрузки из csv так чтобы
+         #   создавались модели, в которых ссылки можно было бы заменить
+         #   по общему механизму
+         #
+         #   elif ext == ".csv":
+         #       result.extend(load_map_model_from_csv(file_path))
 
     return result
 
@@ -216,8 +260,8 @@ def _update_model_links(model_storage: ModelStorage):
 
 
 def _check(to_check, model_name, bad_name):
-    if input is None:
-        Logger.error(f"Wrong resource name for input for {model_name}: {bad_name}")
+    if to_check is None:
+        Logger.error(f"Model {model_name} has a bad link: {bad_name}")
 
 
 def _load_maps(maps_dir, model_storage):

@@ -5,6 +5,7 @@ import pytest
 import yaml
 
 from src.io import storage
+from src.logic import models
 from src.logic.models import ModelStorage, BiomeModel, ResourceModel, NeedModel, Model
 from tests.io.conftest import RESOURCES_DIR, ENTITIES_DIR, WORLDS_DIR, MAPS_DIR
 
@@ -65,9 +66,10 @@ def test_load_model_file():
         tag='!TestModel1',
         constructor=TestModel1.__init__
     )
-    """
+    
 #    yaml.add_path_resolver('!model_0', ['TestModel0'], dict)
 #    yaml.add_path_resolver('!model_1', ['TestModel1'], dict)
+    """
 
     models = storage.load_all_models(path)
 
@@ -78,3 +80,26 @@ def test_load_model_file():
     assert isinstance(models[1], TestModel1)
     assert models[2].id == "5"
     assert isinstance(models[1], TestModel1)
+
+
+@dataclasses.dataclass
+class TestModelWithLink(Model):
+
+    link_field: list = models.model_list()
+
+
+@dataclasses.dataclass
+class TestModelLinked(Model):
+
+    pass
+
+
+def test_model_links():
+    model_0 = TestModelWithLink()
+    model_1 = TestModelLinked(id="test_link")
+    model_0.link_field.append("test_link")
+    model_list = [model_0, model_1]
+
+    sorted_models = storage.sort_model_links(model_list)
+
+    assert model_0.link_field[0] == model_1
