@@ -1,18 +1,19 @@
 import dataclasses
 from dataclasses import field
-from typing import List, Dict
+import yaml
 
 
 @dataclasses.dataclass
-class Model:
+class Model(yaml.YAMLObject):
 
+    yaml_loader = yaml.SafeLoader
     id: str = ""
 
 
 @dataclasses.dataclass
 class EffectModel(Model):
 
-    effects: List = field(default_factory=lambda: [])
+    effects: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -70,9 +71,9 @@ class CellModel(Model):
     x: int = 0
     y: int = 0
     biome: BiomeModel = None
-    resources: List = field(default_factory=lambda: [])
-    pops: List = field(default_factory=lambda: [])
-    groups: List = field(default_factory=lambda: [])
+    resources: list = field(default_factory=lambda: [])
+    pops: list = field(default_factory=lambda: [])
+    groups: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -95,7 +96,7 @@ class WorldModel(EffectModel):
 class GridModel(Model):
 
     # a list of columns, each of which is a list of cells;
-    cell_matrix: List = field(default_factory=lambda: [])
+    cell_matrix: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
@@ -104,12 +105,12 @@ class ModelStorage:
     All the data models in the simulation
     """
 
-    pops: List[PopModel] = field(default_factory=lambda: [])
-    structures: List[StructureModel] = field(default_factory=lambda: [])
-    resources: List[ResourceModel] = field(default_factory=lambda: [])
-    biomes: List[BiomeModel] = field(default_factory=lambda: [])
-    worlds: List[WorldModel] = field(default_factory=lambda: [])
-    maps: List[GridModel] = field(default_factory=lambda: [])
+    pops: list[PopModel] = field(default_factory=lambda: [])
+    structures: list[StructureModel] = field(default_factory=lambda: [])
+    resources: list[ResourceModel] = field(default_factory=lambda: [])
+    biomes: list[BiomeModel] = field(default_factory=lambda: [])
+    worlds: list[WorldModel] = field(default_factory=lambda: [])
+    maps: list[GridModel] = field(default_factory=lambda: [])
 
     def get_pop(self, id):
         return self.get(id, self.pops)

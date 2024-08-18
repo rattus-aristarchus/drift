@@ -14,6 +14,72 @@ from src.logic.models import ModelStorage, PopModel, BiomeModel, StructureModel,
 get_effect = None
 
 
+def sort_model_links(model_storage):
+    """
+    For models that refer to other models, replace string pointers
+    with actual links.
+    """
+    pass
+
+
+def make_model_storage(models):
+    """
+    Generate a model storage object with models sorted into categories.
+    """
+
+    result = ModelStorage()
+
+    for model in models:
+        if isinstance(model, PopModel):
+            result.pops.append(model)
+        elif isinstance(model, StructureModel):
+            result.structures.append(model)
+        elif isinstance(model, ResourceModel):
+            result.resources.append(model)
+        elif isinstance(model, BiomeModel):
+            result.biomes.append(model)
+        elif isinstance(model, GridModel):
+            result.maps.append(model)
+        elif isinstance(model, WorldModel):
+            result.worlds.append(model)
+
+    return result
+
+
+def load_all_models(path):
+    """
+    Walk the directory recursively and load models from all files in it.
+    """
+    result = []
+
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ext = os.path.splitext(file)[1]
+            file_path = os.path.join(root, file)
+            if ext == ".yml" or ext == ".yaml":
+                result.extend(load_models_from_yaml(file_path))
+            elif ext == ".csv":
+                result.extend(load_map_model_from_csv(file_path))
+
+    return result
+
+
+def load_models_from_yaml(path):
+    """
+    Load models from a single YAML file.
+    """
+    result = yaml.safe_load(open(path, "r", encoding="utf-8"))
+    return result
+
+
+def load_map_model_from_csv(path):
+    """
+    Load the model of a map from a CSV file.
+    """
+    result = []
+    return result
+
+
 def load_models(entities_dir, worlds_dir, maps_dir):
 
     # load all the stuff

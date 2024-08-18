@@ -1,9 +1,11 @@
+import dataclasses
 import os.path
 
 import pytest
+import yaml
 
 from src.io import storage
-from src.logic.models import ModelStorage, BiomeModel, ResourceModel, NeedModel
+from src.logic.models import ModelStorage, BiomeModel, ResourceModel, NeedModel, Model
 from tests.io.conftest import RESOURCES_DIR, ENTITIES_DIR, WORLDS_DIR, MAPS_DIR
 
 
@@ -38,3 +40,41 @@ def test_load_models_has_proper_links():
     resource_input = model_storage.get_res("test_output").inputs[0]
     assert isinstance(resource_input, ResourceModel)
     assert resource_input.id == "test_input"
+
+
+@dataclasses.dataclass
+class TestModel0(Model):
+
+    yaml_tag = '!TestModel0'
+
+
+@dataclasses.dataclass
+class TestModel1(Model):
+
+    yaml_tag = '!TestModel1'
+
+
+def test_load_model_file():
+    path = os.path.join(ENTITIES_DIR, "model_folder")
+    """
+    yaml.add_constructor(
+        tag='!TestModel0',
+        constructor=TestModel0.__init__
+    )
+    yaml.add_constructor(
+        tag='!TestModel1',
+        constructor=TestModel1.__init__
+    )
+    """
+#    yaml.add_path_resolver('!model_0', ['TestModel0'], dict)
+#    yaml.add_path_resolver('!model_1', ['TestModel1'], dict)
+
+    models = storage.load_all_models(path)
+
+    assert len(models) == 3
+    assert models[0].id == "0"
+    assert isinstance(models[0], TestModel0)
+    assert models[1].id == "1"
+    assert isinstance(models[1], TestModel1)
+    assert models[2].id == "5"
+    assert isinstance(models[1], TestModel1)
