@@ -181,9 +181,9 @@ def _replace_maps(worlds, maps):
 
 def _replace_effects(model_list: List[EffectModel], get_effect):
     for model in model_list:
-#        if model.effects is None:
- #           model.effects = []
-  #      else:
+        if model.effects is None:
+            model.effects = []
+        else:
             model.effects = _get_model_effects(model, get_effect)
 
 

@@ -1,5 +1,4 @@
 from src.logic.effects import util
-from src.logic.entities import agents
 
 
 # TODO: this was written in the middle of the night

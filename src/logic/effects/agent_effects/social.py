@@ -1,12 +1,11 @@
-from src.logic.entities import agents
-from src.logic.entities.agents import structures
+from src.logic.entities.agents import structures, populations
 from src.logic.effects import util
 from src.logic.entities.agents.structures import Commodity
 
 
 def social_mobility(pop, cell):
     if cell.has_res("ore") and cell.get_pop("blacksmiths") is None:
-        blacksmiths = agents.create_pop(
+        blacksmiths = populations.create_pop(
             util.model_base.get_pop("blacksmiths"),
             destination=cell
         )

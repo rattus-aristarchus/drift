@@ -17,4 +17,3 @@ def climate(history, grid_buffer: GridBuffer):
     temp = mean + math.sin(age / 5) / 2
     grid_buffer.grid.state.temperature = temp
     grid_buffer.temp_deviation = history.world_model.mean_temp - temp
-

@@ -1,8 +1,6 @@
 import math
 from kivy import Logger
-
-import src.logic.entities.agents.resources
-from src.logic.entities import agents
+from src.logic.entities.agents import populations, resources
 from src.logic.models.model_base import ModelBase
 
 # эта штука выставляется статически при запуске программы
@@ -41,7 +39,7 @@ def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
         model = model_base.get_pop(name)
-        check_pop = agents.create_pop(model, cell)
+        check_pop = populations.create_pop(model, cell)
     return check_pop
 
 
@@ -49,7 +47,7 @@ def get_or_create_res(name, cell):
     check_res = cell.get_res(name)
     if check_res is None:
         model = model_base.get_res(name)
-        check_res = src.logic.entities.agents.resources.create_resource(model, cell)
+        check_res = resources.create_resource(model, cell)
     return check_res
 
 
@@ -196,7 +194,6 @@ def get_cap_for_pop(pop, cell):
     return ttl_cap
 
 
-
 """
 def has_empty_neighbor(name):
     for next in neighbors:
@@ -211,4 +208,3 @@ def has_neighbor(name):
             return True
     return False
 """
-

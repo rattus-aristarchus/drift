@@ -37,7 +37,7 @@ def producer_mig(pop, cell_buffer, grid_buffer):
 
 def basic_agriculture(pop, cell_buffer, grid_buffer):
     product = pop.model.produces[0]
-    production.natural_resource_exploitation(pop, product, cell_buffer.cell)
+    production.natural_resource_exploitation(pop, product, cell_buffer.cell, grid_buffer)
 
 
 def produce(pop, cell_buffer, grid_buffer):
@@ -59,6 +59,7 @@ def exchange(market, cell_buffer, grid_buffer):
 def pop_to_market(pop, cell_buffer, grid_buffer):
     social.sell(pop, cell_buffer.cell)
     social.buy(pop, cell_buffer.cell)
+
 
 """
 Эффекты ресурсов

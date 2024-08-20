@@ -3,7 +3,6 @@ from kivy import Logger
 
 import src.logic.entities.agents.agents
 from src.logic.effects import util
-from src.logic.entities import agents
 
 
 def produce_for_surplus(pop, cell_buffer, grid_buffer):

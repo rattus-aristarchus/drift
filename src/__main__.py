@@ -1,8 +1,6 @@
 import os
-
 import kivy.resources
 from kivy.logger import Logger, LOG_LEVELS
-
 from src.io.output import Output
 from src.logic.entities import generate_history
 from util import CONF, RES_DIR, ASSETS_DIR, ENTITIES_DIR, WORLDS_DIR, MAPS_DIR, ICONS_DIR, BACKGROUNDS_DIR

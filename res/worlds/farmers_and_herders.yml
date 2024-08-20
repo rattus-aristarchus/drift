@@ -1,4 +1,5 @@
 - !world
+    id: "farmers_and_herders"
     map: middle_kingdom
     width: 26
     height: 14
