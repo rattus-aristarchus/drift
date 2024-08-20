@@ -1,0 +1,33 @@
+- !world
+    id: "rats_and_lynxes"
+    width: 5
+    height: 5
+    cell_instructions:
+        - location: [0, 0]
+          pops:
+              - name: 'rats'
+                size: 10000
+              - name: 'lynxes'
+                size: 1000
+          watch: True
+        - location: [0, 1]
+          pops:
+              - name: 'rats'
+                size: 0
+              - name: 'lynxes'
+                size: 0
+          watch: True
+        - location: [1, 0]
+          pops:
+              - name: 'rats'
+                size: 0
+              - name: 'lynxes'
+                size: 0
+          watch: True
+        - location: [1, 1]
+          pops:
+              - name: 'rats'
+                size: 0
+              - name: 'lynxes'
+                size: 0
+          watch: True

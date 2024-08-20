@@ -1,0 +1,20 @@
+- !population
+    id: "soot_nomads"
+    name: "коптеводы"
+    sapient: True
+#    effects: [sparse_nomad_inc, sparse_nomad_press, sparse_nomad_mig]
+- !population
+    id: "rice_growers"
+    name: "рисоводы"
+    sapient: True
+#    effects: [rice_inc, rice_pressure, rice_mig]
+- !population
+    id: "flamesheep"
+    name: "огнерунники"
+    sapient: False
+#    effects: [flamesheep_inc, flamesheep_dec]
+- !population
+    id: "steppe_grass"
+    name: "степная трава"
+    sapient: False
+#    effects: [grass_grow]

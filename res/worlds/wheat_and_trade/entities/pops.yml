@@ -1,0 +1,23 @@
+- !population
+    id: "wheatmen"
+    name: "пшеничники"
+    sapient: True
+#    effects: [wheatmen_inc, wheatmen_press, wheatmen_mig]
+- !population
+    id: "peddlers"
+    name: "торговцы"
+    sapient: True
+- !population
+    id: "raiders"
+    name: "налётчики"
+    sapient: True
+- !population
+    id: "steppe_grass"
+    name: "степная трава"
+    sapient: False
+#    effects: [grass_grow]
+- !population
+    id: "wheat"
+    name: "пшеница"
+    sapient: False
+#    effects: [wheat_grow]

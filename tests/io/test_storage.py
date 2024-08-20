@@ -2,13 +2,11 @@ import dataclasses
 import os.path
 
 import pytest
-import yaml
 
 from src.io import storage
-from src.logic import models
 from src.logic.models import custom_fields
 from src.logic.models.models import BiomeModel, ResourceModel, NeedModel, Model, PopModel
-from tests.io.conftest import RESOURCES_DIR, ENTITIES_DIR, WORLDS_DIR, MAPS_DIR
+from tests.io.conftest import RESOURCES_DIR, WORLDS_DIR
 from src.logic.models.model_base import ModelBase
 
 
@@ -29,7 +27,7 @@ def test_load_tiled_map(model_base):
 
 
 def test_load_models_has_proper_links():
-    model_storage = storage.make_model_base(ENTITIES_DIR, WORLDS_DIR, MAPS_DIR)
+    model_storage = storage.make_model_base(WORLDS_DIR)
 
     biome_resource = model_storage.get_biome("test_biome").resources[0][0]
     assert isinstance(biome_resource, ResourceModel)

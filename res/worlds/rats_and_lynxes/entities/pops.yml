@@ -1,0 +1,8 @@
+- !population
+    name: "крысы"
+    sapient: False
+#    effects: [rat_inc, migrate]
+- !population
+    name: "рыси"
+    sapient: False
+ #   effects: [lynx_inc, migrate]

@@ -1,0 +1,6 @@
+- !biome
+    id: "basic"
+    effects:
+    capacity:
+        steppe_grass: 100000
+        wheat: 100000

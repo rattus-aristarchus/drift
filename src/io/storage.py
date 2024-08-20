@@ -17,13 +17,12 @@ from src.logic.models.model_base import ModelBase
 get_effect = None
 
 
-def make_model_base(entities_dir, worlds_dir, maps_dir):
+def make_model_base(worlds_dir):
     all_models = []
-    all_models.extend(load_all_models(entities_dir))
     all_models.extend(load_all_models(worlds_dir))
     sort_model_links(all_models)
     model_base = make_base_from_models(all_models)
-    model_base.maps = load_all_maps(maps_dir, model_base)
+    model_base.maps = load_all_maps(worlds_dir, model_base)
     _replace_maps(model_base.worlds, model_base.maps)
     return model_base
 
@@ -44,6 +43,11 @@ def sort_model_links(all_models):
     for model in all_models:
         # обходим поля класса, для каждого поля получаем его значение
         _class = type(model)
+
+        if not dataclasses.is_dataclass(model):
+            raise Exception(f"A list of models contains object of type "
+                            f"{_class} that isn't a dataclass")
+
         for field in dataclasses.fields(_class):
             if (
                     field.metadata
