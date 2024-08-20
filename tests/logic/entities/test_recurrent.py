@@ -1,24 +1,25 @@
 import dataclasses
 
+import src.logic.entities.basic.custom_fields
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.basic import recurrents
 from src.logic.entities.cells import Cell, Biome
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
 from src.logic.entities.agents.structures import Structure
-from src.logic.models import NeedModel
+from src.logic.models.models import NeedModel
 
 
 @dataclasses.dataclass
 class TestRecurrent0(Recurrent):
 
-    mutual_reference: list = recurrents.relations_list()
+    mutual_reference: list = src.logic.entities.basic.custom_fields.relations_list()
 
 
 @dataclasses.dataclass
 class TestRecurrent1(Recurrent):
 
-    mutual_reference: list = recurrents.relations_list()
+    mutual_reference: list = src.logic.entities.basic.custom_fields.relations_list()
 
 
 def test_copy_mutual_reference():
@@ -37,8 +38,8 @@ def test_copy_mutual_reference():
 @dataclasses.dataclass
 class TestClass(Recurrent):
 
-    deep_list: list = recurrents.deep_copy_list()
-    deep_dict: dict = recurrents.deep_copy_dict()
+    deep_list: list = src.logic.entities.basic.custom_fields.deep_copy_list()
+    deep_dict: dict = src.logic.entities.basic.custom_fields.deep_copy_dict()
 
 
 def test_deep_copy_list_element_is_different():

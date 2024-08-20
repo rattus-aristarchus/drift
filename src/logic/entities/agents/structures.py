@@ -1,11 +1,11 @@
 import dataclasses
 from dataclasses import field
 
-from src.logic.entities.basic import recurrents
+from src.logic.entities.basic import custom_fields
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models import StructureModel
+from src.logic.models.models import StructureModel
 
 
 @dataclasses.dataclass
@@ -16,10 +16,10 @@ class Structure(Agent, Recurrent):
     """
 
     effects: list = field(default_factory=lambda: [])
-    pops: list = recurrents.relations_list()
+    pops: list = custom_fields.relations_list()
     # a list of cells
-    territory: list = recurrents.relations_list()
-    resources: list = recurrents.relations_list()
+    territory: list = custom_fields.relations_list()
+    resources: list = custom_fields.relations_list()
 
     def do_effects(self, cell_buffer=None, grid_buffer=None):
         for func in self.effects:

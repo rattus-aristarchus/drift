@@ -3,10 +3,10 @@ from kivy import Logger
 
 import src.logic.entities.agents.resources
 from src.logic.entities import agents
-from src.logic.models import ModelStorage
+from src.logic.models.model_base import ModelBase
 
 # эта штука выставляется статически при запуске программы
-model_base: ModelStorage = None
+model_base: ModelBase = None
 
 
 def get_structure(name, cell):

@@ -2,10 +2,10 @@ import dataclasses
 import os
 
 from src.logic.entities.agents.agents import Agent
-from src.logic.entities.basic import recurrents
+from src.logic.entities.basic import custom_fields
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models import PopModel, NeedModel
+from src.logic.models.models import PopModel, NeedModel
 
 
 @dataclasses.dataclass
@@ -20,14 +20,14 @@ class Population(Agent, Recurrent):
     type: str = ""
     yearly_growth: float = 0.0
 
-    owned_resources: list = recurrents.relations_list()
+    owned_resources: list = custom_fields.relations_list()
 
     # what fraction of labor is spent on what (not used right now)
   #  effort: dict = field(default_factory=lambda: {})
     # how much surplus did each production net (not used right now)
   #  surplus: dict = field(default_factory=lambda: {})
 
-    needs: list = recurrents.deep_copy_list()
+    needs: list = custom_fields.deep_copy_list()
 
     def __str__(self):
         if self.type == "":

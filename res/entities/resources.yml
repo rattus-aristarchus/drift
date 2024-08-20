@@ -1,40 +1,40 @@
-yaks:
+- !resource
     id: "yaks"
     type: "livestock"
     yearly_growth: 0.1
     effects: [grow_natural]
-sheep:
+- !resource
     id: "sheep"
     type: "livestock"
     yearly_growth: 0.4
     effects: [grow_natural]
-surplus:
+- !resource
     id: "surplus"
-millet:
+- !resource
     id: "millet"
     type: "food"
     max_labor_share: 0.25
     inputs: ["millet_land"]
     effects: [grow]
     yearly_growth: -1
-rice:
+- !resource
     id: "rice"
     type: "food"
     max_labor_share: 0.25
     inputs: ["rice_land"]
     effects: [grow]
     yearly_growth: -1
-millet_land:
+- !resource
     id: "millet_land"
     type: "land"
     min_labor: 0.25
     max_labor: 3
-rice_land:
+- !resource
     id: "rice_land"
     type: "land"
     min_labor: 0.5
     max_labor: 6
-basic_copper_tools:
+- !resource
     id: "basic_copper_tools"
     type: "tools"
     max_labor_share: 0.1
@@ -42,7 +42,7 @@ basic_copper_tools:
     productivity: 2
     effects: [grow]
     yearly_growth: -0.1
-advanced_copper_tools:
+- !resource
     id: "advanced_copper_tools"
     type: "tools"
     max_labor_share: 0.5
@@ -50,7 +50,7 @@ advanced_copper_tools:
     productivity: 2.5
     effects: [grow]
     yearly_growth: -0.1
-surface_copper:
+- !resource
     id: "surface_copper"
     type: "ore"
     min_labor: 0.25

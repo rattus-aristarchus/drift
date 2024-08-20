@@ -2,13 +2,14 @@ import dataclasses
 from dataclasses import field
 from kivy import Logger
 
-from src.logic.entities.basic import recurrents
-import src.logic.entities.agents.structures
+from src.logic.entities.basic import custom_fields, recurrents
+
 from src.logic.buffers import CellBuffer
 from src.logic.entities import cells
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models import GridModel, ModelStorage, CellModel
+from src.logic.models.models import GridModel, CellModel
+from src.logic.models.model_base import ModelBase
 
 
 @dataclasses.dataclass
@@ -32,8 +33,8 @@ class Grid(Entity, Recurrent):
         # клетки "под наблюдением" - те, по которым мы
         # выводим временные ряды в csv, чтобы их потом
         # можно было отображать на графике
-    watched_cells: list = src.logic.entities.basic.recurrents.relations_list() # list = field(default_factory=lambda: [])
-    structures: list = src.logic.entities.basic.recurrents.relations_list() # list = field(default_factory=lambda: [])
+    watched_cells: list = custom_fields.relations_list()
+    structures: list = custom_fields.relations_list()
     state: GridState = None
 
     def cells_as_list(self):
@@ -46,7 +47,7 @@ class Grid(Entity, Recurrent):
         for x in range(0, self.width):
             self.cells[x] = {}
             for y in range(0, self.height):
-                new_cell, all_recurrents = src.logic.entities.basic.recurrents.copy_recurrent_and_add_to_list(
+                new_cell, all_recurrents = recurrents.copy_recurrent_and_add_to_list(
                     original.cells[x][y],
                     all_recurrents
                 )
@@ -94,7 +95,7 @@ def create_grid(width, height, default_biome, age=0):
     return result
 
 
-def create_grid_from_model(grid_model: GridModel, model_base: ModelStorage, age=0):
+def create_grid_from_model(grid_model: GridModel, model_base: ModelBase, age=0):
     height = len(grid_model.cell_matrix[0])
     width = len(grid_model.cell_matrix)
     result = Grid(
@@ -112,7 +113,7 @@ def create_grid_from_model(grid_model: GridModel, model_base: ModelStorage, age=
     return result
 
 
-def create_cell_from_dict(x, y, cell_data, model_base: ModelStorage):
+def create_cell_from_dict(x, y, cell_data, model_base: ModelBase):
     result = None
     if "biome" in cell_data:
         biome_model = model_base.get_biome(cell_data["biome"])

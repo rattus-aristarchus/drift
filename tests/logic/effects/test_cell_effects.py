@@ -4,7 +4,7 @@ from src.logic.buffers import CellBuffer, GridBuffer
 from src.logic.effects.cell_effects import temp_change
 from src.logic.entities import cells, grids, histories
 from src.logic.entities.histories import History
-from src.logic.models import BiomeModel, WorldModel
+from src.logic.models.models import BiomeModel, WorldModel
 
 
 @pytest.fixture(scope="session")

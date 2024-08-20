@@ -1,7 +1,7 @@
-test_output:
+- !resource
     id: "test_output"
     inputs: ["test_input"]
-test_input:
+- !resource
     id: "test_input"
-test_food:
+- !resource
     id: "test_food"

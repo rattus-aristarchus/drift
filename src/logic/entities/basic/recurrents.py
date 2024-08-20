@@ -34,57 +34,6 @@ class Recurrent:
         return all_recurrents
 
 
-"""
-Следующие методы - обертки для dataclasses.field.
-Это поля, которые требуют особенного поведения при копировании.
-Они добавляют метаданные, по которым копирующий метод их узнаёт.
-"""
-
-
-def relations_list():
-    """
-    Список, содержащий ссылки на другие сущности
-    класса Recurrent.
-    """
-    return dataclasses.field(
-        default_factory=lambda: [],
-        metadata={"type": "relations_list"}
-    )
-
-
-def relations_dict():
-    """
-    Словарь, содержащий ссылки на другие сущности
-    класса Recurrent.
-    """
-    return dataclasses.field(
-        default_factory=lambda: {},
-        metadata={"type": "relations_dict"}
-    )
-
-
-def deep_copy_list():
-    """
-    Список, содержащий объекты, которые нужно
-    скопировать, а не просто скопировать ссылки на них.
-    """
-    return dataclasses.field(
-        default_factory=lambda: [],
-        metadata={"type": "deep_copy_list"}
-    )
-
-
-def deep_copy_dict():
-    """
-    Словарь, содержащий объекты, которые нужно
-    скопировать, а не просто скопировать ссылки на них.
-    """
-    return dataclasses.field(
-        default_factory=lambda: {},
-        metadata={"type": "deep_copy_dict"}
-    )
-
-
 def copy_recurrent_and_add_to_list(to_copy: Recurrent, all_recurrents: dict):
     """
     Скопировать объект Recurrent, а также рекурсивно

@@ -1,5 +1,5 @@
 import dataclasses
-from src.logic.models import Model
+from src.logic.models.models import Model
 
 
 @dataclasses.dataclass

@@ -4,12 +4,12 @@ from src.logic.effects import effects, util
 from src.logic.entities import grids
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.histories import History
-from src.logic.models import ModelStorage, BiomeModel, WorldModel, StructureModel
-
+from src.logic.models.models import BiomeModel, WorldModel, StructureModel
+from src.logic.models.model_base import ModelBase
 
 @pytest.fixture(scope="session")
 def model_base():
-    result = ModelStorage()
+    result = ModelBase()
     biome_model = BiomeModel("test_biome")
     result.biomes.append(biome_model)
     market_model = StructureModel("market")

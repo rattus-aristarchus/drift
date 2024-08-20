@@ -1,7 +1,7 @@
 import pytest
 
 from src.logic.entities import cells
-from src.logic.models import BiomeModel, ResourceModel
+from src.logic.models.models import BiomeModel, ResourceModel
 
 
 @pytest.fixture

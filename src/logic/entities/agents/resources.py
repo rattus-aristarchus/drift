@@ -4,7 +4,7 @@ from dataclasses import field
 
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models import ResourceModel
+from src.logic.models.models import ResourceModel
 
 
 @dataclasses.dataclass

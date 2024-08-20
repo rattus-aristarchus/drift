@@ -1,12 +1,13 @@
 import pytest
 
 from src.logic.entities import generate_history
-from src.logic.models import ModelStorage, PopModel
+from src.logic.models.model_base import ModelBase
+from src.logic.models.models import PopModel
 
 
 @pytest.fixture
 def model_base():
-    result = ModelStorage()
+    result = ModelBase()
     model = PopModel(id="test_pop")
     result.pops.append(model)
     return result

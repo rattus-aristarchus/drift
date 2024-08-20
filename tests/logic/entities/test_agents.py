@@ -5,7 +5,7 @@ from src.logic.entities.agents import agents
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.cells import Cell
-from src.logic.models import NeedModel
+from src.logic.models.models import NeedModel
 
 
 def sample_effect():

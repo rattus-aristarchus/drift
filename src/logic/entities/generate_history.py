@@ -1,13 +1,12 @@
 import random
 from kivy.logger import Logger
+from src.logic.entities import histories
+from src.logic.entities.agents import populations, resources
+from src.logic.models.models import WorldModel
+from src.logic.models.model_base import ModelBase
 
-import src.logic.entities.agents.resources
-from src.logic.entities import histories, agents
-from src.logic.entities.agents import populations
-from src.logic.models import WorldModel, ModelStorage
 
-
-def do(world_model: WorldModel, model_storage: ModelStorage, write_output):
+def do(world_model: WorldModel, model_storage: ModelBase, write_output):
     """
     This function is called once, at the beginning, creating the history
     object with the first grid.
@@ -88,7 +87,7 @@ def _populate_cell(cell, cell_dict, model_base):
     if 'resources' in cell_dict.keys():
         for res_dict in cell_dict['resources']:
             model = model_base.get_res(res_dict['name'])
-            resource = src.logic.entities.agents.resources.create_resource(model, cell)
+            resource = resources.create_resource(model, cell)
             resource.size = res_dict['size']
             Logger.debug(f"{__name__}: created resource {resource.name}" +
                          f" of size {str(resource.size)}")

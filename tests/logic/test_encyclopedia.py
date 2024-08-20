@@ -1,5 +1,5 @@
 import pytest
-from src.logic.models import PopModel
+from src.logic.models.models import PopModel
 
 
 @pytest.fixture

@@ -7,7 +7,8 @@ from src.logic.entities import grids
 from src.logic.entities.agents.structures import Structure
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
-from src.logic.models import GridModel, CellModel, ModelStorage
+from src.logic.models.models import GridModel, CellModel
+from src.logic.models.model_base import ModelBase
 
 
 def test_increase_grid_age(fresh_grid):
@@ -68,7 +69,7 @@ def test_create_grid_from_model_right_shape():
         [CellModel(x=1, y=0)]
     ]
 
-    grid = grids.create_grid_from_model(model, ModelStorage())
+    grid = grids.create_grid_from_model(model, ModelBase())
 
     assert grid.height == 1
     assert grid.width == 2

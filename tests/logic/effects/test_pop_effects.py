@@ -3,7 +3,7 @@ from src.logic.effects import util
 from src.logic.effects.agent_effects import production
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.agents.resources import Resource
-from src.logic.models import ResourceModel
+from src.logic.models.models import ResourceModel
 
 
 def test_growth_with_capacity():

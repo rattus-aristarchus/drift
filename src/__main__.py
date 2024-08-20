@@ -14,7 +14,7 @@ from src.io import storage
 
 
 if __name__ == '__main__':
-    model_base = storage.load_models(ENTITIES_DIR, WORLDS_DIR, MAPS_DIR)
+    model_base = storage.make_model_base(ENTITIES_DIR, WORLDS_DIR, MAPS_DIR)
 
     effects_util.model_base = model_base
     world_model = model_base.get_world(CONF['world'])

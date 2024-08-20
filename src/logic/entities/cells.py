@@ -2,12 +2,11 @@ import dataclasses
 import os
 from dataclasses import field
 
-import src.logic.entities.agents.resources
-from src.logic.entities.basic import recurrents
-from src.logic.entities import agents
+from src.logic.entities.agents import resources
+from src.logic.entities.basic import custom_fields
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models import BiomeModel
+from src.logic.models.models import BiomeModel
 
 
 @dataclasses.dataclass
@@ -45,9 +44,9 @@ class Cell(Entity, Recurrent):
     y: int = 0
     effects: list = field(default_factory=lambda: [])
     markets: list = field(default_factory=lambda: [])
-    pops: list = recurrents.relations_list()
-    structures: list = recurrents.relations_list()
-    resources: list = recurrents.relations_list()
+    pops: list = custom_fields.relations_list()
+    structures: list = custom_fields.relations_list()
+    resources: list = custom_fields.relations_list()
     biome: Biome = None
 
     def do_effects(self, cell_buffer, grid_buffer):
@@ -137,7 +136,7 @@ def create_cell(x, y, biome_model: BiomeModel):
     result.effects = biome_model.effects
     result.biome = create_biome(biome_model)
     for res_model, size in biome_model.resources:
-        resource = src.logic.entities.agents.resources.create_resource(res_model, result)
+        resource = resources.create_resource(res_model, result)
         resource.size = size
     return result
 

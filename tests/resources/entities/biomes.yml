@@ -1,4 +1,4 @@
-test_biome:
+- !biome
     id: "test_biome"
     resources:
         - ["test_input", 5000]

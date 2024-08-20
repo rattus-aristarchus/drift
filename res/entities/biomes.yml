@@ -1,9 +1,8 @@
-sea:
+- !biome
     id: "sea"
     moisture: "wet"
     effects: [temp_change]
-
-mountains:
+- !biome
     id: "mountains"
     moisture: "wet"
     effects: [temp_change]
@@ -11,34 +10,29 @@ mountains:
         yaks: 10000
     resources:
         - ["millet_land", 500]
-
-tibet:
+- !biome
     id: "tibet"
     moisture: "wet"
     effects: [temp_change]
     capacity:
         yaks: 10000
-
-peaks:
+- !biome
     id: "peaks"
     moisture: "wet"
     effects: [temp_change]
-
-mountain_forest:
+- !biome
     id: "mountain_forest"
     moisture: "wet"
     effects: [temp_change]
     resources:
         - ["millet_land", 1000]
-
-steppe:
+- !biome
     id: "steppe"
     moisture: "dry"
     effects: [temp_change]
     capacity:
         sheep: 50000
-
-loess_plateau:
+- !biome
     id: "loess_plateau"
     moisture: "wet"
     effects: [temp_change]
@@ -46,8 +40,7 @@ loess_plateau:
         sheep: 25000
     resources:
         - ["millet_land", 25000]
-
-temperate_river_valley:
+- !biome
     id: "temperate_river_valley"
     moisture: "wet"
     effects: [temp_change]
@@ -55,8 +48,7 @@ temperate_river_valley:
         sheep: 50000
     resources:
         - ["millet_land", 50000]
-
-tropical_river_valley:
+- !biome
     id: "tropical_river_valley"
     moisture: "wet"
     effects: [temp_change]
@@ -64,21 +56,18 @@ tropical_river_valley:
         sheep: 10000
     resources:
         - ["rice_land", 15000]
-
-desert:
+- !biome
     id: "desert"
     moisture: "dry"
     effects: [temp_change]
     capacity:
-
-semi-desert:
+- !biome
     id: "semi-desert"
     moisture: "dry"
     effects: [temp_change]
     capacity:
         sheep: 10000
-
-plains:
+- !biome
     id: "plains"
     moisture: "wet"
     effects: [temp_change]
@@ -86,8 +75,7 @@ plains:
         sheep: 50000
     resources:
         - ["millet_land", 10000]
-
-chernozem:
+- !biome
     id: "chernozem"
     moisture: "wet"
     effects: [temp_change]
@@ -95,8 +83,7 @@ chernozem:
         sheep: 50000
     resources:
         - ["millet_land", 25000]
-
-hills:
+- !biome
     id: "hills"
     moisture: "wet"
     effects: [temp_change]

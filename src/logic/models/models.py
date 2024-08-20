@@ -2,15 +2,7 @@ import dataclasses
 from dataclasses import field
 import yaml
 
-
-def model_list():
-    """
-    Список, содержащий ссылки на другие модели.
-    """
-    return dataclasses.field(
-        default_factory=lambda: [],
-        metadata={"type": "model_list"}
-    )
+from src.logic.models import custom_fields
 
 
 @dataclasses.dataclass
@@ -23,19 +15,23 @@ class Model(yaml.YAMLObject):
 @dataclasses.dataclass
 class EffectModel(Model):
 
+    yaml_tag = '!effect'
+
     effects: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
 class PopModel(EffectModel):
 
+    yaml_tag = '!population'
+
     name: str = ""
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
     # loaded as strings, replaced with resource_model
-    produces: list = field(default_factory=lambda: [])
-    sells: list = field(default_factory=lambda: [])
+    produces: list = custom_fields.model_list()
+    sells: list = custom_fields.model_list()
     looks_for: list = field(default_factory=lambda: [])
     needs: list = field(default_factory=lambda: [])
 
@@ -43,15 +39,19 @@ class PopModel(EffectModel):
 @dataclasses.dataclass
 class StructureModel(EffectModel):
 
+    yaml_tag = '!structure'
+
     name: str = ""
 
 
 @dataclasses.dataclass
 class ResourceModel(EffectModel):
 
+    yaml_tag = '!resource'
+
     type: str = ""
     yearly_growth: float = 0.0
-    inputs: list = field(default_factory=lambda: [])
+    inputs: list = custom_fields.model_list()
     min_labor: int = 0
     max_labor: int = 0
     max_labor_share: float = 0.0
@@ -61,6 +61,8 @@ class ResourceModel(EffectModel):
 @dataclasses.dataclass
 class NeedModel(Model):
 
+    yaml_tag = '!need'
+
     resource: ResourceModel = None
     type: str = ""
     per_1000: int = 0
@@ -69,14 +71,18 @@ class NeedModel(Model):
 @dataclasses.dataclass
 class BiomeModel(EffectModel):
 
+    yaml_tag = '!biome'
+
     capacity: dict = field(default_factory=lambda: {})
     # список из пар модель ресурса + количество
-    resources: list = field(default_factory=lambda: [])
+    resources: list = custom_fields.model_list_list()
     moisture: str = ""
 
 
 @dataclasses.dataclass
 class CellModel(Model):
+
+    yaml_tag = '!cell'
 
     x: int = 0
     y: int = 0
@@ -88,6 +94,8 @@ class CellModel(Model):
 
 @dataclasses.dataclass
 class WorldModel(EffectModel):
+
+    yaml_tag = '!world'
 
     width: int = 10
     height: int = 10
@@ -105,43 +113,38 @@ class WorldModel(EffectModel):
 @dataclasses.dataclass
 class GridModel(Model):
 
+    yaml_tag = '!grid'
+
     # a list of columns, each of which is a list of cells;
     cell_matrix: list = field(default_factory=lambda: [])
 
 
-@dataclasses.dataclass
-class ModelStorage:
-    """
-    All the data models in the simulation
-    """
+"""
+Настало время черной магии
+"""
 
-    pops: list[PopModel] = field(default_factory=lambda: [])
-    structures: list[StructureModel] = field(default_factory=lambda: [])
-    resources: list[ResourceModel] = field(default_factory=lambda: [])
-    biomes: list[BiomeModel] = field(default_factory=lambda: [])
-    worlds: list[WorldModel] = field(default_factory=lambda: [])
-    maps: list[GridModel] = field(default_factory=lambda: [])
 
-    def get_pop(self, id):
-        return self.get(id, self.pops)
+def prepare_yaml(_model_class):
+    for _class in _model_class.__subclasses__():
+        _register_constructor(_class)
+        prepare_yaml(_class)
 
-    def get_structure(self, id):
-        return self.get(id, self.structures)
 
-    def get_res(self, id):
-        return self.get(id, self.resources)
+def _register_constructor(dataclass_type):
+    yaml.SafeLoader.add_constructor(
+        tag=dataclass_type.yaml_tag,
+        constructor=lambda loader, node: _custom_constructor(loader, node, dataclass_type)
+    )
 
-    def get_biome(self, id):
-        return self.get(id, self.biomes)
 
-    def get_world(self, id):
-        return self.get(id, self.worlds)
+def _custom_constructor(loader, node, dataclass_type):
+    data = loader.construct_mapping(node, deep=True)
+    return dataclass_type(**data)
 
-    def get_map(self, id):
-        return self.get(id, self.maps)
 
-    def get(self, id: str, model_list):
-        for entity in model_list:
-            if entity.id == id:
-                return entity
-        return None
+"""
+Конец черной магии. Отправляемся в церковь или кабак, запивать или замаливать совесть. 
+"""
+
+# возможно, стоит засунуть этот вызов в какое-то более явное место
+prepare_yaml(Model)

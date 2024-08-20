@@ -6,13 +6,15 @@ import yaml
 
 from src.io import storage
 from src.logic import models
-from src.logic.models import ModelStorage, BiomeModel, ResourceModel, NeedModel, Model
+from src.logic.models import custom_fields
+from src.logic.models.models import BiomeModel, ResourceModel, NeedModel, Model, PopModel
 from tests.io.conftest import RESOURCES_DIR, ENTITIES_DIR, WORLDS_DIR, MAPS_DIR
+from src.logic.models.model_base import ModelBase
 
 
 @pytest.fixture
 def model_base():
-    result = ModelStorage()
+    result = ModelBase()
     result.biomes.append(BiomeModel("test_biome"))
     result.biomes.append(BiomeModel("test_biome_2"))
     return result
@@ -27,7 +29,7 @@ def test_load_tiled_map(model_base):
 
 
 def test_load_models_has_proper_links():
-    model_storage = storage.load_models(ENTITIES_DIR, WORLDS_DIR, MAPS_DIR)
+    model_storage = storage.make_model_base(ENTITIES_DIR, WORLDS_DIR, MAPS_DIR)
 
     biome_resource = model_storage.get_biome("test_biome").resources[0][0]
     assert isinstance(biome_resource, ResourceModel)
@@ -56,7 +58,7 @@ class TestModel1(Model):
 
 
 def test_load_model_file():
-    path = os.path.join(ENTITIES_DIR, "model_folder")
+    path = os.path.join(RESOURCES_DIR, "free_structure")
     """
     yaml.add_constructor(
         tag='!TestModel0',
@@ -85,7 +87,7 @@ def test_load_model_file():
 @dataclasses.dataclass
 class TestModelWithLink(Model):
 
-    link_field: list = models.model_list()
+    link_field: list = custom_fields.model_list()
 
 
 @dataclasses.dataclass
@@ -100,6 +102,15 @@ def test_model_links():
     model_0.link_field.append("test_link")
     model_list = [model_0, model_1]
 
-    sorted_models = storage.sort_model_links(model_list)
+    storage.sort_model_links(model_list)
 
     assert model_0.link_field[0] == model_1
+
+
+def test_missing_fields():
+    path = os.path.join(RESOURCES_DIR, "for_missing_fields")
+
+    models = storage.load_all_models(path)
+
+    assert models[0].id == ""
+    assert len(models[0].needs) == 0
