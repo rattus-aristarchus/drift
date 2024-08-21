@@ -71,7 +71,7 @@ def test_load_model_file():
 #    yaml.add_path_resolver('!model_1', ['TestModel1'], dict)
     """
 
-    models = storage.load_all_models(path)
+    models = storage._load_all_models(path)
 
     assert len(models) == 3
     assert models[0].id == "0"
@@ -100,7 +100,7 @@ def test_model_links():
     model_0.link_field.append("test_link")
     model_list = [model_0, model_1]
 
-    storage.sort_model_links(model_list)
+    storage._sort_model_links(model_list)
 
     assert model_0.link_field[0] == model_1
 
@@ -108,7 +108,7 @@ def test_model_links():
 def test_missing_fields():
     path = os.path.join(RESOURCES_DIR, "for_missing_fields")
 
-    models = storage.load_all_models(path)
+    models = storage._load_all_models(path)
 
     assert models[0].id == ""
     assert len(models[0].needs) == 0

@@ -17,37 +17,64 @@ from src.logic.models.model_base import ModelBase
 get_effect = None
 
 
+def load_assets(assets_dir):
+    """
+    Читаем с диска всё, необходимое для графики.
+    """
+    colors = yaml.safe_load(open(assets_dir + "/palette.yml", "r", encoding="utf-8"))
+    images = yaml.safe_load(open(assets_dir + "/images.yml", "r", encoding="utf-8"))
+    map_filter_data = yaml.safe_load(open(assets_dir + "/map_filters.yml", "r", encoding="utf-8"))
+    map_filters = []
+    for id, data in map_filter_data.items():
+        map_filters.append(MapFilter(**data))
+
+    result = Assets(colors=colors, images=images, map_filters=map_filters)
+    return result
+
+
 def make_model_base(worlds_dir):
+    """
+    Читаем с диска все прототипы сущностей
+    """
+
     all_models = []
-    all_models.extend(load_all_models(worlds_dir))
-    sort_model_links(all_models)
-    model_base = make_base_from_models(all_models)
-    model_base.maps = load_all_maps(worlds_dir, model_base)
+    all_models.extend(_load_all_models(worlds_dir))
+    _sort_model_links(all_models)
+    model_base = _make_base_from_models(all_models)
+    model_base.maps = _load_all_maps(worlds_dir, model_base)
     _replace_maps(model_base.worlds, model_base.maps)
     return model_base
 
 
-def sort_model_links(all_models):
+def _sort_model_links(all_models):
     """
-    For models that refer to other models, replace string pointers
+    For models that refer to other models or to effects, replace
+    string pointers
     with actual links.
     """
 
+    # вначале разбираемся с эффектами. отбираем только те модели, у
+    # которых могут быть эффекты
     effect_models = []
     for model in all_models:
         if isinstance(model, EffectModel):
             effect_models.append(model)
 
+    # заменяем названия эффектов ссылками на них
     _replace_effects(effect_models, get_effect)
 
+    # теперь заменяем названия моделей ссылками на модели
     for model in all_models:
-        # обходим поля класса, для каждого поля получаем его значение
         _class = type(model)
 
+        # вся эта ерунда работает только для dataclass
         if not dataclasses.is_dataclass(model):
             raise Exception(f"A list of models contains object of type "
                             f"{_class} that isn't a dataclass")
 
+        # заменять названия ссылками нужно только у специально
+        # обозначенных нами полей. обходим все поля класса и для
+        # нужных производим замену строк на ссылки
         for field in dataclasses.fields(_class):
             if (
                     field.metadata
@@ -69,6 +96,10 @@ def _find_model(model_id, all_models):
 
 
 def _replace_ids_with_links_in_list(model, field_name, all_models):
+    """
+    В поле field_name модели model, являющемся списком, заменяем
+    все строки ссылками на модели. Модели ищем в списке all_models
+    """
     link_list = getattr(model, field_name)
     model_list = []
     for link in link_list:
@@ -81,6 +112,10 @@ def _replace_ids_with_links_in_list(model, field_name, all_models):
 
 
 def _replace_ids_with_links_in_list_list(model, field_name, all_models):
+    """
+    В поле field_name модели model, являющемся списком списков, заменяем
+    все строки ссылками на модели. Модели ищем в списке all_models
+    """
     list_list = getattr(model, field_name)
     new_list_list = []
 
@@ -96,7 +131,7 @@ def _replace_ids_with_links_in_list_list(model, field_name, all_models):
     setattr(model, field_name, new_list_list)
 
 
-def make_base_from_models(models):
+def _make_base_from_models(models):
     """
     Generate a model storage object with models sorted into categories.
     """
@@ -120,7 +155,7 @@ def make_base_from_models(models):
     return result
 
 
-def load_all_models(path):
+def _load_all_models(path):
     """
     Walk the directory recursively and load models from all files in it.
     """
@@ -131,13 +166,13 @@ def load_all_models(path):
             ext = os.path.splitext(file)[1]
             file_path = os.path.join(root, file)
             if ext == ".yml" or ext == ".yaml":
-                new_models = load_models_from_yaml(file_path)
+                new_models = _load_models_from_yaml_file(file_path)
                 result.extend(new_models)
 
     return result
 
 
-def load_models_from_yaml(path):
+def _load_models_from_yaml_file(path):
     """
     Load models from a single YAML file.
     """
@@ -147,7 +182,7 @@ def load_models_from_yaml(path):
     return result
 
 
-def load_all_maps(path, model_base):
+def _load_all_maps(path, model_base):
     """
     Walk the directory recursively and load map models from all files in it.
     """
@@ -164,16 +199,6 @@ def load_all_maps(path, model_base):
     return result
 
 
-def load_assets(assets_dir):
-    colors = yaml.safe_load(open(assets_dir + "/palette.yml", "r", encoding="utf-8"))
-    images = yaml.safe_load(open(assets_dir + "/images.yml", "r", encoding="utf-8"))
-    map_filter_data = yaml.safe_load(open(assets_dir + "/map_filters.yml", "r", encoding="utf-8"))
-    map_filters = []
-    for id, data in map_filter_data.items():
-        map_filters.append(MapFilter(**data))
-
-    result = Assets(colors=colors, images=images, map_filters=map_filters)
-    return result
 
 
 def _replace_maps(worlds, maps):
@@ -184,6 +209,9 @@ def _replace_maps(worlds, maps):
 
 
 def _replace_effects(model_list: List[EffectModel], get_effect):
+    """
+    Заменяем названия эффектов в поле model.effects ссылками на эффекты
+    """
     for model in model_list:
         if model.effects is None:
             model.effects = []

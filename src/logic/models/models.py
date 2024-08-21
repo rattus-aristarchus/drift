@@ -120,17 +120,30 @@ class GridModel(Model):
 
 
 """
-Настало время черной магии
+Настало время черной магии.
+
+К сожалению, PyYAML не умеет нормально работать с dataclass.field. При инициализации
+объекта из файла, обычные поля создаются, а поля dataclass.field - нет. Скорее всего,
+это происходит из-за того, что PyYAML не использует автоматически создаваемый dataclass 
+конструктор.
+Поэтому наша задача - напрямую передать эти конструкторы в PyYAML.
 """
 
 
-def prepare_yaml(_model_class):
+def _register_constructors_for_model_subclasses(_model_class):
+    """
+    Обходим рекурсивно дерево классов моделей, и для каждого класса
+    регистрируем конструктор в PyYAML
+    """
     for _class in _model_class.__subclasses__():
         _register_constructor(_class)
-        prepare_yaml(_class)
+        _register_constructors_for_model_subclasses(_class)
 
 
 def _register_constructor(dataclass_type):
+    """
+    Передаём в YAML конструктор для этого типа
+    """
     yaml.SafeLoader.add_constructor(
         tag=dataclass_type.yaml_tag,
         constructor=lambda loader, node: _custom_constructor(loader, node, dataclass_type)
@@ -147,4 +160,4 @@ def _custom_constructor(loader, node, dataclass_type):
 """
 
 # возможно, стоит засунуть этот вызов в какое-то более явное место
-prepare_yaml(Model)
+_register_constructors_for_model_subclasses(Model)
