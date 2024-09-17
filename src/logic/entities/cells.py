@@ -6,7 +6,7 @@ from src.logic.entities.agents import resources
 from src.logic.entities.basic import custom_fields
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models.models import BiomeModel
+#from src.logic.models.models import BiomeModel
 
 
 @dataclasses.dataclass
@@ -15,9 +15,10 @@ class Biome(Entity):
     Экология клетки карты.
     """
 
-    model: BiomeModel = None
     # сколько популяций или ресурсов может вместить данная клетка:
     capacity: dict = dataclasses.field(default_factory=lambda: {})
+    resources: list = custom_fields.relations_list()
+    moisture: str = ""
 
     def __str__(self):
         description = self.name
@@ -46,6 +47,7 @@ class Cell(Entity, Recurrent):
     markets: list = field(default_factory=lambda: [])
     pops: list = custom_fields.relations_list()
     structures: list = custom_fields.relations_list()
+    # TODO: resources должен лежать в biome
     resources: list = custom_fields.relations_list()
     biome: Biome = None
 
@@ -130,7 +132,7 @@ def increase_age(cell, value=1):
     for pop in cell.pops:
         pop.age += value
 
-
+"""
 def create_cell(x, y, biome_model: BiomeModel):
     result = Cell(x=x, y=y)
     result.effects = biome_model.effects
@@ -139,11 +141,11 @@ def create_cell(x, y, biome_model: BiomeModel):
         resource = resources.create_resource(res_model, result)
         resource.size = size
     return result
-
-
+"""
+"""
 def create_biome(biome_model):
-    result = Biome(name=biome_model.id, model=biome_model)
+    result = Biome(name=biome_model.name, model=biome_model)
     if biome_model.capacity:
         result.capacity = dict(biome_model.capacity)
     return result
-
+"""

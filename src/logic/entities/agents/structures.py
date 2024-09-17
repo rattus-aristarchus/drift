@@ -5,7 +5,6 @@ from src.logic.entities.basic import custom_fields
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models.models import StructureModel
 
 
 @dataclasses.dataclass
@@ -67,7 +66,7 @@ def create_market(model, cell, type, resource=None):
     cell.markets.append(market)
     return market
 
-
+"""
 def create_structure(model: StructureModel, destination=None, grid=None):
     result = Structure(name=model.id)
     result.effects = list(model.effects)
@@ -77,3 +76,4 @@ def create_structure(model: StructureModel, destination=None, grid=None):
     if grid:
         grid.structures.append(result)
     return result
+"""

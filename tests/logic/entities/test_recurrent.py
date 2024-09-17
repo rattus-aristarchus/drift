@@ -61,9 +61,9 @@ def test_copy_pop_is_different():
         name="test_need",
         per_1000=50
     )
-    test_need.model = NeedModel(id="test_need_model")
+    test_need.model = NeedModel(name="test_need_model")
     test_need_1 = Need(name="test_need_1")
-    test_need_1.model = NeedModel(id="test_need_model_1")
+    test_need_1.model = NeedModel(name="test_need_model_1")
     pop.needs.append(test_need)
     sample_cell.pops.append(pop)
 
@@ -73,11 +73,11 @@ def test_copy_pop_is_different():
     copy_pop, all_recurrents = recurrents.copy_recurrent_and_add_to_list(pop, {})
     copy_pop.needs.append(test_need_1)
     copy_pop.size += 1
-    copy_pop.get_need(need_id="test_need_model").per_1000 = 60
+    copy_pop.get_need(need_name="test_need_model").per_1000 = 60
 
     assert pop.size == 5
     assert len(pop.needs) == 1
-    assert pop.get_need(need_id="test_need_model").per_1000 == 50
+    assert pop.get_need(need_name="test_need_model").per_1000 == 50
 
 
 def test_copy_cell_is_different():

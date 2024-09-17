@@ -1,5 +1,5 @@
 - !world
-    id: "surplus_and_craft"
+    name: "surplus_and_craft"
     map: middle_kingdom
     width: 26
     height: 14

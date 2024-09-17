@@ -49,11 +49,10 @@ def copy_recurrent_and_add_to_list(to_copy: Recurrent, all_recurrents: dict):
     # вначале - обычное питоновское копирование
     copy = dataclasses.replace(to_copy)
     # добавляем созданную копию в список всех копий
-    all_recurrents[copy.id] = copy
+    all_recurrents[copy.name] = copy
 
     # обходим поля класса, для каждого поля получаем его значение
-    _class = type(to_copy)
-    for field in dataclasses.fields(_class):
+    for field in dataclasses.fields(type(to_copy)):
         old_value = getattr(to_copy, field.name)
         new_value = None
 
@@ -107,6 +106,11 @@ def copy_recurrent_and_add_to_list(to_copy: Recurrent, all_recurrents: dict):
     # добавляем копиям ссылки друг на друга
     copy.last_copy = to_copy
     to_copy.next_copy = copy
+    # цепь ссылок не должна быть бесконечной (для сериализации, и если захотим
+    # ограничить количество итераций в памяти). поэтому обнуляем ссылку на пред-предшествующую копию
+    if to_copy.last_copy:
+        to_copy.last_copy.next_copy = None
+        to_copy.last_copy = None
 
     return copy, all_recurrents
 
@@ -116,10 +120,10 @@ def _get_or_create_copy(element, all_recurrents):
     Метод, который должен обеспечить копию элемента.
     """
 
-    if element.id in all_recurrents.keys():
+    if element.name in all_recurrents.keys():
         # Если элемент уже был скопирован ранее, он будет лежать
         # в all_recurrents, и мы получаем его из этого словаря.
-        new_copy = all_recurrents[element.id]
+        new_copy = all_recurrents[element.name]
     else:
         # Если нет, создаем новую копию.
         new_copy, all_recurrents = copy_recurrent_and_add_to_list(element, all_recurrents)

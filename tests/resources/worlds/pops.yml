@@ -1,6 +1,5 @@
 - !population
-    id: "test_pop"
-    name: "тестовая популяция"
+    name: "test_pop"
     produces: ["test_output"]
     needs:
         - !need

@@ -1,4 +1,8 @@
 - !biome
-    id: "test_biome"
+    name: "test_biome"
     resources:
         - ["test_input", 5000]
+- !biome
+    name: "test_biome_2"
+    resources:
+        - ["test_input", 10000]

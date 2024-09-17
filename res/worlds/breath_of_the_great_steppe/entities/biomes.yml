@@ -1,5 +1,5 @@
 - !biome
-    id: "basic"
+    name: "basic"
     capacity:
         soot_nomads: 10000
         flamesheep: 100000

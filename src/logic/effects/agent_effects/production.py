@@ -54,7 +54,7 @@ def _get_max_effort(product_model, ttl_labor, cell):
 
     bottleneck_num = sys.maxsize
     for input in product_model.inputs:
-        resource = cell.get_res(input.id)
+        resource = cell.get_res(input.name)
         can_use_labor = input.max_labor * resource.size
         if can_use_labor < bottleneck_num:
             bottleneck_num = can_use_labor
@@ -76,7 +76,7 @@ def produce(pop, cell, grid_buffer):
 
 
 def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
-    land_name = product_model.inputs[0].id
+    land_name = product_model.inputs[0].name
     old_land = cell.last_copy.get_res(land_name)
     # без земли делать нечего
     if not old_land:
@@ -101,7 +101,7 @@ def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
         output = 0
         tech_factor = 0
 
-    product = util.get_or_create_res(product_model.id, cell)
+    product = util.get_or_create_res(product_model.name, cell)
     product.size += output
     src.logic.entities.agents.agents.set_ownership(pop, product)
 
@@ -111,7 +111,7 @@ def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
     Logger.debug(f"{__name__}: {pop.name} of size {str(people_num)} with {str(round(land_used))} "
                  f"{land_name} (of total {land_size}) and {str(limit)} productivity cap (with "
                  f"{str(tech_factor)} tech factor) produced "
-                 f"{str(output)} {product_model.id}")
+                 f"{str(output)} {product_model.name}")
 
 
 # вот тут вопрос. стоит ли различать трудосберегающие технологии

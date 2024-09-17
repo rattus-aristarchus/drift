@@ -14,8 +14,7 @@ def copy_dataclass_with_collections(to_copy):
 
     copy = dataclasses.replace(to_copy)
 
-    _class = type(to_copy)
-    for field in fields(_class):
+    for field in fields(type(to_copy)):
         value = getattr(to_copy, field.name)
         if isinstance(value, list) or isinstance(value, dict):
             setattr(copy, field.name, value.copy())

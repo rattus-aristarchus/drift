@@ -12,7 +12,7 @@ class Controller:
 
     def run(self, view):
         self.view = view
-        view.create_grid(self.history.current_state(), self.history.world_model.id)
+        view.create_grid(self.history.current_state(), self.history.world_model.name)
         view.show_grid(self.history.current_state())
         Clock.schedule_interval(self.auto_turn, 0.2)
 

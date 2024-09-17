@@ -1,5 +1,5 @@
 - !biome
-    id: "basic"
+    name: "basic"
     effects:
     capacity:
         steppe_grass: 100000

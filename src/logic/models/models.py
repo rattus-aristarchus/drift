@@ -2,6 +2,12 @@ import dataclasses
 from dataclasses import field
 import yaml
 
+from src.logic.entities.agents.populations import Population, Need
+from src.logic.entities.agents.resources import Resource
+from src.logic.entities.agents.structures import Structure
+from src.logic.entities.cells import Biome
+from src.logic.entities.grids import Grid
+from src.logic.entities.histories import World
 from src.logic.models import custom_fields
 
 
@@ -9,7 +15,7 @@ from src.logic.models import custom_fields
 class Model(yaml.YAMLObject):
 
     yaml_loader = yaml.SafeLoader
-    id: str = ""
+    name: str = ""
 
 
 @dataclasses.dataclass
@@ -24,8 +30,8 @@ class EffectModel(Model):
 class PopModel(EffectModel):
 
     yaml_tag = '!population'
+    linked_class = Population
 
-    name: str = ""
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
@@ -40,14 +46,14 @@ class PopModel(EffectModel):
 class StructureModel(EffectModel):
 
     yaml_tag = '!structure'
-
-    name: str = ""
+    linked_class = Structure
 
 
 @dataclasses.dataclass
 class ResourceModel(EffectModel):
 
     yaml_tag = '!resource'
+    linked_class = Resource
 
     type: str = ""
     yearly_growth: float = 0.0
@@ -62,8 +68,9 @@ class ResourceModel(EffectModel):
 class NeedModel(Model):
 
     yaml_tag = '!need'
+    linked_class = Need
 
-    resource: ResourceModel = None
+    resource: str = ""
     type: str = ""
     per_1000: int = 0
 
@@ -72,6 +79,7 @@ class NeedModel(Model):
 class BiomeModel(EffectModel):
 
     yaml_tag = '!biome'
+    linked_class = Biome
 
     capacity: dict = field(default_factory=lambda: {})
     # список из пар модель ресурса + количество
@@ -96,6 +104,7 @@ class CellModel(Model):
 class WorldModel(EffectModel):
 
     yaml_tag = '!world'
+    linked_class = World
 
     width: int = 10
     height: int = 10
@@ -108,15 +117,6 @@ class WorldModel(EffectModel):
     map: str = ""
     # инструкции для наполнения регионов
     cell_instructions: dict = field(default_factory=lambda: {})
-
-
-@dataclasses.dataclass
-class GridModel(Model):
-
-    yaml_tag = '!grid'
-
-    # a list of columns, each of which is a list of cells;
-    cell_matrix: list = field(default_factory=lambda: [])
 
 
 """
@@ -161,3 +161,36 @@ def _custom_constructor(loader, node, dataclass_type):
 
 # возможно, стоит засунуть этот вызов в какое-то более явное место
 _register_constructors_for_model_subclasses(Model)
+
+
+def create_from_model(model):
+    new_entity = model.linked_class()
+    return _fill_from_model(model, new_entity)
+
+
+def _fill_from_model(model, entity):
+    for model_field in dataclasses.fields(type(model)):
+        model_value = getattr(model, model_field.name)
+        new_value = _replace_models(model_value)
+        setattr(entity, model_field.name, new_value)
+    return entity
+
+def _replace_models(value):
+    result = _replace_if_model(value)
+    if isinstance(value, list):
+        result = []
+        for obj in value:
+            new_value = _replace_if_model(obj)
+            result.append(new_value)
+    elif isinstance(value, dict):
+        result = {}
+        for key, obj in value.items():
+            new_value = _replace_if_model(obj)
+            result[key] = new_value
+    return result
+
+def _replace_if_model(value):
+    result = value
+    if isinstance(value, Model):
+        result = create_from_model(value)
+    return result

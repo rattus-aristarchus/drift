@@ -8,8 +8,6 @@ from src.logic.buffers import CellBuffer
 from src.logic.entities import cells
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models.models import GridModel, CellModel
-from src.logic.models.model_base import ModelBase
 
 
 @dataclasses.dataclass
@@ -94,7 +92,7 @@ def create_grid(width, height, default_biome, age=0):
 
     return result
 
-
+"""
 def create_grid_from_model(grid_model: GridModel, model_base: ModelBase, age=0):
     height = len(grid_model.cell_matrix[0])
     width = len(grid_model.cell_matrix)
@@ -111,8 +109,9 @@ def create_grid_from_model(grid_model: GridModel, model_base: ModelBase, age=0):
             result.cells[x][y] = create_cell_from_model(cell_model)
 
     return result
+"""
 
-
+"""
 def create_cell_from_dict(x, y, cell_data, model_base: ModelBase):
     result = None
     if "biome" in cell_data:
@@ -135,8 +134,9 @@ def create_cell_from_dict(x, y, cell_data, model_base: ModelBase):
         pass
 
     return result
+"""
 
-
+"""
 def create_cell_from_model(model: CellModel):
     result = None
     if model.biome:
@@ -155,7 +155,7 @@ def create_cell_from_model(model: CellModel):
         pass
 
     return result
-
+"""
 
 def increase_age(grid, value=1):
     grid.state.age += 1

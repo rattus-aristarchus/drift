@@ -10,7 +10,7 @@ from src.logic.models.models import BiomeModel, WorldModel
 @pytest.fixture(scope="session")
 def steppe_model():
     result = BiomeModel(
-        id="steppe",
+        name="steppe",
         moisture="dry",
         capacity={
             "sheep": 50000

@@ -1,8 +1,26 @@
-from kivy import Logger
+import dataclasses
 
+from kivy import Logger
+from dataclasses import field
 from src.logic.entities.basic import recurrents
 from src.logic.entities import grids
 from src.logic.buffers import GridBuffer
+
+
+@dataclasses.dataclass
+class World:
+
+    width: int = 10
+    height: int = 10
+    age: int = 0
+    mean_temp: float = 7
+    # how much the temperature needs to deviate for
+    # pops to change by 50%:
+    deviation_50: float = 1
+
+    map: str = ""
+    # инструкции для наполнения регионов
+    cell_instructions: dict = field(default_factory=lambda: {})
 
 
 class History:

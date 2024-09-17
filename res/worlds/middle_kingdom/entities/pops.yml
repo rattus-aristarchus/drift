@@ -1,6 +1,5 @@
 - !population
-    id: "steppe_herders"
-    name: "степные скотоводы"
+    name: "steppe_herders"
     sapient: True
     type: "producers"
     yearly_growth: 0.1
@@ -10,8 +9,7 @@
             per_1000: 1000
     effects:
 - !population
-    id: "mountain_herders"
-    name: "горные скотоводы"
+    name: "mountain_herders"
     sapient: True
     type: "producers"
     yearly_growth: 0.1
@@ -21,8 +19,7 @@
             per_1000: 1000
     effects:
 - !population
-    id: "northern_farmers"
-    name: "крестьяне севера"
+    name: "northern_farmers"
     sapient: True
     type: "producers"
     yearly_growth: 0.1
@@ -37,8 +34,7 @@
     looks_for: ["millet_land"]
     effects: [produce, do_food, producer_grow, producer_mig, social_mobility, pop_to_market]
 - !population
-    id: "rice_growers"
-    name: "рисоводы"
+    name: "rice_growers"
     sapient: True
     type: "producers"
     yearly_growth: 0.1
@@ -53,8 +49,7 @@
     looks_for: ["rice_land"]
     effects: [produce, do_food, producer_grow, producer_mig, social_mobility, pop_to_market]
 - !population
-    id: "blacksmiths"
-    name: "кузнецы"
+    name: "blacksmiths"
     sapient: True
     type: "secondary_producers"
     yearly_growth: 0.1

@@ -8,7 +8,7 @@ from src.logic.models.models import PopModel
 @pytest.fixture
 def model_base():
     result = ModelBase()
-    model = PopModel(id="test_pop")
+    model = PopModel(name="test_pop")
     result.pops.append(model)
     return result
 

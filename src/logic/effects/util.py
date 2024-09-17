@@ -1,10 +1,9 @@
 import math
 from kivy import Logger
 from src.logic.entities.agents import populations, resources
-from src.logic.models.model_base import ModelBase
 
 # эта штука выставляется статически при запуске программы
-model_base: ModelBase = None
+# model_base: ModelBase = None
 
 
 def get_structure(name, cell):

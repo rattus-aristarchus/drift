@@ -12,7 +12,7 @@ def cell_with_pop():
 
 def test_resources_are_created():
     resource_model = ResourceModel(
-        id="test_resource"
+        name="test_resource"
     )
     biome_model = BiomeModel(
         resources=[

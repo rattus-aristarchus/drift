@@ -7,7 +7,7 @@ from src.logic.entities import grids
 from src.logic.entities.agents.structures import Structure
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
-from src.logic.models.models import GridModel, CellModel
+from src.logic.models.models import CellModel
 from src.logic.models.model_base import ModelBase
 
 
@@ -26,7 +26,7 @@ def test_create_cell_from_dict(cell_representation, model_base):
     cell_dict = ast.literal_eval(cell_representation)
     cell = grids.create_cell_from_dict(0, 0, cell_dict, model_base)
 
-    assert cell.biome.model.id == "test_biome"
+    assert cell.biome.model.name == "test_biome"
 
 
 class __EffectSpy:
@@ -73,6 +73,3 @@ def test_create_grid_from_model_right_shape():
 
     assert grid.height == 1
     assert grid.width == 2
-
-
-

@@ -1,9 +1,13 @@
+import dataclasses
+
 import pytest
 
 from src.logic.effects.agent_effects import social
 from src.logic.entities.agents import agents
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
+from src.logic.entities.basic import entities
+from src.logic.entities.basic.entities import Entity
 from src.logic.entities.cells import Cell
 from src.logic.models.models import NeedModel
 
@@ -64,7 +68,7 @@ def test_buy_happy_path(model_base):
     old_buyer = Population()
     buyer.last_copy = old_buyer
     need_model = NeedModel(
-        id="test_need",
+        name="test_need",
         type="test_commodity"
     )
     need = Need(
@@ -88,3 +92,32 @@ def test_buy_happy_path(model_base):
     assert cell.markets[0].exchange is not None
     assert len(cell.markets[0].purchases) == 1
     assert cell.markets[0].purchases[0].amount == 500
+
+@dataclasses.dataclass
+class TestSubEntity(Entity):
+    pass
+
+@dataclasses.dataclass
+class TestEntity:
+
+    sub_entity: TestSubEntity = None
+    sub_entity_list: list = dataclasses.field(default_factory=lambda: [])
+
+
+def test_deep_copy_entity_copies_sub_entity():
+    test = TestEntity()
+    sub = TestSubEntity()
+    sub_1 = TestSubEntity()
+    test.sub_entity = sub
+    test.sub_entity_list.append(sub_1)
+
+    copy = entities.deep_copy_simple(test)
+    sub.name = "changed"
+    sub_1.name = "changed"
+
+    assert copy.sub_entity
+    assert isinstance(copy.sub_entity, TestSubEntity)
+    assert copy.sub_entity.name == ""
+    assert len(copy.sub_entity_list) == 1
+    assert isinstance(copy.sub_entity_list[0], TestSubEntity)
+    assert copy.sub_entity_list[0].name == ""

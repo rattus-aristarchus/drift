@@ -1,5 +1,5 @@
 - !world
-    id: "wheat_and_trade"
+    name: "wheat_and_trade"
     effects: [climate]
     cell_instructions:
         - location: everywhere

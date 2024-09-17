@@ -4,7 +4,7 @@ from dataclasses import field
 
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic.recurrents import Recurrent
-from src.logic.models.models import ResourceModel
+#from src.logic.models.models import ResourceModel
 
 
 @dataclasses.dataclass
@@ -19,6 +19,11 @@ class Resource(Agent, Recurrent):
     owners: dict = field(default_factory=lambda: {})
     yearly_growth: float = 0.0
     type: str = ""
+    inputs: list = field(default_factory=lambda: [])
+    min_labor: int = 0
+    max_labor: int = 0
+    max_labor_share: float = 0.0
+    productivity: float = 1.0
 
     def __str__(self):
         if self.type == "":
@@ -43,7 +48,7 @@ class Resource(Agent, Recurrent):
             free = 0
         return free
 
-
+"""
 def create_resource(model: ResourceModel, destination=None, group=None):
     result = Resource(
         name=model.id,
@@ -57,3 +62,4 @@ def create_resource(model: ResourceModel, destination=None, group=None):
     elif group:
         group.resources.append(result)
     return result
+"""

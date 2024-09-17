@@ -1,7 +1,7 @@
 import dataclasses
 from dataclasses import field
 
-from src.logic.models.models import PopModel, StructureModel, ResourceModel, BiomeModel, WorldModel, GridModel
+from src.logic.models.models import PopModel, StructureModel, ResourceModel, BiomeModel, WorldModel
 
 
 @dataclasses.dataclass
@@ -15,28 +15,25 @@ class ModelBase:
     resources: list[ResourceModel] = field(default_factory=lambda: [])
     biomes: list[BiomeModel] = field(default_factory=lambda: [])
     worlds: list[WorldModel] = field(default_factory=lambda: [])
-    maps: list[GridModel] = field(default_factory=lambda: [])
 
-    def get_pop(self, id):
-        return self.get(id, self.pops)
 
-    def get_structure(self, id):
-        return self.get(id, self.structures)
+    def get_pop(self, name):
+        return self.get(name, self.pops)
 
-    def get_res(self, id):
-        return self.get(id, self.resources)
+    def get_structure(self, name):
+        return self.get(name, self.structures)
 
-    def get_biome(self, id):
-        return self.get(id, self.biomes)
+    def get_res(self, name):
+        return self.get(name, self.resources)
 
-    def get_world(self, id):
-        return self.get(id, self.worlds)
+    def get_biome(self, name):
+        return self.get(name, self.biomes)
 
-    def get_map(self, id):
-        return self.get(id, self.maps)
+    def get_world(self, name):
+        return self.get(name, self.worlds)
 
-    def get(self, id: str, model_list):
+    def get(self, name: str, model_list):
         for entity in model_list:
-            if entity.id == id:
+            if entity.name == name:
                 return entity
         return None

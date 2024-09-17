@@ -21,7 +21,7 @@ def buy(pop, cell):
             surplus, amount = available_surplus(pop)
             if surplus and amount > 0:
                 if need.model.resource:
-                    market = get_market(need.model.resource.id, cell)
+                    market = get_market(need.model.resource.name, cell)
                 else:
                     market = get_or_create_market_by_type(need.model.type, cell)
                 if market:

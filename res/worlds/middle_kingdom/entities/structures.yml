@@ -1,7 +1,6 @@
 - !structure
-    id: "settlement"
-    name: "поселение"
+    name: "settlement"
     effects: [settlement]
 - !structure
-    id: "market"
+    name: "market"
     effects: [exchange]

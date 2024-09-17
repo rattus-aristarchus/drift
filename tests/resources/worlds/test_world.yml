@@ -1,0 +1,7 @@
+- !world
+    name: "test_world"
+    map: map
+    width: 2
+    height: 3
+    mean_temp: 7
+    deviation_50: 1

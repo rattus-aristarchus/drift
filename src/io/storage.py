@@ -8,7 +8,8 @@ from kivy import Logger
 
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
-from src.logic.models.models import PopModel, BiomeModel, StructureModel, WorldModel, EffectModel, GridModel, \
+from src.io import load_factory, load_worlds
+from src.logic.models.models import PopModel, BiomeModel, StructureModel, WorldModel, EffectModel, \
     CellModel, ResourceModel, NeedModel, Model
 from src.logic.models.model_base import ModelBase
 
@@ -30,6 +31,28 @@ def load_assets(assets_dir):
 
     result = Assets(colors=colors, images=images, map_filters=map_filters)
     return result
+
+
+def load_entities(worlds_dir):
+    all_models = load_models(worlds_dir)
+    factory = load_factory.make_factory_from_models(all_models)
+    worlds = load_worlds.create_worlds(all_models)
+    load_worlds.load_maps_into_worlds(worlds, worlds_dir, factory)
+    return factory, worlds
+
+
+def load_models(worlds_dir):
+    all_models = []
+    all_models.extend(_load_all_models(worlds_dir))
+
+    effect_models = []
+    for model in all_models:
+        if isinstance(model, EffectModel):
+            effect_models.append(model)
+
+    # заменяем названия эффектов ссылками на них
+    _replace_effects(effect_models, get_effect)
+    return all_models
 
 
 def make_model_base(worlds_dir):
@@ -88,9 +111,9 @@ def _sort_model_links(all_models):
     return all_models
 
 
-def _find_model(model_id, all_models):
+def _find_model(model_name, all_models):
     for model in all_models:
-        if model.id == model_id:
+        if model.name == model_name:
             return model
     return None
 
@@ -107,7 +130,7 @@ def _replace_ids_with_links_in_list(model, field_name, all_models):
         if link_model:
             model_list.append(link_model)
         else:
-            Logger.error(f"Model {model.id} has a bad link: {link}")
+            Logger.error(f"Model {model.name} has a bad link: {link}")
     setattr(model, field_name, model_list)
 
 
@@ -125,17 +148,16 @@ def _replace_ids_with_links_in_list_list(model, field_name, all_models):
         if link_model:
             new_sub_list[0] = link_model
         else:
-            Logger.error(f"Model {model.id} has a bad link: {new_sub_list[0]}")
+            Logger.error(f"Model {model.name} has a bad link: {new_sub_list[0]}")
         new_list_list.append(new_sub_list)
 
     setattr(model, field_name, new_list_list)
 
-
+"""
 def _make_base_from_models(models):
-    """
-    Generate a model storage object with models sorted into categories.
-    """
-
+  
+ #   Generate a model storage object with models sorted into categories.
+  
     result = ModelBase()
 
     for model in models:
@@ -153,7 +175,7 @@ def _make_base_from_models(models):
             result.worlds.append(model)
 
     return result
-
+"""
 
 def _load_all_models(path):
     """
@@ -182,32 +204,6 @@ def _load_models_from_yaml_file(path):
     return result
 
 
-def _load_all_maps(path, model_base):
-    """
-    Walk the directory recursively and load map models from all files in it.
-    """
-    result = []
-
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            ext = os.path.splitext(file)[1]
-            file_path = os.path.join(root, file)
-            if ext == ".csv":
-                map_model = _load_map_from_tiled(file_path, model_base)
-                result.append(map_model)
-
-    return result
-
-
-
-
-def _replace_maps(worlds, maps):
-    for world in worlds:
-        for map in maps:
-            if world.map == map.id:
-                world.map = map
-
-
 def _replace_effects(model_list: List[EffectModel], get_effect):
     """
     Заменяем названия эффектов в поле model.effects ссылками на эффекты
@@ -223,69 +219,4 @@ def _get_model_effects(model: EffectModel, get_effect):
     result = []
     for effect_name in model.effects:
         result.append(get_effect(effect_name))
-    return result
-
-
-def _load_map(path, model_storage):
-    result = None
-    with open(path) as csv_file:
-        name = os.path.splitext(os.path.basename(path))[0]
-        result = GridModel(id=name)
-
-        csvreader = csv.reader(csv_file, delimiter=';')
-        rows = []
-        for row in csvreader:
-            cell_row = []
-            for cell in row:
-                cell_row.append(cell)
-            rows.append(cell_row)
-
-        # the csv reader reads the file by rows; however, we
-        # need to arrange them by columns first, so that we
-        # can call matrix[x][y] (x being the index of a column)
-
-        for x in range(0, len(rows[0])):
-            column = []
-            for y in range(0, len(rows)):
-                column.append(rows[y][x])
-            result.cell_matrix.append(column)
-
-    return result
-
-
-def _load_map_from_tiled(path, model_base):
-    result = None
-    with open(path) as csv_file:
-        name = os.path.splitext(os.path.basename(path))[0]
-        result = GridModel(id=name)
-
-        csvreader = csv.reader(csv_file, delimiter=',')
-        cell_rows = []
-        x = 0
-        y = 0
-        for row in csvreader:
-            cell_row = []
-            for cell_string in row:
-                cell = CellModel(x=x, y=y)
-                biome = model_base.get_biome(cell_string)
-                if biome is None:
-                    Logger.error(f"Map file at {path} contains an invalid biome name: {cell_string}")
-                else:
-                    cell.biome = biome
-                cell_row.append(cell)
-                x += 1
-            cell_rows.append(cell_row)
-            y += 1
-            x = 0
-
-        # the csv reader reads the file by rows; however, we
-        # need to arrange them by columns first, so that we
-        # can call matrix[x][y] (x being the index of a column)
-
-        for x in range(0, len(cell_rows[0])):
-            column = []
-            for y in range(0, len(cell_rows)):
-                column.append(cell_rows[y][x])
-            result.cell_matrix.append(column)
-
     return result

@@ -1,9 +1,9 @@
 - !biome
-    id: "sea"
+    name: "sea"
     moisture: "wet"
     effects: [temp_change]
 - !biome
-    id: "mountains"
+    name: "mountains"
     moisture: "wet"
     effects: [temp_change]
     capacity:
@@ -11,29 +11,29 @@
     resources:
         - ["millet_land", 500]
 - !biome
-    id: "tibet"
+    name: "tibet"
     moisture: "wet"
     effects: [temp_change]
     capacity:
         yaks: 10000
 - !biome
-    id: "peaks"
+    name: "peaks"
     moisture: "wet"
     effects: [temp_change]
 - !biome
-    id: "mountain_forest"
+    name: "mountain_forest"
     moisture: "wet"
     effects: [temp_change]
     resources:
         - ["millet_land", 1000]
 - !biome
-    id: "steppe"
+    name: "steppe"
     moisture: "dry"
     effects: [temp_change]
     capacity:
         sheep: 50000
 - !biome
-    id: "loess_plateau"
+    name: "loess_plateau"
     moisture: "wet"
     effects: [temp_change]
     capacity:
@@ -41,7 +41,7 @@
     resources:
         - ["millet_land", 25000]
 - !biome
-    id: "temperate_river_valley"
+    name: "temperate_river_valley"
     moisture: "wet"
     effects: [temp_change]
     capacity:
@@ -49,7 +49,7 @@
     resources:
         - ["millet_land", 50000]
 - !biome
-    id: "tropical_river_valley"
+    name: "tropical_river_valley"
     moisture: "wet"
     effects: [temp_change]
     capacity:
@@ -57,18 +57,18 @@
     resources:
         - ["rice_land", 15000]
 - !biome
-    id: "desert"
+    name: "desert"
     moisture: "dry"
     effects: [temp_change]
     capacity:
 - !biome
-    id: "semi-desert"
+    name: "semi-desert"
     moisture: "dry"
     effects: [temp_change]
     capacity:
         sheep: 10000
 - !biome
-    id: "plains"
+    name: "plains"
     moisture: "wet"
     effects: [temp_change]
     capacity:
@@ -76,7 +76,7 @@
     resources:
         - ["millet_land", 10000]
 - !biome
-    id: "chernozem"
+    name: "chernozem"
     moisture: "wet"
     effects: [temp_change]
     capacity:
@@ -84,7 +84,7 @@
     resources:
         - ["millet_land", 25000]
 - !biome
-    id: "hills"
+    name: "hills"
     moisture: "wet"
     effects: [temp_change]
     capacity:
