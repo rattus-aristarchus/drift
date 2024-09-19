@@ -1,4 +1,5 @@
 - !world
+    name: "steppe_breath"
     width: 20
     height: 20
     cell_instructions:

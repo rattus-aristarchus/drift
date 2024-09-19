@@ -1,8 +1,6 @@
-from src.io import storage
 from src.logic.entities.factory import Factory
-from src.logic.models import models
-from src.logic.models.models import EffectModel, PopModel, StructureModel, ResourceModel, BiomeModel, \
-    WorldModel
+from src.io import models
+from src.io.models import PopModel, StructureModel, ResourceModel, BiomeModel
 
 
 def make_factory_from_models(all_models):

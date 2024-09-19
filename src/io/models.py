@@ -6,9 +6,7 @@ from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.structures import Structure
 from src.logic.entities.cells import Biome
-from src.logic.entities.grids import Grid
 from src.logic.entities.histories import World
-from src.logic.models import custom_fields
 
 
 @dataclasses.dataclass
@@ -35,9 +33,8 @@ class PopModel(EffectModel):
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
-    # loaded as strings, replaced with resource_model
-    produces: list = custom_fields.model_list()
-    sells: list = custom_fields.model_list()
+    produces: list = field(default_factory=lambda: [])
+    sells: list = field(default_factory=lambda: [])
     looks_for: list = field(default_factory=lambda: [])
     needs: list = field(default_factory=lambda: [])
 
@@ -57,7 +54,7 @@ class ResourceModel(EffectModel):
 
     type: str = ""
     yearly_growth: float = 0.0
-    inputs: list = custom_fields.model_list()
+    inputs: list = field(default_factory=lambda: [])
     min_labor: int = 0
     max_labor: int = 0
     max_labor_share: float = 0.0
@@ -83,7 +80,7 @@ class BiomeModel(EffectModel):
 
     capacity: dict = field(default_factory=lambda: {})
     # список из пар модель ресурса + количество
-    resources: list = custom_fields.model_list_list()
+    starting_resources: list = field(default_factory=lambda: [])
     moisture: str = ""
 
 

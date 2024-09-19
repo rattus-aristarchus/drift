@@ -200,7 +200,7 @@ def sparse_nomad_mig(pop, cell_buffer, grid_buffer):
         # if the destination is still too crowded, the band
         # splits in two. otherwise, it migrates to the destination
         if num > get_free_capacity(dest_0_old) / 2:
-            model = util.model_base.get_pop('soot_nomads')
+            model = util.factory.new_population('soot_nomads')
             new_pop = agents.create_pop('soot_nomads', cell_buffer.cell)
             new_pop.size = round(pop.size / 2)
             pop.size = round(pop.size / 2)
@@ -227,8 +227,9 @@ def wheatmen_press(pop, cell_buffer, grid_buffer):
 
     # if not part of a community, farmers form a village
     if len(pop.structures) == 0:
-        model = util.model_base.get_structure('settlement')
-        village = src.logic.entities.agents.structures.create_structure(model, cell_buffer.cell)
+        village = factory.new_structure('settlement')
+        cell.structures.append(village)
+
         pop.structures.append(village)
         village.pops.append(pop)
 

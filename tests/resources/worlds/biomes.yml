@@ -1,8 +1,8 @@
 - !biome
     name: "test_biome"
-    resources:
+    starting_resources:
         - ["test_input", 5000]
 - !biome
     name: "test_biome_2"
-    resources:
+    starting_resources:
         - ["test_input", 10000]

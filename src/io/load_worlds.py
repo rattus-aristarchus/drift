@@ -4,8 +4,8 @@ from kivy import Logger
 
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
-from src.logic.models import models
-from src.logic.models.models import WorldModel, CellModel
+from src.io import models
+from src.io.models import WorldModel
 
 
 def create_worlds(all_models):
@@ -18,8 +18,8 @@ def create_worlds(all_models):
 
 
 def load_maps_into_worlds(worlds, worlds_dir, factory):
-    map_models = _load_all_maps(worlds_dir, factory)
-    _replace_maps(worlds, map_models)
+    maps = _load_all_maps(worlds_dir, factory)
+    _replace_maps(worlds, maps)
 
 
 def _load_all_maps(path, factory):
@@ -72,6 +72,12 @@ def _load_map_from_tiled(path, factory):
             result.cells[x] = {}
             for y in range(0, len(cell_rows)):
                 result.cells[x][y] = cell_rows[y][x]
+
+        result.width = len(result.cells)
+        if result.width > 0:
+            result.height = len(result.cells[0])
+        else:
+            result.height = 0
 
     return result
 

@@ -8,7 +8,7 @@
     effects: [temp_change]
     capacity:
         yaks: 10000
-    resources:
+    starting_resources:
         - ["millet_land", 500]
 - !biome
     name: "tibet"
@@ -24,7 +24,7 @@
     name: "mountain_forest"
     moisture: "wet"
     effects: [temp_change]
-    resources:
+    starting_resources:
         - ["millet_land", 1000]
 - !biome
     name: "steppe"
@@ -38,7 +38,7 @@
     effects: [temp_change]
     capacity:
         sheep: 25000
-    resources:
+    starting_resources:
         - ["millet_land", 25000]
 - !biome
     name: "temperate_river_valley"
@@ -46,7 +46,7 @@
     effects: [temp_change]
     capacity:
         sheep: 50000
-    resources:
+    starting_resources:
         - ["millet_land", 50000]
 - !biome
     name: "tropical_river_valley"
@@ -54,7 +54,7 @@
     effects: [temp_change]
     capacity:
         sheep: 10000
-    resources:
+    starting_resources:
         - ["rice_land", 15000]
 - !biome
     name: "desert"
@@ -73,7 +73,7 @@
     effects: [temp_change]
     capacity:
         sheep: 50000
-    resources:
+    starting_resources:
         - ["millet_land", 10000]
 - !biome
     name: "chernozem"
@@ -81,7 +81,7 @@
     effects: [temp_change]
     capacity:
         sheep: 50000
-    resources:
+    starting_resources:
         - ["millet_land", 25000]
 - !biome
     name: "hills"
@@ -89,6 +89,6 @@
     effects: [temp_change]
     capacity:
         sheep: 50000
-    resources:
+    starting_resources:
         - ["millet_land", 5000]
         - ["rice_land", 1000]

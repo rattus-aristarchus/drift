@@ -1,9 +1,10 @@
 import math
 from kivy import Logger
 from src.logic.entities.agents import populations, resources
+from src.logic.entities.factory import Factory
 
 # эта штука выставляется статически при запуске программы
-# model_base: ModelBase = None
+factory: Factory = None
 
 
 def get_structure(name, cell):
@@ -37,16 +38,16 @@ def get_neighbors(x, y, grid):
 def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:
-        model = model_base.get_pop(name)
-        check_pop = populations.create_pop(model, cell)
+        check_pop = factory.new_population(name)
+        cell.pops.append(check_pop)
     return check_pop
 
 
 def get_or_create_res(name, cell):
     check_res = cell.get_res(name)
     if check_res is None:
-        model = model_base.get_res(name)
-        check_res = resources.create_resource(model, cell)
+        check_res = factory.new_resource(name)
+        cell.resources.append(check_res)
     return check_res
 
 

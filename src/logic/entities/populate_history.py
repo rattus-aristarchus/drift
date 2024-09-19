@@ -2,43 +2,43 @@ import random
 from kivy.logger import Logger
 from src.logic.entities import histories
 from src.logic.entities.agents import populations, resources
-from src.logic.models.models import WorldModel
-from src.logic.models.model_base import ModelBase
+from src.logic.entities.factory import Factory
+from src.logic.entities.histories import World
 
 
-def do(world_model: WorldModel, model_storage: ModelBase, write_output):
+def do(world: World, factory: Factory, write_output):
     """
     This function is called once, at the beginning, creating the history
     object with the first grid.
-    :param world_model: a model from which to generate the first grid
-    :param model_storage: a base from which all entities in history will be generated
+    :param world: a world from which to generate the first grid
+    :param factory: a base from which all entities in history will be generated
     :return: a history object
-    :write_output: a callback to write a grid to disk
+    :param write_output: a callback to write a grid to disk
     """
 
-    if world_model.map != "":
-        history = histories.create_with_premade_map(world_model, model_storage, write_output)
+    if world.map != "":
+        history = histories.create_with_premade_map(world, write_output)
     else:
-        history = histories.create_with_generated_map(world_model, model_storage, write_output)
+        history = histories.create_with_generated_map(world, factory, write_output)
 
     grid = history.current_state()
 
-    for cell_dict in world_model.cell_instructions:
+    for cell_dict in world.cell_instructions:
         # the world model contains a list of instructions for
         # populating cells
-        _do_populate_instruction(cell_dict, grid, model_storage)
+        _do_populate_instruction(cell_dict, grid, factory)
 
     return history
 
 
-def _do_populate_instruction(instructions, grid, model_base):
+def _do_populate_instruction(instructions, grid, factory):
     populated_cells = []
 
     if instructions['location'] == 'everywhere':
         # the instruction has to be repeated for every cell on the map
         for x, column in grid.cells.items():
             for y, cell in column.items():
-                _populate_cell(cell, instructions, model_base)
+                _populate_cell(cell, instructions, factory)
                 populated_cells.append(cell)
 
     elif instructions['location'] == 'random':
@@ -50,7 +50,7 @@ def _do_populate_instruction(instructions, grid, model_base):
             repeat = 1
         for i in range(repeat):
             cell = _retreive_cell(instructions, grid)
-            _populate_cell(cell, instructions, model_base)
+            _populate_cell(cell, instructions, factory)
             populated_cells.append(cell)
 
     elif isinstance(instructions['location'], list):
@@ -58,7 +58,7 @@ def _do_populate_instruction(instructions, grid, model_base):
         # it has to be applied to
         x = instructions['location'][0]
         y = instructions['location'][1]
-        _populate_cell(grid.cells[x][y], instructions, model_base)
+        _populate_cell(grid.cells[x][y], instructions, factory)
         populated_cells.append(grid.cells[x][y])
 
     if 'watch' in instructions.keys() and instructions['watch']:
@@ -75,19 +75,19 @@ def _retreive_cell(cell_dict, grid):
     return cell
 
 
-def _populate_cell(cell, cell_dict, model_base):
+def _populate_cell(cell, cell_dict, factory):
     if 'pops' in cell_dict.keys():
         for pop_dict in cell_dict['pops']:
-            pop_model = model_base.get_pop(pop_dict['name'])
-            pop = populations.create_pop(pop_model, cell)
+            pop = factory.new_population(pop_dict['name'])
+            cell.pops.append(pop)
             pop.size = pop_dict['size']
             Logger.debug(f"{__name__}: created pop " + pop.name +
                          " of size " + str(pop.size))
 
     if 'resources' in cell_dict.keys():
         for res_dict in cell_dict['resources']:
-            model = model_base.get_res(res_dict['name'])
-            resource = resources.create_resource(model, cell)
+            resource = factory.new_resource(res_dict['name'])
+            cell.resources.append(resource)
             resource.size = res_dict['size']
             Logger.debug(f"{__name__}: created resource {resource.name}" +
                          f" of size {str(resource.size)}")

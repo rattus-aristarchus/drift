@@ -43,12 +43,12 @@ class Population(Agent, Recurrent):
     def get_need(self, need_type="", need_name=""):
         if need_type != "":
             for need in self.needs:
-                if need.model.type == need_type:
+                if need.type == need_type:
                     return need
 
         elif need_name != "":
             for need in self.needs:
-                if need.model.name == need_name:
+                if need.name == need_name:
                     return need
 
         return None
@@ -66,38 +66,4 @@ class Need(Entity):
     per_1000: int = 0
     # сколько реально есть
     actual: int = 0
-
-"""
-def create_pop(model: PopModel, destination=None):
-    new_pop = Population(
-        name=model.id,
-        effects=list(model.effects),
-        sapient=model.sapient,
-        type=model.type,
-        yearly_growth=model.yearly_growth
-    )
-    new_pop.model = model
-
-    needs = []
-    for need_model in model.needs:
-        needs.append(create_need(need_model))
-    new_pop.needs = needs
-
-    if destination:
-        destination.pops.append(new_pop)
-
-    return new_pop
-"""
-
-"""
-def create_need(model: NeedModel):
-    result = Need(
-        per_1000=model.per_1000,
-        # если не выставить actual, то нулевой год в симуляции всегда
-        # будет адом, т. к. все потребности будут неудовлетворенными
-        actual=model.per_1000
-    )
-    result.model = model
-    return result
-"""
 

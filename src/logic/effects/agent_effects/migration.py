@@ -9,7 +9,7 @@ def producer_mig(pop, cell_buffer, grid_buffer):
 
     if food_need.actual < food_need.per_1000:
         # note: this only looks for one resource
-        old_destinations = util.get_neighbors_with_res(pop.model.looks_for[0], cell_buffer.old_neighbors)
+        old_destinations = util.get_neighbors_with_res(pop.looks_for[0], cell_buffer.old_neighbors)
         destinations = util.find_equivalent_cells(old_destinations, grid_buffer.grid)
 
         if len(destinations) > 0:

@@ -5,22 +5,11 @@ import pytest
 
 from src.io import storage, load_factory, load_worlds
 from src.logic.entities.agents.populations import Need
-from src.logic.entities.agents.resources import Resource
 from src.logic.entities.cells import Biome
 from src.logic.entities.factory import Factory
 from src.logic.entities.grids import Grid
-from src.logic.models import custom_fields
-from src.logic.models.models import BiomeModel, ResourceModel, NeedModel, Model, PopModel
+from src.io.models import Model
 from tests.io.conftest import RESOURCES_DIR, WORLDS_DIR
-from src.logic.models.model_base import ModelBase
-
-
-@pytest.fixture
-def model_base():
-    result = ModelBase()
-    result.biomes.append(BiomeModel("test_biome"))
-    result.biomes.append(BiomeModel("test_biome_2"))
-    return result
 
 
 @pytest.fixture
@@ -42,7 +31,7 @@ def test_load_tiled_map(test_factory):
 def test_load_models_has_proper_links():
     factory, worlds = storage.load_entities(WORLDS_DIR)
 
-    biome_resource = factory.new_biome("test_biome").resources[0][0]
+    biome_resource = factory.new_biome("test_biome").starting_resources[0][0]
     assert isinstance(biome_resource, str)
     assert biome_resource == "test_input"
     pop_production = factory.new_population("test_pop").produces[0]
@@ -82,29 +71,6 @@ def test_load_model_file():
     assert isinstance(models[1], TestModel1)
 
 
-@dataclasses.dataclass
-class TestModelWithLink(Model):
-
-    link_field: list = custom_fields.model_list()
-
-
-@dataclasses.dataclass
-class TestModelLinked(Model):
-
-    pass
-
-
-def test_model_links():
-    model_0 = TestModelWithLink()
-    model_1 = TestModelLinked(name="test_link")
-    model_0.link_field.append("test_link")
-    model_list = [model_0, model_1]
-
-    storage._sort_model_links(model_list)
-
-    assert model_0.link_field[0] == model_1
-
-
 def test_missing_fields_are_initialized():
     path = os.path.join(RESOURCES_DIR, "for_missing_fields")
 
@@ -115,7 +81,7 @@ def test_missing_fields_are_initialized():
 
 
 def test_load_factory():
-    models = storage.load_models(WORLDS_DIR)
+    models = storage._load_models(WORLDS_DIR)
 
     factory = load_factory.make_factory_from_models(models)
 
@@ -125,7 +91,7 @@ def test_load_factory():
 
 
 def test_load_worlds():
-    models = storage.load_models(WORLDS_DIR)
+    models = storage._load_models(WORLDS_DIR)
     factory = load_factory.make_factory_from_models(models)
     world_models = load_worlds.create_worlds(models)
 

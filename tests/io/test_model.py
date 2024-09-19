@@ -1,9 +1,8 @@
 import dataclasses
 
-from src.logic.entities.agents.populations import Population
 from src.logic.entities.basic.entities import Entity
-from src.logic.models import models
-from src.logic.models.models import Model
+from src.io import models
+from src.io.models import Model
 
 
 @dataclasses.dataclass

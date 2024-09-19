@@ -1,4 +1,5 @@
 - !world
+    name: "nomads_vs_farmers"
     width: 20
     height: 20
     cell_instructions:

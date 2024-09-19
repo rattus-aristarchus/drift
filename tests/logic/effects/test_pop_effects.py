@@ -3,7 +3,6 @@ from src.logic.effects import util
 from src.logic.effects.agent_effects import production
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.agents.resources import Resource
-from src.logic.models.models import ResourceModel
 
 
 def test_growth_with_capacity():
@@ -28,25 +27,25 @@ def test_hyperbolic(optimum, labor_per_land, land_used, expected_result):
 
 def test_tech_factor_additive():
     pop = Population(size=1000)
-    tool_model = ResourceModel(
-        productivity=2
-    )
     tool_0 = Resource(
-        model=tool_model,
+        name="tool",
         type="tools",
+        productivity=2,
         size=500
     )
     tool_1 = Resource(
-        model=tool_model,
+        name="tool",
         type="tools",
+        productivity=2,
         size=500
     )
     pop.owned_resources.append(tool_0)
     pop.owned_resources.append(tool_1)
     pop_1 = Population(size=1000)
     tool_2 = Resource(
-        model=tool_model,
+        name="tool",
         type="tools",
+        productivity=2,
         size=1000
     )
     pop_1.owned_resources.append(tool_2)

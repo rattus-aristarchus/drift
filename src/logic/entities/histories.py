@@ -5,10 +5,12 @@ from dataclasses import field
 from src.logic.entities.basic import recurrents
 from src.logic.entities import grids
 from src.logic.buffers import GridBuffer
+from src.logic.entities.basic.entities import Entity
+from src.logic.entities.basic.recurrents import copy_recurrent_and_add_to_list
 
 
 @dataclasses.dataclass
-class World:
+class World(Entity):
 
     width: int = 10
     height: int = 10
@@ -29,10 +31,10 @@ class History:
     каждый из которых соответствует состоянию модели на определенный момент времени.
     """
 
-    def __init__(self, world_model, write_output):
+    def __init__(self, world, write_output=lambda *args: None):
         self.past_grids = []
         self.turn = 0
-        self.world_model = world_model
+        self.world = world
         self.effects = []
         self.write_output = write_output
 
@@ -70,7 +72,7 @@ def do_turn(history):
 def _create_new_turn_grid(history):
     old_grid = history.past_grids[-1]
     new_grid, all_recurrents = recurrents.copy_recurrent_and_add_to_list(old_grid, {})
-    grids.increase_age(new_grid)
+    grids.increase_age_for_everything(new_grid)
     history.past_grids.append(new_grid)
     return new_grid
 
@@ -88,17 +90,17 @@ def _do_effects(history, new_grid, old_grid):
     new_grid.do_effects(grid_buffer)
 
 
-def create_with_premade_map(world_model, model_base, write_output):
-    result = History(world_model, write_output)
-    first_grid = grids.create_grid_from_model(world_model.map, model_base, world_model.age)
+def create_with_premade_map(world, write_output):
+    result = History(world, write_output)
+    first_grid, all_recurrents = copy_recurrent_and_add_to_list(world.map, {})
     result.past_grids.append(first_grid)
-    result.effects = list(world_model.effects)
+    result.effects = list(world.effects)
     return result
 
 
-def create_with_generated_map(world_model, model_base, write_output):
-    result = History(world_model, write_output)
-    first_grid = grids.create_grid(world_model.width, world_model.height, model_base.get_biome('basic'))
+def create_with_generated_map(world, factory, write_output):
+    result = History(world, write_output)
+    first_grid = grids.create_grid_with_default_biome(world.width, world.height, 'basic', factory)
     result.past_grids.append(first_grid)
-    result.effects = list(world_model.effects)
+    result.effects = list(world.effects)
     return result

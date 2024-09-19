@@ -3,21 +3,21 @@ import os
 from dataclasses import field
 
 from src.logic.entities.agents import resources
+from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic import custom_fields
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
-#from src.logic.models.models import BiomeModel
 
 
 @dataclasses.dataclass
-class Biome(Entity):
+class Biome(Agent):
     """
     Экология клетки карты.
     """
 
     # сколько популяций или ресурсов может вместить данная клетка:
     capacity: dict = dataclasses.field(default_factory=lambda: {})
-    resources: list = custom_fields.relations_list()
+    starting_resources: list = dataclasses.field(default_factory=lambda: [])
     moisture: str = ""
 
     def __str__(self):
@@ -128,24 +128,18 @@ def _find_structure(name, cell):
     return None
 
 
-def increase_age(cell, value=1):
+def increase_age_for_everything(cell, value=1):
     for pop in cell.pops:
         pop.age += value
 
-"""
-def create_cell(x, y, biome_model: BiomeModel):
+
+def create_cell(x, y, biome_name, factory):
     result = Cell(x=x, y=y)
-    result.effects = biome_model.effects
-    result.biome = create_biome(biome_model)
-    for res_model, size in biome_model.resources:
-        resource = resources.create_resource(res_model, result)
+    biome = factory.new_biome(biome_name)
+    result.biome = biome
+    result.effects = biome.effects
+    for res_name, size in biome.starting_resources:
+        resource = factory.new_resource(res_name)
         resource.size = size
+        result.resources.append(resource)
     return result
-"""
-"""
-def create_biome(biome_model):
-    result = Biome(name=biome_model.name, model=biome_model)
-    if biome_model.capacity:
-        result.capacity = dict(biome_model.capacity)
-    return result
-"""

@@ -1,8 +1,12 @@
 import src.logic.entities.agents.agents
-from src.logic.effects import structure_effects
+from src.logic.effects import structure_effects, util
+from src.logic.effects.agent_effects import social
+from src.logic.entities.agents import agents
 from src.logic.entities.agents.resources import Resource
-from src.logic.entities.agents.populations import Population
-from src.logic.entities.agents.structures import Market, Commodity
+from src.logic.entities.agents.populations import Population, Need
+from src.logic.entities.agents.structures import Market, Commodity, Structure
+from src.logic.entities.cells import Cell
+from src.logic.entities.factory import Factory
 
 
 def test_exchange_happy_path():
@@ -52,3 +56,38 @@ def test_exchange_happy_path():
     assert len(buyer_1.owned_resources) == 2
     assert buyer_1.name in market.exchange.owners.keys()
     assert market.exchange.owners[buyer_1.name] == 250
+
+
+def test_buy_happy_path():
+    buyer = Population()
+    old_buyer = Population()
+    buyer.last_copy = old_buyer
+    need = Need(
+        name="test_need",
+        type="test_commodity",
+        per_1000=1000,
+        actual=500
+    )
+    old_buyer.needs.append(
+        need
+    )
+    surplus = Resource(
+        name="surplus",
+        size=500
+    )
+    agents.set_ownership(buyer, surplus)
+    cell = Cell()
+    util.factory = Factory()
+    util.factory.structures.append(
+        Market(
+            name="market",
+            effects=src.logic.effects.effects.exchange
+        )
+    )
+
+    social.buy(buyer, cell)
+
+    assert len(cell.markets) == 1
+    assert cell.markets[0].exchange is not None
+    assert len(cell.markets[0].purchases) == 1
+    assert cell.markets[0].purchases[0].amount == 500

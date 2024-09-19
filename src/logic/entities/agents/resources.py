@@ -4,7 +4,6 @@ from dataclasses import field
 
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic.recurrents import Recurrent
-#from src.logic.models.models import ResourceModel
 
 
 @dataclasses.dataclass
@@ -47,19 +46,3 @@ class Resource(Agent, Recurrent):
         if free < 0:
             free = 0
         return free
-
-"""
-def create_resource(model: ResourceModel, destination=None, group=None):
-    result = Resource(
-        name=model.id,
-        effects=model.effects,
-        yearly_growth=model.yearly_growth,
-        type=model.type
-    )
-    result.model = model
-    if destination:
-        destination.resources.append(result)
-    elif group:
-        group.resources.append(result)
-    return result
-"""

@@ -14,7 +14,7 @@ def produce_for_surplus(pop, cell_buffer, grid_buffer):
     """
 
     product_vs_share_vs_surplus = []
-    for product_model in pop.model.produces:
+    for product_model in pop.produces:
         entry = [
             product_model.name,
             pop.effort[product_model.name],
@@ -66,7 +66,7 @@ def _get_max_effort(product_model, ttl_labor, cell):
 
 
 def produce(pop, cell, grid_buffer):
-    for output_model in pop.model.produces:
+    for output_model in pop.produces:
         if not output_model:
             pass
         if output_model.type == "food":
@@ -87,8 +87,8 @@ def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
         land_size = old_land.size
         labor_per_land = people_num / land_size
         # если земли слишком много, ее не пытаются обработать:
-        if labor_per_land < old_land.model.min_labor:
-            labor_per_land = old_land.model.min_labor
+        if labor_per_land < old_land.min_labor:
+            labor_per_land = old_land.min_labor
         land_used = people_num / labor_per_land
         tech_factor = get_tech_factor(pop.last_copy)
         limit = _resource_productivity(old_land, grid_buffer, tech_factor)
@@ -124,10 +124,10 @@ def hyperbolic_function(limit, labor_per_land, land_used):
 
 
 def _resource_productivity(resource, grid_buffer, tech_factor):
-    result = resource.model.max_labor * tech_factor
+    result = resource.max_labor * tech_factor
 
     if resource.type == "land":
-        deviation_factor = grid_buffer.temp_deviation / grid_buffer.history.world_model.deviation_50
+        deviation_factor = grid_buffer.temp_deviation / grid_buffer.history.world.deviation_50
         if deviation_factor >= 0:
             result *= (1 + deviation_factor)
         else:
@@ -145,5 +145,5 @@ def get_tech_factor(pop):
                 availability = 1
             # если производительность инструмента 2, и он есть у 50%
             # населения, то производительность должна вырости в 1.5 раза
-            result += (resource.model.productivity - 1) * availability
+            result += (resource.productivity - 1) * availability
     return result

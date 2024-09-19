@@ -7,12 +7,10 @@ from src.logic.entities import grids
 from src.logic.entities.agents.structures import Structure
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
-from src.logic.models.models import CellModel
-from src.logic.models.model_base import ModelBase
 
 
 def test_increase_grid_age(fresh_grid):
-    grids.increase_age(fresh_grid, 2)
+    grids.increase_age_for_everything(fresh_grid, 2)
 
     assert fresh_grid.cells[0][0].pops[0].age == 2
 
@@ -21,13 +19,13 @@ def test_increase_grid_age(fresh_grid):
 def cell_representation():
     return '{"biome": "test_biome"}'
 
-
+"""
 def test_create_cell_from_dict(cell_representation, model_base):
     cell_dict = ast.literal_eval(cell_representation)
     cell = grids.create_cell_from_dict(0, 0, cell_dict, model_base)
 
-    assert cell.biome.model.name == "test_biome"
-
+    assert cell.biome.name == "test_biome"
+"""
 
 class __EffectSpy:
     calls: int = 0
@@ -60,16 +58,3 @@ def test_effect_calls_for_structures_are_not_repeated(effect_spy):
     grid.do_effects(buffer)
 
     assert spy.calls == 1
-
-
-def test_create_grid_from_model_right_shape():
-    model = GridModel()
-    model.cell_matrix = [
-        [CellModel(x=0, y=0)],
-        [CellModel(x=1, y=0)]
-    ]
-
-    grid = grids.create_grid_from_model(model, ModelBase())
-
-    assert grid.height == 1
-    assert grid.width == 2

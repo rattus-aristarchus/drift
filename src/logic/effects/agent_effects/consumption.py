@@ -21,7 +21,7 @@ def natural_growth(res, cell):
 
 def growth(res):
     old_res = res.last_copy
-    growth = old_res.model.yearly_growth
+    growth = old_res.yearly_growth
     num = old_res.size
 
     res.size += round(num * growth)
@@ -33,7 +33,7 @@ def growth(res):
 
 def producer_grow(pop, cell_buffer, grid_buffer):
     num = pop.last_copy.size
-    growth_rate = pop.model.yearly_growth
+    growth_rate = pop.yearly_growth
     food_need = pop.last_copy.get_need("food")
     hunger = 1 - food_need.actual / food_need.per_1000
 

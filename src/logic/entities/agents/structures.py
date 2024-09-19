@@ -54,26 +54,3 @@ class Market(Agent):
     sale: Commodity = None
     purchases: list[Commodity] = field(default_factory=lambda: [])
     price: float = 0.0
-
-
-def create_market(model, cell, type, resource=None):
-    market = Market(
-        type=type
-    )
-    if resource:
-        market.product = resource
-    market.effects = model.effects
-    cell.markets.append(market)
-    return market
-
-"""
-def create_structure(model: StructureModel, destination=None, grid=None):
-    result = Structure(name=model.id)
-    result.effects = list(model.effects)
-    if destination:
-        destination.structures.append(result)
-        result.territory.append(destination)
-    if grid:
-        grid.structures.append(result)
-    return result
-"""
