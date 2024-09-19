@@ -2,6 +2,8 @@ import dataclasses
 
 from kivy import Logger
 from dataclasses import field
+
+from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic import recurrents
 from src.logic.entities import grids
 from src.logic.buffers import GridBuffer
@@ -10,7 +12,7 @@ from src.logic.entities.basic.recurrents import copy_recurrent_and_add_to_list
 
 
 @dataclasses.dataclass
-class World(Entity):
+class World(Agent):
 
     width: int = 10
     height: int = 10

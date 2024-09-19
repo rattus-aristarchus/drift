@@ -5,8 +5,7 @@ import yaml
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.io import load_factory, load_worlds
-from src.io.models import EffectModel
-
+from src.logic.entities.agents.agents import Agent
 
 # the following methods are required to load effects into models
 get_effect = None
@@ -41,7 +40,7 @@ def _load_models(worlds_dir):
 
     effect_models = []
     for model in all_models:
-        if isinstance(model, EffectModel):
+        if isinstance(model, Agent):
             effect_models.append(model)
 
     # заменяем названия эффектов ссылками на них
@@ -76,7 +75,7 @@ def _load_models_from_yaml_file(path):
     return result
 
 
-def _replace_effects(model_list: List[EffectModel], get_effect):
+def _replace_effects(model_list: List[Agent], get_effect):
     """
     Заменяем названия эффектов в поле model.effects ссылками на эффекты
     """
@@ -87,7 +86,7 @@ def _replace_effects(model_list: List[EffectModel], get_effect):
             model.effects = _get_model_effects(model, get_effect)
 
 
-def _get_model_effects(model: EffectModel, get_effect):
+def _get_model_effects(model: Agent, get_effect):
     result = []
     for effect_name in model.effects:
         result.append(get_effect(effect_name))

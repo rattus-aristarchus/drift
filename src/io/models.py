@@ -5,7 +5,7 @@ import yaml
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.structures import Structure
-from src.logic.entities.cells import Biome
+from src.logic.entities.cells import Biome, Cell
 from src.logic.entities.histories import World
 
 
@@ -17,104 +17,53 @@ class Model(yaml.YAMLObject):
 
 
 @dataclasses.dataclass
-class EffectModel(Model):
-
-    yaml_tag = '!effect'
-
-    effects: list = field(default_factory=lambda: [])
-
-
-@dataclasses.dataclass
-class PopModel(EffectModel):
+class PopModel(Model, Population):
 
     yaml_tag = '!population'
     linked_class = Population
 
-    sapient: bool = False
-    type: str = ""
-    yearly_growth: float = 0.0
-    produces: list = field(default_factory=lambda: [])
-    sells: list = field(default_factory=lambda: [])
-    looks_for: list = field(default_factory=lambda: [])
-    needs: list = field(default_factory=lambda: [])
-
 
 @dataclasses.dataclass
-class StructureModel(EffectModel):
+class StructureModel(Model, Structure):
 
     yaml_tag = '!structure'
     linked_class = Structure
 
 
 @dataclasses.dataclass
-class ResourceModel(EffectModel):
+class ResourceModel(Model, Resource):
 
     yaml_tag = '!resource'
     linked_class = Resource
 
-    type: str = ""
-    yearly_growth: float = 0.0
-    inputs: list = field(default_factory=lambda: [])
-    min_labor: int = 0
-    max_labor: int = 0
-    max_labor_share: float = 0.0
-    productivity: float = 1.0
-
 
 @dataclasses.dataclass
-class NeedModel(Model):
+class NeedModel(Model, Need):
 
     yaml_tag = '!need'
     linked_class = Need
 
-    resource: str = ""
-    type: str = ""
-    per_1000: int = 0
-
 
 @dataclasses.dataclass
-class BiomeModel(EffectModel):
+class BiomeModel(Model, Biome):
 
     yaml_tag = '!biome'
     linked_class = Biome
 
-    capacity: dict = field(default_factory=lambda: {})
-    # список из пар модель ресурса + количество
-    starting_resources: list = field(default_factory=lambda: [])
-    moisture: str = ""
-
 
 @dataclasses.dataclass
-class CellModel(Model):
+class CellModel(Model, Cell):
 
     yaml_tag = '!cell'
 
-    x: int = 0
-    y: int = 0
-    biome: BiomeModel = None
-    resources: list = field(default_factory=lambda: [])
-    pops: list = field(default_factory=lambda: [])
     groups: list = field(default_factory=lambda: [])
 
 
 @dataclasses.dataclass
-class WorldModel(EffectModel):
+class WorldModel(Model, World):
 
     yaml_tag = '!world'
     linked_class = World
-
-    width: int = 10
-    height: int = 10
-    age: int = 0
-    mean_temp: float = 7
-    # how much the temperature needs to deviate for
-    # pops to change by 50%:
-    deviation_50: float = 1
-
-    map: str = ""
-    # инструкции для наполнения регионов
-    cell_instructions: dict = field(default_factory=lambda: {})
-
 
 """
 Настало время черной магии.

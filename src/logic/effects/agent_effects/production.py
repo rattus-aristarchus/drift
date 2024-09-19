@@ -13,6 +13,7 @@ def produce_for_surplus(pop, cell_buffer, grid_buffer):
     где больше излишка.
     """
 
+    #TODO: это надо переписать, т. к. модели используются теперь только для io
     product_vs_share_vs_surplus = []
     for product_model in pop.produces:
         entry = [

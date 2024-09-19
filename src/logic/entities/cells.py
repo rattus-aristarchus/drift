@@ -47,9 +47,14 @@ class Cell(Entity, Recurrent):
     markets: list = field(default_factory=lambda: [])
     pops: list = custom_fields.relations_list()
     structures: list = custom_fields.relations_list()
-    # TODO: resources должен лежать в biome
     resources: list = custom_fields.relations_list()
     biome: Biome = None
+
+    # словарь имя популяци / привлекательность для миграции
+    # или социального лифта
+    draw: dict = field(default_factory=lambda: {})
+    # трудность миграции / социального лифта
+    barrier: dict = field(default_factory=lambda: {})
 
     def do_effects(self, cell_buffer, grid_buffer):
         for func in self.effects:

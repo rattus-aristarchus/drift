@@ -11,7 +11,7 @@ def temp_change(cell, grid_buffer):
         return
 
     # first, we have to know, how much temperature deviation is "bad" or "good".
-    # we know that from the world_model.deviation_50
+    # we know that from the world.deviation_50
     deviation_factor = grid_buffer.temp_deviation / grid_buffer.history.world.deviation_50
 
     # for a wet climate, high temperature is bad, cold is good - so the
@@ -30,3 +30,7 @@ def temp_change(cell, grid_buffer):
     for name, mean_cap in cell.biome.capacity.items():
         cap = round(mean_cap * multiplier)
         cell.biome.capacity[name] = cap
+
+
+def calculate_draw():
+    pass
