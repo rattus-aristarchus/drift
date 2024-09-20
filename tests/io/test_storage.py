@@ -29,7 +29,7 @@ def test_load_tiled_map(test_factory):
 
 
 def test_load_models_has_proper_links():
-    factory, worlds = storage.load_entities(WORLDS_DIR)
+    factory, worlds, rules = storage.load_entities(WORLDS_DIR)
 
     biome_resource = factory.new_biome("test_biome").starting_resources[0][0]
     assert isinstance(biome_resource, str)
@@ -99,3 +99,12 @@ def test_load_worlds():
 
     assert world_models[0].map
     assert isinstance(world_models[0].map, Grid)
+
+
+def test_load_rules():
+    models = storage._load_models(WORLDS_DIR)
+
+    rules = storage._create_rulebook(models)
+
+    assert len(rules.biomes) == 1
+    assert "default_biome" in rules.biomes.keys()

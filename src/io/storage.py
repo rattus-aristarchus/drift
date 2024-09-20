@@ -4,8 +4,10 @@ import yaml
 
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
-from src.io import load_factory, load_worlds
+from src.io import load_factory, load_worlds, models
 from src.logic.entities.agents.agents import Agent
+from src.logic.rules.rulebook import Rules
+from src.logic.rules.rules import Rule, BiomeRule, ResourceRule, PopulationRule
 
 # the following methods are required to load effects into models
 get_effect = None
@@ -31,7 +33,8 @@ def load_entities(worlds_dir):
     factory = load_factory.make_factory_from_models(all_models)
     worlds = load_worlds.create_worlds(all_models)
     load_worlds.load_maps_into_worlds(worlds, worlds_dir, factory)
-    return factory, worlds
+    rules = _create_rulebook(all_models)
+    return factory, worlds, rules
 
 
 def _load_models(worlds_dir):
@@ -90,4 +93,19 @@ def _get_model_effects(model: Agent, get_effect):
     result = []
     for effect_name in model.effects:
         result.append(get_effect(effect_name))
+    return result
+
+
+def _create_rulebook(all_models):
+    result = Rules()
+    for model in all_models:
+        if isinstance(model, Rule):
+            rule = models.create_from_model(model)
+            if isinstance(rule, BiomeRule):
+                result.biomes[rule.name] = rule
+            elif isinstance(rule, ResourceRule):
+                result.resources[rule.name] = rule
+            elif isinstance(rule, PopulationRule):
+                result.populations[rule.name] = rule
+
     return result
