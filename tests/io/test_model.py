@@ -1,5 +1,5 @@
 import dataclasses
-
+import inspect
 from src.logic.entities.basic.entities import Entity
 from src.io import models
 from src.io.models import Model
@@ -24,3 +24,17 @@ def test_create_from_model():
     test_entity = models.create_from_model(test_model)
 
     assert test_entity.name == "test"
+
+@dataclasses.dataclass
+class TestParent:
+
+    parent_field: str = ""
+
+@dataclasses.dataclass
+class TestClass(TestParent):
+
+    test_field: str = ""
+
+def test_get_class_members():
+    members = TestClass.__dict__
+    print(members)

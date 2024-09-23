@@ -141,12 +141,21 @@ def _custom_constructor(loader, node, dataclass_type):
     data = loader.construct_mapping(node, deep=True)
     return dataclass_type(**data)
 
+# возможно, стоит засунуть этот вызов в какое-то более явное место
+_register_constructors_for_model_subclasses(Model)
+
+for _class in _model_class.__subclasses__():
+    _register_constructor(_class)
+    _register_constructors_for_model_subclasses(_class)
 """
 Конец черной магии. Отправляемся в церковь или кабак, запивать или замаливать совесть. 
 """
 
-# возможно, стоит засунуть этот вызов в какое-то более явное место
-_register_constructors_for_model_subclasses(Model)
+def _create_fields_for_model_recursive(model_cls):
+
+
+
+_create_fields_for_model_recursive(Model)
 
 
 def create_from_model(model):
