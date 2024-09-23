@@ -5,6 +5,7 @@ import yaml
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.io import load_factory, load_worlds, models
+from src.io.models import RuleModel, BiomeRuleModel, ResourceRuleModel, PopulationRuleModel
 from src.logic.entities.agents.agents import Agent
 from src.logic.rules.rulebook import Rules
 from src.logic.rules.rules import Rule, BiomeRule, ResourceRule, PopulationRule
@@ -99,7 +100,7 @@ def _get_model_effects(model: Agent, get_effect):
 def _create_rulebook(all_models):
     result = Rules()
     for model in all_models:
-        if isinstance(model, Rule):
+        if isinstance(model, RuleModel):
             rule = models.create_from_model(model)
             if isinstance(rule, BiomeRule):
                 result.biomes[rule.name] = rule

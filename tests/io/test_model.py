@@ -3,6 +3,7 @@ import inspect
 from src.logic.entities.basic.entities import Entity
 from src.io import models
 from src.io.models import Model
+from src.logic.entities.basic.recurrents import Recurrent
 
 
 @dataclasses.dataclass
@@ -25,16 +26,15 @@ def test_create_from_model():
 
     assert test_entity.name == "test"
 
-@dataclasses.dataclass
-class TestParent:
-
-    parent_field: str = ""
 
 @dataclasses.dataclass
-class TestClass(TestParent):
+class TestClass(Recurrent):
 
     test_field: str = ""
 
+
+"""
 def test_get_class_members():
     members = TestClass.__dict__
     print(members)
+"""

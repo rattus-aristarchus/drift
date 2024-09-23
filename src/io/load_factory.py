@@ -1,7 +1,7 @@
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.factory import Factory
 from src.io import models
-from src.io.models import PopModel, StructureModel, ResourceModel, BiomeModel, WorldModel
+from src.io.models import PopModel, StructureModel, ResourceModel, BiomeModel, WorldModel, AgentModel
 
 
 def make_factory_from_models(all_models):
@@ -26,7 +26,7 @@ def make_factory_from_models(all_models):
             result.biomes[entity.name] = entity
         elif isinstance(model, WorldModel):
             pass
-        elif isinstance(model, Agent):
+        elif isinstance(model, AgentModel):
             entity = models.create_from_model(model)
             result.misc[entity.name] = entity
 
