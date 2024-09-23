@@ -14,7 +14,6 @@ class Structure(Agent, Recurrent):
     популяций / территорий (города, государства, рынки).
     """
 
-    effects: list = field(default_factory=lambda: [])
     pops: list = custom_fields.relations_list()
     # a list of cells
     territory: list = custom_fields.relations_list()

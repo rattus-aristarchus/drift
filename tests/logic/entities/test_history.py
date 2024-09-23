@@ -9,7 +9,7 @@ from src.logic.entities.factory import Factory
 def factory_with_test_pop():
     result = Factory()
     pop = Population(name="test_pop")
-    result.populations.append(pop)
+    result.populations["test_pop"] = pop
     return result
 
 

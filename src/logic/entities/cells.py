@@ -1,7 +1,7 @@
 import dataclasses
 import os
 from dataclasses import field
-
+from kivy import Logger
 from src.logic.entities.agents import resources
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic import custom_fields
@@ -36,14 +36,13 @@ class Biome(Agent):
 
 
 @dataclasses.dataclass
-class Cell(Entity, Recurrent):
+class Cell(Agent, Recurrent):
     """
     Клетка карты.
     """
 
     x: int = 0
     y: int = 0
-    effects: list = field(default_factory=lambda: [])
     markets: list = field(default_factory=lambda: [])
     pops: list = custom_fields.relations_list()
     structures: list = custom_fields.relations_list()
@@ -56,7 +55,7 @@ class Cell(Entity, Recurrent):
     # трудность миграции / социального лифта
     barrier: dict = field(default_factory=lambda: {})
 
-    def do_effects(self, cell_buffer, grid_buffer):
+    def do_effects(self, cell_buffer=None, grid_buffer=None):
         for func in self.effects:
             func(self, cell_buffer, grid_buffer)
 
@@ -141,10 +140,15 @@ def increase_age_for_everything(cell, value=1):
 def create_cell(x, y, biome_name, factory):
     result = Cell(x=x, y=y)
     biome = factory.new_biome(biome_name)
-    result.biome = biome
-    result.effects = biome.effects
+    if biome is None:
+        Logger.error(f"Trying to create cell with invalid biome name: {biome}")
+    else:
+        result.biome = biome
+        result.effects = biome.effects
+    Logger.debug(f"Creating cell at ({str(x)},{str(y)}) with biome {biome_name}")
     for res_name, size in biome.starting_resources:
         resource = factory.new_resource(res_name)
         resource.size = size
         result.resources.append(resource)
+        Logger.debug(f"Adding {str(size)} of resource {res_name}")
     return result

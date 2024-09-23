@@ -20,6 +20,7 @@ class Population(Agent, Recurrent):
     yearly_growth: float = 0.0
 
     owned_resources: list = custom_fields.relations_list()
+    needs: list = custom_fields.deep_copy_list()
 
     # what fraction of labor is spent on what (not used right now)
   #  effort: dict = field(default_factory=lambda: {})
@@ -28,7 +29,7 @@ class Population(Agent, Recurrent):
     produces: list = field(default_factory=lambda: [])
     sells: list = field(default_factory=lambda: [])
     looks_for: list = field(default_factory=lambda: [])
-    needs: list = custom_fields.deep_copy_list()
+
 
     def __str__(self):
         if self.type == "":

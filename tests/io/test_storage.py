@@ -15,8 +15,8 @@ from tests.io.conftest import RESOURCES_DIR, WORLDS_DIR
 @pytest.fixture
 def test_factory():
     result = Factory()
-    result.biomes.append(Biome(name="test_biome"))
-    result.biomes.append(Biome(name="test_biome_2"))
+    result.biomes["test_biome"] = Biome(name="test_biome")
+    result.biomes["test_biome_2"] = Biome(name="test_biome_2")
     return result
 
 

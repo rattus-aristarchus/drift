@@ -1,10 +1,11 @@
 import dataclasses
+import uuid
 from dataclasses import field
 import yaml
 
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
-from src.logic.entities.agents.structures import Structure
+from src.logic.entities.agents.structures import Structure, Market
 from src.logic.entities.cells import Biome, Cell
 from src.logic.entities.histories import World
 from src.logic.rules.rules import BiomeRule, ResourceRule, PopulationRule
@@ -20,6 +21,8 @@ from src.logic.rules.rules import BiomeRule, ResourceRule, PopulationRule
 class Model(yaml.YAMLObject):
 
     yaml_loader = yaml.SafeLoader
+    linked_class = None
+
     name: str = ""
 
 
@@ -35,6 +38,13 @@ class StructureModel(Model, Structure):
 
     yaml_tag = '!structure'
     linked_class = Structure
+
+
+@dataclasses.dataclass
+class MarketModel(Model, Market):
+
+    yaml_tag = '!market'
+    linked_class = Market
 
 
 @dataclasses.dataclass
@@ -131,7 +141,6 @@ def _custom_constructor(loader, node, dataclass_type):
     data = loader.construct_mapping(node, deep=True)
     return dataclass_type(**data)
 
-
 """
 Конец черной магии. Отправляемся в церковь или кабак, запивать или замаливать совесть. 
 """
@@ -144,9 +153,10 @@ def create_from_model(model):
     new_entity = model.linked_class()
     return _fill_from_model(model, new_entity)
 
-
 def _fill_from_model(model, entity):
     for model_field in dataclasses.fields(type(model)):
+        if model_field.name == "id":
+            continue
         model_value = getattr(model, model_field.name)
         new_value = _replace_models(model_value)
         setattr(entity, model_field.name, new_value)

@@ -17,7 +17,7 @@ def factory_with_steppe_biome():
             "sheep": 50000
         }
     )
-    factory.biomes.append(result)
+    factory.biomes["steppe"] = result
     return factory
 
 

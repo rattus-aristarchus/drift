@@ -17,6 +17,7 @@ class Resource(Agent, Recurrent):
     # пары из имя агента + количество (кто сколько владеет)
     owners: dict = field(default_factory=lambda: {})
     yearly_growth: float = 0.0
+
     type: str = ""
     inputs: list = field(default_factory=lambda: [])
     min_labor: int = 0

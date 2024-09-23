@@ -78,12 +78,11 @@ def test_buy_happy_path():
     agents.set_ownership(buyer, surplus)
     cell = Cell()
     util.factory = Factory()
-    util.factory.structures.append(
-        Market(
-            name="market",
-            effects=src.logic.effects.effects.exchange
-        )
+    util.factory.structures["market"] = Market(
+        name="market",
+        effects=src.logic.effects.effects.exchange
     )
+
 
     social.buy(buyer, cell)
 

@@ -5,7 +5,7 @@ from src.logic.entities.factory import Factory
 def test_new():
     factory = Factory()
     pop_prototype = Population(name="test_pop", size=1)
-    factory.populations.append(pop_prototype)
+    factory.populations["test_pop"] = pop_prototype
 
     new_pop = factory.new_population("test_pop")
 

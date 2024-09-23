@@ -3,6 +3,7 @@ from kivy import Logger
 
 import src.logic.entities.agents.agents
 from src.logic.effects import util
+from src.logic.effects.util import factory
 
 
 def produce_for_surplus(pop, cell_buffer, grid_buffer):
@@ -15,11 +16,11 @@ def produce_for_surplus(pop, cell_buffer, grid_buffer):
 
     #TODO: это надо переписать, т. к. модели используются теперь только для io
     product_vs_share_vs_surplus = []
-    for product_model in pop.produces:
+    for product_name in pop.produces:
         entry = [
-            product_model.name,
-            pop.effort[product_model.name],
-            _get_surplus_per_effort(product_model, pop)
+            product_name,
+            pop.effort[product_name],
+            _get_surplus_per_effort(product_name, pop)
         ]
         product_vs_share_vs_surplus.append(entry)
 
@@ -42,21 +43,24 @@ def _shrink_everyones_share_except(product_vs_share_vs_surplus, to_except, total
             share -= shrink_per_product
 
 
-def _get_surplus_per_effort(product_model, pop):
+def _get_surplus_per_effort(product_name, pop):
     pass
 
 
-def _get_max_effort(product_model, ttl_labor, cell):
+def _get_max_effort(product_name, ttl_labor, cell):
     """
     Вычисляем, сколько максимум труда может занять
     производство product_model
     """
-    if_infinite_inputs = product_model.max_labor_share * ttl_labor
+    prototype = factory.prototype_resource(product_name)
+
+    if_infinite_inputs = prototype.max_labor_share * ttl_labor
 
     bottleneck_num = sys.maxsize
-    for input in product_model.inputs:
-        resource = cell.get_res(input.name)
-        can_use_labor = input.max_labor * resource.size
+    for input in prototype.inputs:
+        resource = cell.get_res(input)
+        res_prototype = factory.prototype_resource(input)
+        can_use_labor = res_prototype.max_labor * resource.size
         if can_use_labor < bottleneck_num:
             bottleneck_num = can_use_labor
 
@@ -67,17 +71,18 @@ def _get_max_effort(product_model, ttl_labor, cell):
 
 
 def produce(pop, cell, grid_buffer):
-    for output_model in pop.produces:
-        if not output_model:
+    for output in pop.produces:
+        if not output:
             pass
-        if output_model.type == "food":
-            natural_resource_exploitation(pop, output_model, cell, grid_buffer)
-        elif output_model.type == "tools":
-            natural_resource_exploitation(pop, output_model, cell, grid_buffer)
+        prototype = util.factory.prototype_resource(output)
+        if prototype.type == "food":
+            natural_resource_exploitation(pop, prototype, cell, grid_buffer)
+        elif prototype.type == "tools":
+            natural_resource_exploitation(pop, prototype, cell, grid_buffer)
 
 
-def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
-    land_name = product_model.inputs[0].name
+def natural_resource_exploitation(pop, prototype, cell, grid_buffer):
+    land_name = prototype.inputs[0]
     old_land = cell.last_copy.get_res(land_name)
     # без земли делать нечего
     if not old_land:
@@ -102,7 +107,7 @@ def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
         output = 0
         tech_factor = 0
 
-    product = util.get_or_create_res(product_model.name, cell)
+    product = util.get_or_create_res(prototype.name, cell)
     product.size += output
     src.logic.entities.agents.agents.set_ownership(pop, product)
 
@@ -112,7 +117,7 @@ def natural_resource_exploitation(pop, product_model, cell, grid_buffer):
     Logger.debug(f"{__name__}: {pop.name} of size {str(people_num)} with {str(round(land_used))} "
                  f"{land_name} (of total {land_size}) and {str(limit)} productivity cap (with "
                  f"{str(tech_factor)} tech factor) produced "
-                 f"{str(output)} {product_model.name}")
+                 f"{str(output)} {prototype.name}")
 
 
 # вот тут вопрос. стоит ли различать трудосберегающие технологии

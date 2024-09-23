@@ -64,7 +64,7 @@ def get_or_create_market(resource, cell):
             market = check_market
             market.product = resource
     if not market:
-        market = util.factory.new_structure("market")
+        market = util.factory.new_misc("market")
         cell.markets.append(market)
         market.type = resource.type
         market.product = resource

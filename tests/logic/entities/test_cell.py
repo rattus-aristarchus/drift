@@ -6,21 +6,15 @@ from src.logic.entities.cells import Biome
 from src.logic.entities.factory import Factory
 
 
-@pytest.fixture
-def cell_with_pop():
-
-    return cell
-
-
 def test_resources_are_created():
     factory = Factory()
     resource = Resource(name="test_resource")
-    factory.resources.append(resource)
+    factory.resources["test_resource"] = resource
     biome = Biome(name="test_biome")
     biome.starting_resources=[
         ("test_resource", 5)
     ]
-    factory.biomes.append(biome)
+    factory.biomes["test_biome"] = biome
 
     cell = cells.create_cell(0, 0, "test_biome", factory)
 

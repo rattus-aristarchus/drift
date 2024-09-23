@@ -11,7 +11,7 @@ from src.logic.entities.histories import History, World
 def factory_with_default_biome():
     default_biome = Biome(name="default_biome")
     factory = Factory()
-    factory.biomes.append(default_biome)
+    factory.biomes["default_biome"] = default_biome
     return factory
 
 @pytest.fixture

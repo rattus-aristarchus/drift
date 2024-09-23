@@ -2,6 +2,7 @@ import csv
 import os
 from kivy import Logger
 
+from src.logic.entities import cells
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
 from src.io import models
@@ -52,12 +53,7 @@ def _load_map_from_tiled(path, factory):
         for row in csvreader:
             cell_row = []
             for cell_string in row:
-                cell = Cell(x=x, y=y)
-                biome = factory.new_biome(cell_string)
-                if biome is None:
-                    Logger.error(f"Map file at {path} contains an invalid biome name: {cell_string}")
-                else:
-                    cell.biome = biome
+                cell = cells.create_cell(x, y, cell_string, factory)
                 cell_row.append(cell)
                 x += 1
             cell_rows.append(cell_row)
