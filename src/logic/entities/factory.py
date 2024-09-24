@@ -38,7 +38,7 @@ class Factory:
             return None
         else:
             prototype = prototype_dict[name]
-            return entities.deep_copy_simple(prototype)
+            return entities.inherit_prototype_fields(prototype)
 
     def prototype_population(self, name):
         return self._get_prototype(self.populations, name)

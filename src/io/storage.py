@@ -5,10 +5,10 @@ import yaml
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.io import load_factory, load_worlds, models
-from src.io.models import RuleModel, BiomeRuleModel, ResourceRuleModel, PopulationRuleModel
+from src.io.models import RuleModel, AgentModel
 from src.logic.entities.agents.agents import Agent
 from src.logic.rules.rulebook import Rules
-from src.logic.rules.rules import Rule, BiomeRule, ResourceRule, PopulationRule
+from src.logic.rules.rules import BiomeRule, ResourceRule, PopulationRule
 
 # the following methods are required to load effects into models
 get_effect = None
@@ -30,7 +30,7 @@ def load_assets(assets_dir):
 
 
 def load_entities(worlds_dir):
-    all_models = _load_models(worlds_dir)
+    all_models = _load_models_and_replace_effects(worlds_dir)
     factory = load_factory.make_factory_from_models(all_models)
     worlds = load_worlds.create_worlds(all_models)
     load_worlds.load_maps_into_worlds(worlds, worlds_dir, factory)
@@ -38,13 +38,13 @@ def load_entities(worlds_dir):
     return factory, worlds, rules
 
 
-def _load_models(worlds_dir):
+def _load_models_and_replace_effects(worlds_dir):
     all_models = []
     all_models.extend(_load_all_models(worlds_dir))
 
     effect_models = []
     for model in all_models:
-        if isinstance(model, Agent):
+        if isinstance(model, AgentModel):
             effect_models.append(model)
 
     # заменяем названия эффектов ссылками на них
@@ -79,12 +79,12 @@ def _load_models_from_yaml_file(path):
     return result
 
 
-def _replace_effects(model_list: List[Agent], get_effect):
+def _replace_effects(model_list: List[AgentModel], get_effect):
     """
     Заменяем названия эффектов в поле model.effects ссылками на эффекты
     """
     for model in model_list:
-        if model.effects is None:
+        if not hasattr(model, "effects") or model.effects is None:
             model.effects = []
         else:
             model.effects = _get_model_effects(model, get_effect)

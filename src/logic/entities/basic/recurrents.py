@@ -18,7 +18,7 @@ class Recurrent:
 
     # айдишник, по которому можно опознать копии одной
     # и той же сущности
-    id: str = dataclasses.field(default_factory=lambda: str(uuid.uuid4()))
+    _id: str = dataclasses.field(default_factory=lambda: str(uuid.uuid4()))
 
     # при создании новой итерации модели все сущности
     # копируются в нее; last_copy - ссылка на сущность
@@ -49,7 +49,7 @@ def copy_recurrent_and_add_to_list(to_copy: Recurrent, all_recurrents: dict):
     # вначале - обычное питоновское копирование
     copy = dataclasses.replace(to_copy)
     # добавляем созданную копию в список всех копий
-    all_recurrents[copy.id] = copy
+    all_recurrents[copy._id] = copy
 
     # обходим поля класса, для каждого поля получаем его значение
     for field in dataclasses.fields(type(to_copy)):
@@ -120,10 +120,10 @@ def _get_or_create_copy(element, all_recurrents):
     Метод, который должен обеспечить копию элемента.
     """
 
-    if element.id in all_recurrents.keys():
+    if element._id in all_recurrents.keys():
         # Если элемент уже был скопирован ранее, он будет лежать
         # в all_recurrents, и мы получаем его из этого словаря.
-        new_copy = all_recurrents[element.id]
+        new_copy = all_recurrents[element._id]
     else:
         # Если нет, создаем новую копию.
         new_copy, all_recurrents = copy_recurrent_and_add_to_list(element, all_recurrents)

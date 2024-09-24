@@ -70,7 +70,7 @@ class NeedModel(AgentModel):
 
 
 @dataclasses.dataclass
-class BiomeModel(Model):
+class BiomeModel(AgentModel):
 
     yaml_tag = '!biome'
     linked_class = Biome

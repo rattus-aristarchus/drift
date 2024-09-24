@@ -82,7 +82,7 @@ def test_missing_fields_are_initialized():
 """
 
 def test_load_factory():
-    models = storage._load_models(WORLDS_DIR)
+    models = storage._load_models_and_replace_effects(WORLDS_DIR)
 
     factory = load_factory.make_factory_from_models(models)
 
@@ -92,7 +92,7 @@ def test_load_factory():
 
 
 def test_load_worlds():
-    models = storage._load_models(WORLDS_DIR)
+    models = storage._load_models_and_replace_effects(WORLDS_DIR)
     factory = load_factory.make_factory_from_models(models)
     worlds = load_worlds.create_worlds(models)
 
@@ -103,7 +103,7 @@ def test_load_worlds():
 
 
 def test_load_rules():
-    models = storage._load_models(WORLDS_DIR)
+    models = storage._load_models_and_replace_effects(WORLDS_DIR)
 
     rules = storage._create_rulebook(models)
 

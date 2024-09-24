@@ -11,7 +11,7 @@ class Entity:
     name: str = ""
 
 
-def deep_copy_simple(entity):
+def inherit_prototype_fields(entity):
     """
     Глубокое копирование сущности, рекурсивно вызывается для
     всех ссылок на другие сущности.
@@ -24,15 +24,19 @@ def deep_copy_simple(entity):
     копирования иерархической сущности, под-сущности которой не ссылаются
     друг на друга.
     """
-    copy = dataclasses.replace(entity)
+    copy = type(entity)()
 
     for field in fields(type(entity)):
+        # внутренние поля у копии должны быть свои
+        if field.name[0] == '_':
+            continue
+
         value = getattr(entity, field.name)
-        new_value = None
+        new_value = value
 
         # если прямая ссылка на сущность - вызываем функцию рекурсивно
         if isinstance(value, Entity):
-            new_value = deep_copy_simple(value)
+            new_value = inherit_prototype_fields(value)
 
         # если список - то это может быть список сущностей, тогда
         # рекурсивный вызов для каждого элемента; либо просто список -
@@ -41,7 +45,7 @@ def deep_copy_simple(entity):
             if len(value) > 0 and isinstance(value[0], Entity):
                 new_value = []
                 for item in value:
-                    new_item = deep_copy_simple(item)
+                    new_item = inherit_prototype_fields(item)
                     new_value.append(new_item)
             else:
                 new_value = value.copy()
@@ -52,12 +56,12 @@ def deep_copy_simple(entity):
             if len(value) > 0 and isinstance(next(iter(value.values())), Entity):
                 new_value = {}
                 for key, item in value:
-                    new_item = deep_copy_simple(item)
+                    new_item = inherit_prototype_fields(item)
                     new_value[key] = new_item
             else:
                 new_value = value.copy()
 
-        if new_value:
-            setattr(copy, field.name, new_value)
+
+        setattr(copy, field.name, new_value)
 
     return copy
