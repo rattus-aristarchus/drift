@@ -5,6 +5,6 @@ Modelling large group dynamics just for fun. This may or may not result in a lar
 
 [туду](TODO.md)
 
-[веселые истории журнал покажет наш]()
+[веселые истории журнал покажет наш](STORIES.md)
 
 
