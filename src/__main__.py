@@ -18,7 +18,7 @@ def _get_world(name, world_list):
 
 
 if __name__ == '__main__':
-    factory, rules = storage.load_entities(NAMESPACES_DIR)
+    factory = storage.load_entities(NAMESPACES_DIR)
 
     effects_util.factory = factory
     world = _get_world(CONF['world'], list(factory.worlds.values()))

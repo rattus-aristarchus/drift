@@ -1,6 +1,5 @@
 import dataclasses
 import inspect
-import uuid
 from dataclasses import field
 import yaml
 
@@ -10,7 +9,6 @@ from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.structures import Structure, Market
 from src.logic.entities.cells import Biome, Cell
 from src.logic.entities.histories import World
-from src.logic.rules.rules import BiomeRule, ResourceRule, PopulationRule, Rule
 
 """
 При переносе данных из моделей в связанные с ними классы система
@@ -89,37 +87,6 @@ class WorldModel(AgentModel):
 
     yaml_tag = '!world'
     linked_class = World
-
-"""
-Дальше - модели для правил
-"""
-
-@dataclasses.dataclass
-class RuleModel(Model):
-
-    yaml_tag = '!rule'
-    linked_class = Rule
-
-@dataclasses.dataclass
-class BiomeRuleModel(RuleModel):
-
-    yaml_tag = '!biome_rule'
-    linked_class = BiomeRule
-
-
-@dataclasses.dataclass
-class ResourceRuleModel(RuleModel):
-
-    yaml_tag = '!resource_rule'
-    linked_class = ResourceRule
-
-
-@dataclasses.dataclass
-class PopulationRuleModel(RuleModel):
-
-    yaml_tag = '!population_rule'
-    linked_class = PopulationRule
-
 
 """
 Настало время черной магии.
