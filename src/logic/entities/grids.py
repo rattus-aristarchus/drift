@@ -52,9 +52,9 @@ class Grid(Entity, Recurrent):
         return result
 
     def on_copy(self, original, all_recurrents):
-        for x in range(0, self.width):
+        for x in range(0, original.width):
             self.cells[x] = {}
-            for y in range(0, self.height):
+            for y in range(0, original.height):
                 new_cell, all_recurrents = recurrents.copy_recurrent_and_add_to_list(
                     original.cells[x][y],
                     all_recurrents
