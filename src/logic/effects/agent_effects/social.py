@@ -77,7 +77,7 @@ def get_or_create_market_by_type(type, cell):
         if check_market.type == type and check_market.product is None:
             market = check_market
     if not market:
-        market = util.factory.new_structure("market")
+        market = util.factory.new_misc("market")
         cell.markets.append(market)
         market.type = type
     return market

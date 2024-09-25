@@ -1,0 +1,12 @@
+NAMES INSIDE EACH FIRST-LEVEL FOLDER OF NAMESPACES SHOULD BE UNIQUE
+
+e.g.:
+namespaces/first_namespace/entities.yaml "some_entity"
+namespaces/second_namespace/entities.yaml "some_entity"
+-
+is okay; however:
+
+namespaces/first_namespace/sub_folder/entities.yaml "some_entity"
+namespaces/first_namespace/another_sub_folder/entities.yaml "some_entity"
+-
+IS NOT OKAY, they won't be recognized as separate entities by the system

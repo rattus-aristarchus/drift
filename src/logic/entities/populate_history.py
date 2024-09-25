@@ -2,7 +2,7 @@ import random
 from kivy.logger import Logger
 from src.logic.entities import histories
 from src.logic.entities.agents import populations, resources
-from src.logic.entities.factory import Factory
+from src.logic.entities.factories import Factory
 from src.logic.entities.histories import World
 
 

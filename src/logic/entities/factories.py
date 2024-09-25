@@ -66,3 +66,11 @@ class Factory:
         else:
             prototype = prototype_dict[name]
             return entities.inherit_prototype_fields(prototype)
+
+
+def get_factory_with_world_name(name, factories):
+    for factory in factories:
+        for world_name, world in factory.worlds.items():
+            if world_name == name:
+                return factory
+    return None

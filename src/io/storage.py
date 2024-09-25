@@ -26,17 +26,33 @@ def load_assets(assets_dir):
     result = Assets(colors=colors, images=images, map_filters=map_filters)
     return result
 
-"""
-def load_namespaces(namespace_dir):
-    list_subfolders_with_paths = [f.path for f in os.scandir(namespace_dir) if f.is_dir()]
+
+def load_namespaces(namespaces_dir):
+    """
+    Читаем с диска все сущности.
+
+    Каждая папка первого уровня в папке namespaces считается отдельным
+    пространством имен;
+    для каждой такой папки создается отдельная фабрика (содержащая все сущности
+    этой папки), и имена сущностей должны быть уникальны внутри пространства
+    имён.
+
+    Это делается для того, чтобы можно было держать в ресурсах разные проекты и
+    не париться о том, чтобы имена были уникальными между проектами.
+    """
+
+    factories = []
+    list_subfolders_with_paths = [f.path for f in os.scandir(namespaces_dir) if f.is_dir()]
     for namespace in list_subfolders_with_paths:
-"""
+        factory = make_factory_from_namespace(namespace)
+        factories.append(factory)
+    return factories
 
 
-def load_entities(worlds_dir):
-    all_models = _load_models_and_replace_effects(worlds_dir)
+def make_factory_from_namespace(namespace):
+    all_models = _load_models_and_replace_effects(namespace)
     factory = load_factory.make_factory_from_models(all_models)
-    load_worlds.load_maps_into_worlds(list(factory.worlds.values()), worlds_dir, factory)
+    load_worlds.load_maps_into_worlds(list(factory.worlds.values()), namespace, factory)
     return factory
 
 

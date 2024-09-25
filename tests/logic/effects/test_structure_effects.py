@@ -6,7 +6,7 @@ from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.structures import Market, Commodity, Structure
 from src.logic.entities.cells import Cell
-from src.logic.entities.factory import Factory
+from src.logic.entities.factories import Factory
 
 
 def test_exchange_happy_path():
@@ -78,7 +78,7 @@ def test_buy_happy_path():
     agents.set_ownership(buyer, surplus)
     cell = Cell()
     util.factory = Factory()
-    util.factory.structures["market"] = Market(
+    util.factory.misc["market"] = Market(
         name="market",
         effects=src.logic.effects.effects.exchange
     )

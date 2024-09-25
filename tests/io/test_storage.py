@@ -6,7 +6,7 @@ import pytest
 from src.io import storage, load_factory, load_worlds
 from src.logic.entities.agents.populations import Need
 from src.logic.entities.cells import Biome
-from src.logic.entities.factory import Factory
+from src.logic.entities.factories import Factory
 from src.logic.entities.grids import Grid
 from src.io.models import Model
 from tests.io.conftest import RESOURCES_DIR, WORLDS_DIR
@@ -29,7 +29,7 @@ def test_load_tiled_map(test_factory):
 
 
 def test_load_models_has_proper_links():
-    factory = storage.load_entities(WORLDS_DIR)
+    factory = storage.make_factory_from_namespace(WORLDS_DIR)
 
     biome_resource = factory.new_biome("test_biome").starting_resources[0][0]
     assert isinstance(biome_resource, str)

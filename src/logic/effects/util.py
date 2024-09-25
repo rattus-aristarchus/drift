@@ -1,7 +1,7 @@
 import math
 from kivy import Logger
 from src.logic.entities.agents import populations, resources
-from src.logic.entities.factory import Factory
+from src.logic.entities.factories import Factory
 
 # эта штука выставляется статически при запуске программы
 factory: Factory = None

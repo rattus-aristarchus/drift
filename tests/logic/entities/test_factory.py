@@ -1,5 +1,5 @@
 from src.logic.entities.agents.populations import Population
-from src.logic.entities.factory import Factory
+from src.logic.entities.factories import Factory
 
 
 def test_new():

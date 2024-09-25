@@ -3,7 +3,7 @@ from src.logic.buffers import GridBuffer
 from src.logic.effects.cell_effects import temp_change
 from src.logic.entities import grids
 from src.logic.entities.cells import Biome
-from src.logic.entities.factory import Factory
+from src.logic.entities.factories import Factory
 from src.logic.entities.histories import History, World
 
 
