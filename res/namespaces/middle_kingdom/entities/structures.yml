@@ -1,6 +1,5 @@
 - !structure
     name: "settlement"
-    effects: [settlement]
 - !market
     name: "market"
     effects: [exchange]

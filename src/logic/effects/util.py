@@ -192,19 +192,3 @@ def get_cap_for_pop(pop, cell):
     for food, food_index in pop.sustained_by.items():
         ttl_cap += round(cell.biome.get_capacity(food) / food_index)
     return ttl_cap
-
-
-"""
-def has_empty_neighbor(name):
-    for next in neighbors:
-        if next.get_pop(name) is None:
-            return True
-    return False
-
-
-def has_neighbor(name):
-    for next in neighbors:
-        if next.get_pop(name) is not None:
-            return True
-    return False
-"""
