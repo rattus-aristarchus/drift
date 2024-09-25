@@ -25,7 +25,8 @@ def make_factory_from_models(all_models):
             entity = models.create_from_model(model)
             result.biomes[entity.name] = entity
         elif isinstance(model, WorldModel):
-            pass
+            world = models.create_from_model(model)
+            result.worlds[world.name] = world
         elif isinstance(model, AgentModel):
             entity = models.create_from_model(model)
             result.misc[entity.name] = entity

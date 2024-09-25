@@ -29,7 +29,7 @@ def test_load_tiled_map(test_factory):
 
 
 def test_load_models_has_proper_links():
-    factory, worlds, rules = storage.load_entities(WORLDS_DIR)
+    factory, rules = storage.load_entities(WORLDS_DIR)
 
     biome_resource = factory.new_biome("test_biome").starting_resources[0][0]
     assert isinstance(biome_resource, str)
@@ -94,7 +94,7 @@ def test_load_factory():
 def test_load_worlds():
     models = storage._load_models_and_replace_effects(WORLDS_DIR)
     factory = load_factory.make_factory_from_models(models)
-    worlds = load_worlds.create_worlds(models)
+    worlds = list(factory.worlds.values())
 
     load_worlds.load_maps_into_worlds(worlds, WORLDS_DIR, factory)
 

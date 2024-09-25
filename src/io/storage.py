@@ -28,14 +28,19 @@ def load_assets(assets_dir):
     result = Assets(colors=colors, images=images, map_filters=map_filters)
     return result
 
+"""
+def load_namespaces(namespace_dir):
+    list_subfolders_with_paths = [f.path for f in os.scandir(namespace_dir) if f.is_dir()]
+    for namespace in list_subfolders_with_paths:
+"""
+
 
 def load_entities(worlds_dir):
     all_models = _load_models_and_replace_effects(worlds_dir)
     factory = load_factory.make_factory_from_models(all_models)
-    worlds = load_worlds.create_worlds(all_models)
-    load_worlds.load_maps_into_worlds(worlds, worlds_dir, factory)
+    load_worlds.load_maps_into_worlds(list(factory.worlds.values()), worlds_dir, factory)
     rules = _create_rulebook(all_models)
-    return factory, worlds, rules
+    return factory, rules
 
 
 def _load_models_and_replace_effects(worlds_dir):

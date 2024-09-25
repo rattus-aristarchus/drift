@@ -18,7 +18,7 @@ def create_worlds(all_models):
     return result
 
 
-def load_maps_into_worlds(worlds, worlds_dir, factory):
+def load_maps_into_worlds(worlds: list, worlds_dir, factory):
     maps = _load_all_maps(worlds_dir, factory)
     _replace_maps(worlds, maps)
 
@@ -105,7 +105,7 @@ def _load_map(path, model_storage):
     return result
 """
 
-def _replace_maps(worlds, maps):
+def _replace_maps(worlds: list, maps):
     for world in worlds:
         for map in maps:
             if world.map == map.name:

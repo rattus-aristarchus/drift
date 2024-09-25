@@ -25,7 +25,7 @@ Logger.info("Storage: loading dir " + MAIN_DIR)
 ASSETS_DIR = os.path.join(RES_DIR, "assets")
 ICONS_DIR = os.path.join(ASSETS_DIR, "icons")
 BACKGROUNDS_DIR = os.path.join(ASSETS_DIR, "backgrounds")
-WORLDS_DIR = os.path.join(RES_DIR, "worlds")
+NAMESPACES_DIR = os.path.join(RES_DIR, "namespaces")
 
 conf_path = MAIN_DIR + "/conf.yml"
 CONF = conf.init_conf(conf_path)

@@ -12,6 +12,8 @@ class Factory:
         self.biomes = {}
         self.misc = {}
 
+        self.worlds = {}
+
     def new_population(self, name):
         new_pop = self._new(self.populations, name)
         # чтобы в первый ход существовния популяции, когда еще
@@ -32,6 +34,31 @@ class Factory:
     def new_misc(self, name):
         return self._new(self.misc, name)
 
+    def prototype_population(self, name):
+        return self._get_from_dict(self.populations, name)
+
+    def prototype_structure(self, name):
+        return self._get_from_dict(self.structures, name)
+
+    def prototype_resource(self, name):
+        return self._get_from_dict(self.resources, name)
+
+    def prototype_biome(self, name):
+        return self._get_from_dict(self.biomes, name)
+
+    def prototype_misc(self, name):
+        return self._get_from_dict(self.misc, name)
+
+    def get_world(self, name):
+        return self._get_from_dict(self.worlds, name)
+
+    def _get_from_dict(self, _dict, name):
+        if name not in _dict.keys():
+            Logger.error(f"Trying to get an entity with name {name} that is not in a dictionary of all entities.")
+            return None
+        else:
+            return _dict[name]
+
     def _new(self, prototype_dict, name):
         if name not in prototype_dict.keys():
             Logger.error(f"Trying to create entity of none-existent type {name}.")
@@ -39,25 +66,3 @@ class Factory:
         else:
             prototype = prototype_dict[name]
             return entities.inherit_prototype_fields(prototype)
-
-    def prototype_population(self, name):
-        return self._get_prototype(self.populations, name)
-
-    def prototype_structure(self, name):
-        return self._get_prototype(self.structures, name)
-
-    def prototype_resource(self, name):
-        return self._get_prototype(self.resources, name)
-
-    def prototype_biome(self, name):
-        return self._get_prototype(self.biomes, name)
-
-    def prototype_misc(self, name):
-        return self._get_prototype(self.misc, name)
-
-    def _get_prototype(self, prototype_dict, name):
-        if name not in prototype_dict.keys():
-            Logger.error(f"Trying to get an entity with name {name} that is not in a dictionary of all entities.")
-            return None
-        else:
-            return prototype_dict[name]
