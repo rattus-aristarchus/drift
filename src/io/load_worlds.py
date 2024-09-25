@@ -69,12 +69,6 @@ def _load_map_from_tiled(path, factory):
             for y in range(0, len(cell_rows)):
                 result.cells[x][y] = cell_rows[y][x]
 
-        result.width = len(result.cells)
-        if result.width > 0:
-            result.height = len(result.cells[0])
-        else:
-            result.height = 0
-
     return result
 
 """

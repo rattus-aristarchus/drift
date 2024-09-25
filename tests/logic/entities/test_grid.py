@@ -42,7 +42,7 @@ def effect_spy():
 
 
 def test_effect_calls_for_structures_are_not_repeated(effect_spy):
-    grid = Grid(width=2, height=1)
+    grid = Grid()
     cell_0 = Cell()
     cell_1 = Cell()
     grid.cells[0] = {0: cell_0}
@@ -58,3 +58,31 @@ def test_effect_calls_for_structures_are_not_repeated(effect_spy):
     grid.do_effects(buffer)
 
     assert spy.calls == 1
+
+def test_get_neighbors():
+    grid = Grid()
+    a = Cell(name="a")
+    b = Cell(name="b")
+    c = Cell(name="c")
+    d = Cell(name="d")
+    e = Cell(name="e")
+    f = Cell(name="f")
+    grid.cells = {
+        0: {
+            0: a,
+            1: b,
+            2: c
+        },
+        1: {
+            0: d,
+            1: e,
+            2: f
+        }
+    }
+
+    grids.set_neighbors_for_cells(grid)
+
+    assert len(a.neighbors) == 3
+    assert b in a.neighbors
+    assert d in a.neighbors
+    assert c not in a.neighbors

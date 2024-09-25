@@ -23,17 +23,27 @@ class Grid(Entity, Recurrent):
     Карта по состоянию на определенную итерацию модели.
     """
 
-    width: int = 0
-    height: int = 0
-        # клетки представлены словарём словарей, чтобы
-        # к ним можно было обращаться cells[x][y]
+    # клетки представлены словарём словарей, чтобы
+    # к ним можно было обращаться cells[x][y]
     cells: dict = field(default_factory=lambda: {})
-        # клетки "под наблюдением" - те, по которым мы
-        # выводим временные ряды в csv, чтобы их потом
-        # можно было отображать на графике
+
+    # клетки "под наблюдением" - те, по которым мы
+    # выводим временные ряды в csv, чтобы их потом
+    # можно было отображать на графике
     watched_cells: list = custom_fields.relations_list()
     structures: list = custom_fields.relations_list()
     state: GridState = field(default_factory=lambda: GridState())
+
+    @property
+    def width(self):
+        return len(self.cells)
+
+    @property
+    def height(self):
+        if len(self.cells) > 0:
+            return len(self.cells[0])
+        else:
+            return 0
 
     def cells_as_list(self):
         result = []
@@ -82,12 +92,12 @@ class Grid(Entity, Recurrent):
 
 
 def create_grid_with_default_biome(width, height, biome_name: str, factory, age=0):
-    result = Grid(width=width, height=height)
+    result = Grid()
     result.state = GridState(age=age)
 
-    for x in range(0, result.width):
+    for x in range(0, width):
         result.cells[x] = {}
-        for y in range(0, result.height):
+        for y in range(0, height):
             result.cells[x][y] = cells.create_cell(x, y, biome_name, factory)
 
     return result
@@ -98,3 +108,29 @@ def increase_age_for_everything(grid, value=1):
     for x in range(0, grid.width):
         for y in range(0, grid.height):
             cells.increase_age_for_everything(grid.cells[x][y], value)
+
+
+def set_neighbors_for_cells(grid):
+    for x in range(0, grid.width):
+        for y in range(0, grid.height):
+            neighbors = _get_neighbors(x, y, grid)
+            grid.cells[x][y].neighbors = neighbors
+
+
+def _get_neighbors(x, y, grid):
+    result = []
+
+    x_range = [x - 1, x, x + 1]
+    y_range = [y - 1, y, y + 1]
+
+    for poss_x in x_range:
+        for poss_y in y_range:
+            if poss_x == x and poss_y == y:
+                continue
+            if poss_x < 0 or poss_x >= grid.width:
+                continue
+            if poss_y < 0 or poss_y >= grid.height:
+                continue
+            result.append(grid.cells[poss_x][poss_y])
+
+    return result

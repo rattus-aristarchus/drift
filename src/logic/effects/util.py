@@ -16,25 +16,6 @@ def get_structure(name, cell):
     return result
 
 
-def get_neighbors(x, y, grid):
-    result = []
-
-    poss_x_rng = [x - 1, x, x + 1]
-    poss_y_rng = [y - 1, y, y + 1]
-
-    for poss_x in poss_x_rng:
-        for poss_y in poss_y_rng:
-            if poss_x == x and poss_y == y:
-                continue
-            if poss_x < 0 or poss_x >= grid.width:
-                continue
-            if poss_y < 0 or poss_y >= grid.height:
-                continue
-            result.append(grid.cells[poss_x][poss_y])
-
-    return result
-
-
 def get_or_create_pop(name, cell):
     check_pop = cell.get_pop(name)
     if check_pop is None:

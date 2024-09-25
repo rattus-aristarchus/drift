@@ -22,10 +22,6 @@ class Population(Agent, Recurrent):
     owned_resources: list = custom_fields.relations_list()
     needs: list = custom_fields.deep_copy_list()
 
-    # what fraction of labor is spent on what (not used right now)
-  #  effort: dict = field(default_factory=lambda: {})
-    # how much surplus did each production net (not used right now)
-  #  surplus: dict = field(default_factory=lambda: {})
     produces: list = field(default_factory=lambda: [])
     sells: list = field(default_factory=lambda: [])
     looks_for: list = field(default_factory=lambda: [])
