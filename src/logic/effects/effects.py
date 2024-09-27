@@ -26,13 +26,16 @@ def get_effect(func_name):
 Эффекты популяций
 """
 
+def migrate(pop, cell_buffer, grid_buffer):
+    migration.migrate(pop, cell_buffer.cell)
+
+
+def brownian_migration(pop, cell_buffer, grid_buffer):
+    migration.brownian_migration(pop, cell_buffer.cell)
+
 
 def producer_grow(pop, cell_buffer, grid_buffer):
     consumption.producer_grow(pop, cell_buffer, grid_buffer)
-
-
-def producer_mig(pop, cell_buffer, grid_buffer):
-    migration.producer_mig(pop, cell_buffer, grid_buffer)
 
 
 def basic_agriculture(pop, cell_buffer, grid_buffer):

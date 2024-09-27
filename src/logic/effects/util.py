@@ -132,7 +132,7 @@ def get_neighbors_with_pop_capacity(pop_name, neighbors):
     return result
 
 
-def get_neighbors_with_res(res_name, neighbors):
+def get_neighbors_with_free_res(res_name, neighbors):
     result = []
     for neighbor in neighbors:
         res = neighbor.get_res(res_name)

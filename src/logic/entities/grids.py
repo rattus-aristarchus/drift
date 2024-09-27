@@ -81,7 +81,6 @@ class Grid(Entity, Recurrent):
                     to_remove.append(pop)
             for pop in to_remove:
                 cell.pops.remove(pop)
-                _clear_flags(pop)
 
             # remove resources that have been emptied out
             to_remove = []
@@ -100,6 +99,8 @@ def create_grid_with_default_biome(width, height, biome_name: str, factory, age=
         result.cells[x] = {}
         for y in range(0, height):
             result.cells[x][y] = cells.create_cell(x, y, biome_name, factory)
+
+    set_neighbors_for_cells(result)
 
     return result
 

@@ -54,9 +54,6 @@ class Cell(Agent, Recurrent):
     draw: dict = field(default_factory=lambda: {})
     # трудность миграции / социального лифта
     barrier: dict = field(default_factory=lambda: {})
-    # популяции, присутствующие в соседних клетках, которые
-    # могут сюда мигрировать
-    can_migrate: list = custom_fields.relations_list()
 
     def do_effects(self, cell_buffer=None, grid_buffer=None):
         for func in self.effects:

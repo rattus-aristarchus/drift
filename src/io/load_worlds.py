@@ -2,7 +2,7 @@ import csv
 import os
 from kivy import Logger
 
-from src.logic.entities import cells
+from src.logic.entities import cells, grids
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
 from src.io import models
@@ -68,6 +68,8 @@ def _load_map_from_tiled(path, factory):
             result.cells[x] = {}
             for y in range(0, len(cell_rows)):
                 result.cells[x][y] = cell_rows[y][x]
+
+        grids.set_neighbors_for_cells(result)
 
     return result
 

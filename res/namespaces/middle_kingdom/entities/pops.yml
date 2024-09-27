@@ -35,7 +35,7 @@
             per_1000: 1000
     produces: ["millet", "basic_copper_tools"]
     looks_for: ["millet_land"]
-    effects: [produce, do_food, producer_grow, producer_mig, social_mobility, pop_to_market]
+    effects: [produce, do_food, producer_grow, migrate, brownian_migration, social_mobility, pop_to_market]
 - !population
     name: "rice_growers"
     sapient: True
@@ -51,7 +51,7 @@
             per_1000: 1000
     produces: ["rice", "basic_copper_tools"]
     looks_for: ["rice_land"]
-    effects: [produce, do_food, producer_grow, producer_mig, social_mobility, pop_to_market]
+    effects: [produce, do_food, producer_grow, migrate, brownian_migration, social_mobility, pop_to_market]
 - !population
     name: "blacksmiths"
     sapient: True

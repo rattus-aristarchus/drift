@@ -3,6 +3,8 @@ from kivy import Logger
 import src.logic.entities.agents.agents
 from src.logic.effects import util
 
+_log_name = __name__.split('.')[-1]
+
 """
 def producer_grow(pop, cell_buffer, grid_buffer):
     num = pop.last_copy.size
@@ -76,5 +78,5 @@ def do_food(pop, cell_buffer, grid_buffer):
     food_need = pop.get_need("food")
     food_need.actual = sated * 1000
 
-    Logger.debug(f"{__name__}: {pop.name} ate {ttl_food - surplus}, "
+    Logger.debug(f"{_log_name}: {pop.name} ate {ttl_food - surplus}, "
                  f"surplus is {str(surplus)}, satiation is {str(round(sated, 2))} (0-1)")
