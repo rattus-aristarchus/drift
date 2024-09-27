@@ -24,6 +24,7 @@ class Resource(Agent, Recurrent):
     max_labor: int = 0
     max_labor_share: float = 0.0
     productivity: float = 1.0
+    movable: bool = True
 
     def __str__(self):
         if self.type == "":

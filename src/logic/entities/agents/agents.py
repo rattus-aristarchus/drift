@@ -45,7 +45,7 @@ def set_ownership(agent, resource, amount=None):
         if resource not in agent.owned_resources:
             agent.owned_resources.append(resource)
 
-
+# полный бардак, конечно. почти то же самое что предыдущая функция
 def add_ownership(agent, resource, amount):
     if agent.name not in resource.owners.keys():
         resource.owners[agent.name] = 0

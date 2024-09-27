@@ -2,10 +2,8 @@ import dataclasses
 import os
 from dataclasses import field
 from kivy import Logger
-from src.logic.entities.agents import resources
 from src.logic.entities.agents.agents import Agent
-from src.logic.entities.basic import custom_fields
-from src.logic.entities.basic.entities import Entity
+from src.logic.entities.basic import custom_fields, entities
 from src.logic.entities.basic.recurrents import Recurrent
 
 
@@ -58,7 +56,7 @@ class Cell(Agent, Recurrent):
     barrier: dict = field(default_factory=lambda: {})
     # популяции, присутствующие в соседних клетках, которые
     # могут сюда мигрировать
-    can_migrate: list = field(default_factory=lambda: [])
+    can_migrate: list = custom_fields.relations_list()
 
     def do_effects(self, cell_buffer=None, grid_buffer=None):
         for func in self.effects:
@@ -90,12 +88,9 @@ class Cell(Agent, Recurrent):
         return None
 
     def get_res(self, name):
-        for res in self.resources:
-            if res.name == name:
-                return res
-        return None
+        return entities.get_entity(name, self.resources)
 
-    def has_res(self, type):
+    def has_res_type(self, type):
         for res in self.resources:
             if res.type == type:
                 return True
@@ -152,8 +147,7 @@ def create_cell(x, y, biome_name, factory):
         result.effects = biome.effects
     Logger.debug(f"Creating cell at ({str(x)},{str(y)}) with biome {biome_name}")
     for res_name, size in biome.starting_resources:
-        resource = factory.new_resource(res_name)
+        resource = factory.new_resource(res_name, result)
         resource.size = size
-        result.resources.append(resource)
         Logger.debug(f"Adding {str(size)} of resource {res_name}")
     return result

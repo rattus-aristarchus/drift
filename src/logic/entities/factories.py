@@ -25,8 +25,11 @@ class Factory:
     def new_structure(self, name):
         return self._new(self.structures, name)
 
-    def new_resource(self, name):
-        return self._new(self.resources, name)
+    def new_resource(self, name, cell=None):
+        new = self._new(self.resources, name)
+        if cell:
+            cell.resources.append(new)
+        return new
 
     def new_biome(self, name):
         return self._new(self.biomes, name)

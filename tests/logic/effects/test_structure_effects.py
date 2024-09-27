@@ -1,12 +1,11 @@
 import src.logic.entities.agents.agents
-from src.logic.effects import structure_effects, util
+from src.logic.effects import structure_effects
 from src.logic.effects.agent_effects import social
 from src.logic.entities.agents import agents
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.structures import Market, Commodity, Structure
 from src.logic.entities.cells import Cell
-from src.logic.entities.factories import Factory
 
 
 def test_exchange_happy_path():
@@ -58,7 +57,7 @@ def test_exchange_happy_path():
     assert market.exchange.owners[buyer_1.name] == 250
 
 
-def test_buy_happy_path():
+def test_buy_happy_path(init_factory):
     buyer = Population()
     old_buyer = Population()
     buyer.last_copy = old_buyer
@@ -77,12 +76,6 @@ def test_buy_happy_path():
     )
     agents.set_ownership(buyer, surplus)
     cell = Cell()
-    util.factory = Factory()
-    util.factory.misc["market"] = Market(
-        name="market",
-        effects=src.logic.effects.effects.exchange
-    )
-
 
     social.buy(buyer, cell)
 

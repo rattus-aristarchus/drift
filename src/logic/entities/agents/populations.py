@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import field
 import os
 from src.logic.entities.agents.agents import Agent
-from src.logic.entities.basic import custom_fields
+from src.logic.entities.basic import custom_fields, entities
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
 
@@ -18,6 +18,8 @@ class Population(Agent, Recurrent):
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0
+    # какая доля готова сняться с места при максимальном желании
+    mobility: float = 0.0
 
     owned_resources: list = custom_fields.relations_list()
     needs: list = custom_fields.deep_copy_list()
@@ -50,6 +52,23 @@ class Population(Agent, Recurrent):
 
         return None
 
+
+    def get_resource(self, name):
+        return entities.get_entity(name, self.owned_resources)
+
+
+    def get_fulfilment(self):
+        """
+        Общая удовлетворенность ситуацией.
+
+        Рассчитываем как среднее от удовлетворения всех потребностей.
+        """
+        sum_fulfilment = 0.0
+        for need in self.needs:
+            sum_fulfilment += need.actual / need.per_1000
+        avg_fulfilment = sum_fulfilment / len(self.needs)
+
+        return avg_fulfilment
 
 @dataclasses.dataclass
 class Need(Entity):

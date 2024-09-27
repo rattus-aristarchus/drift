@@ -4,7 +4,7 @@ from src.logic.entities.agents.structures import Commodity
 
 
 def social_mobility(pop, cell):
-    if cell.has_res("ore") and cell.get_pop("blacksmiths") is None:
+    if cell.has_res_type("ore") and cell.get_pop("blacksmiths") is None:
         blacksmiths = util.factory.new_population("blacksmiths")
         cell.pops.append(blacksmiths)
         blacksmiths.size = 1000

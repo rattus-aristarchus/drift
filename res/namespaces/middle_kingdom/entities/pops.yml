@@ -3,6 +3,7 @@
     sapient: True
     type: "producers"
     yearly_growth: 0.1
+    mobility: 1.0
     needs:
         - !need
             type: "food"
@@ -13,6 +14,7 @@
     sapient: True
     type: "producers"
     yearly_growth: 0.1
+    mobility: 1.0
     needs:
         - !need
             type: "food"
@@ -23,6 +25,7 @@
     sapient: True
     type: "producers"
     yearly_growth: 0.1
+    mobility: 0.1
     needs:
         - !need
             type: "food"
@@ -38,6 +41,7 @@
     sapient: True
     type: "producers"
     yearly_growth: 0.1
+    mobility: 0.1
     needs:
         - !need
             type: "food"
@@ -53,6 +57,7 @@
     sapient: True
     type: "secondary_producers"
     yearly_growth: 0.1
+    mobility: 0.1
     needs:
         - !need
             type: "food"

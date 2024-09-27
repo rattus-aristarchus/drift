@@ -1,7 +1,7 @@
 import dataclasses
 from dataclasses import field
 
-from src.logic.entities.basic import custom_fields
+from src.logic.entities.basic import custom_fields, entities
 from src.logic.entities.agents.agents import Agent
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.basic.recurrents import Recurrent
@@ -24,16 +24,10 @@ class Structure(Agent, Recurrent):
             func(self, grid_buffer)
 
     def get_res(self, name):
-        for res in self.resources:
-            if res.name == name:
-                return res
-        return None
+        return entities.get_entity(name, self.resources)
 
     def get_pop(self, name):
-        for pop in self.pops:
-            if pop.name == name:
-                return pop
-        return None
+        return entities.get_entity(name, self.pops)
 
 
 @dataclasses.dataclass

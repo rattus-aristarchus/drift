@@ -81,6 +81,7 @@ class Grid(Entity, Recurrent):
                     to_remove.append(pop)
             for pop in to_remove:
                 cell.pops.remove(pop)
+                _clear_flags(pop)
 
             # remove resources that have been emptied out
             to_remove = []

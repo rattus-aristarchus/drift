@@ -30,7 +30,3 @@ def temp_change(cell, grid_buffer):
     for name, mean_cap in cell.biome.capacity.items():
         cap = round(mean_cap * multiplier)
         cell.biome.capacity[name] = cap
-
-
-def calculate_draw():
-    pass

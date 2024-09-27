@@ -86,8 +86,7 @@ def _populate_cell(cell, cell_dict, factory):
 
     if 'resources' in cell_dict.keys():
         for res_dict in cell_dict['resources']:
-            resource = factory.new_resource(res_dict['name'])
-            cell.resources.append(resource)
+            resource = factory.new_resource(res_dict['name'], cell)
             resource.size = res_dict['size']
             Logger.debug(f"{__name__}: created resource {resource.name}" +
                          f" of size {str(resource.size)}")

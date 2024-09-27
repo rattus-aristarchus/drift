@@ -65,3 +65,16 @@ def inherit_prototype_fields(entity):
         setattr(copy, field.name, new_value)
 
     return copy
+
+
+def get_entity(name, _list):
+    for e in _list:
+        if e.name == name:
+            return e
+    return None
+
+def has_entity(name, _list):
+    for e in _list:
+        if e.name == name:
+            return True
+    return False

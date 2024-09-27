@@ -27,8 +27,7 @@ def get_or_create_pop(name, cell):
 def get_or_create_res(name, cell):
     check_res = cell.get_res(name)
     if check_res is None:
-        check_res = factory.new_resource(name)
-        cell.resources.append(check_res)
+        check_res = factory.new_resource(name, cell)
     return check_res
 
 
