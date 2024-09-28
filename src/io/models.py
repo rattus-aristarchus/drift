@@ -3,7 +3,7 @@ import inspect
 from dataclasses import field
 import yaml
 
-from src.logic.entities.agents.agents import Agent
+from src.logic.computation import Agent
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.structures import Structure, Market

@@ -1,5 +1,5 @@
 from src.logic.effects import util
-from src.logic.entities.agents import agents
+from src.logic.entities.agents import ownership
 from kivy import Logger
 
 _log_name = __name__.split('.')[-1]
@@ -75,7 +75,7 @@ def migrate(pop, cell):
             # если таковых нет, создаем
             if not target_res:
                 new_res = util.factory.new_resource(old_res.name, cell)
-                agents.set_ownership(old_target.next_copy, new_res)
+                ownership.set_ownership(old_target.next_copy, new_res)
                 target_res = new_res
 
             # мигрируем

@@ -3,7 +3,7 @@ import dataclasses
 from kivy import Logger
 from dataclasses import field
 
-from src.logic.entities.agents.agents import Agent
+from src.logic.computation import Agent
 from src.logic.entities.basic import recurrents
 from src.logic.entities import grids
 from src.logic.buffers import GridBuffer

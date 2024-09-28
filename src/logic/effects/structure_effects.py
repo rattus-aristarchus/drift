@@ -7,7 +7,8 @@
 
 from random import Random
 
-import src.logic.entities.agents.agents
+import src.logic.entities.agents.ownership
+from src.logic.entities.agents import ownership
 from src.logic.entities.agents.structures import Market
 
 
@@ -38,23 +39,23 @@ def exchange(market: Market):
         if purchase.amount <= 0:
             continue
 
-        src.logic.entities.agents.agents.add_ownership(
+        ownership.add_ownership(
             purchase.seller,
             market.product,
             round(purchase.amount / price)
         )
-        src.logic.entities.agents.agents.subtract_ownership(
+        ownership.subtract_ownership(
             purchase.seller,
             market.exchange,
             purchase.amount
         )
 
-    src.logic.entities.agents.agents.add_ownership(
+    ownership.add_ownership(
         market.sale.seller,
         market.exchange,
         round(market.sale.amount * price)
     )
-    src.logic.entities.agents.agents.subtract_ownership(
+    ownership.subtract_ownership(
         market.sale.seller,
         market.product,
         market.sale.amount

@@ -1,7 +1,7 @@
 import pytest
 
 from src.logic.effects.agent_effects import migration
-from src.logic.entities.agents import agents
+from src.logic.entities.agents import ownership
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.basic import recurrents
@@ -48,7 +48,7 @@ def mig_setup(two_cell_grid):
     cell_b.pops.append(pop_b)
     res_a = Resource(name="test_res",size=1000)
     cell_a.resources.append(res_a)
-    agents.set_ownership(pop_a, res_a)
+    ownership.set_ownership(pop_a, res_a)
     new_grid, all_recurrents = recurrents.copy_recurrent_and_add_to_list(two_cell_grid, {})
     return new_grid, cell_a.next_copy, cell_b.next_copy, pop_a.next_copy, pop_b.next_copy
 

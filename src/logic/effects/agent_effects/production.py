@@ -1,9 +1,9 @@
 import sys
 from kivy import Logger
 
-import src.logic.entities.agents.agents
+import src.logic.entities.agents.ownership
 from src.logic.effects import util
-from src.logic.entities.agents import agents
+from src.logic.entities.agents import ownership
 
 _log_name = __name__.split('.')[-1]
 
@@ -46,10 +46,10 @@ def natural_resource_exploitation(pop, prototype, cell, grid_buffer):
 
     product = util.get_or_create_res(prototype.name, cell)
     product.size += output
-    src.logic.entities.agents.agents.set_ownership(pop, product)
+    ownership.set_ownership(pop, product)
 
     land = cell.get_res(land_name)
-    agents.set_ownership(pop, land, land_used)
+    ownership.set_ownership(pop, land, land_used)
 
     Logger.debug(f"{_log_name}: {str(people_num)} {pop.name} from ({cell.x},{cell.y})  "
                  f"with {str(round(land_used))} "

@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import field
 
 from src.logic.entities.basic import custom_fields, entities
-from src.logic.entities.agents.agents import Agent
+from src.logic.computation import Agent
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.basic.recurrents import Recurrent
 

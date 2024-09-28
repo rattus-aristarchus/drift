@@ -6,7 +6,7 @@ from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.io import load_factory, load_worlds
 from src.io.models import AgentModel
-from src.logic.entities.agents.agents import Agent
+from src.logic.computation import Agent
 
 # the following methods are required to load effects into models
 get_effect = None
