@@ -29,11 +29,13 @@
     type: "land"
     min_labor: 0.25
     max_labor: 3
+    movable: False
 - !resource
     name: "rice_land"
     type: "land"
     min_labor: 0.5
     max_labor: 6
+    movable: False
 - !resource
     name: "basic_copper_tools"
     type: "tools"
@@ -55,3 +57,4 @@
     type: "ore"
     min_labor: 0.25
     max_labor: 3
+    movable: False

@@ -8,7 +8,8 @@
         - !need
             type: "food"
             per_1000: 1000
-    effects:
+    looks_for: []
+    effects: []
 - !population
     name: "mountain_herders"
     sapient: True

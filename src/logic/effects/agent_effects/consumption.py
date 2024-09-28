@@ -48,6 +48,7 @@ def producer_grow(pop, cell_buffer, grid_buffer):
 
 
 def do_food(pop, cell_buffer, grid_buffer):
+    cell = cell_buffer.cell
     food_list = []
     ttl_food = 0
 
@@ -78,5 +79,5 @@ def do_food(pop, cell_buffer, grid_buffer):
     food_need = pop.get_need("food")
     food_need.actual = sated * 1000
 
-    Logger.debug(f"{_log_name}: {pop.name} ate {ttl_food - surplus}, "
+    Logger.debug(f"{_log_name}: {pop.name} in ({cell.x},{cell.y}) ate {ttl_food - surplus}, "
                  f"surplus is {str(surplus)}, satiation is {str(round(sated, 2))} (0-1)")
