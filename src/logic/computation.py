@@ -21,10 +21,11 @@ class GridCPU:
 
     def __init__(self, world):
         self.grid = None
-        self.world = world
-
         self.cpus = []
-        self.effects = []
+
+        self.world = world
+        self.effects = world.effects
+        self.cell_effects = world.cell_effects
 
     def refresh_cpus(self, grid):
         """
@@ -59,7 +60,7 @@ class GridCPU:
 
         # передаем выполнение управляющим объектам для отдельных клеток
         for cell_cpu in self.cpus:
-            cell_cpu.do_effects(buffer)
+            cell_cpu.do_effects(buffer, self.cell_effects)
 
     def _grid_level_messages(self, buffer):
         msg = (f"The age is {self.grid.state.age}. Global temeprature"
@@ -79,13 +80,13 @@ class CellCPU:
     def __init__(self, cell):
         self.cell = cell
 
-    def do_effects(self, buffer):
+    def do_effects(self, buffer, cell_effects):
         """
         Выполняем алгоритмы
         """
 
         # вначале - алгоритмы уровня клетки
-        for func in self.cell.effects:
+        for func in cell_effects:
             func(self.cell, buffer)
 
         # алгоритмы для популяций

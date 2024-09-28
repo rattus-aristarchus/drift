@@ -4,11 +4,12 @@ from dataclasses import field
 from kivy import Logger
 from src.logic.computation import Agent
 from src.logic.entities.basic import custom_fields, entities
+from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
 
 
 @dataclasses.dataclass
-class Biome(Agent):
+class Biome(Entity):
     """
     Экология клетки карты.
     """
@@ -34,7 +35,7 @@ class Biome(Agent):
 
 
 @dataclasses.dataclass
-class Cell(Agent, Recurrent):
+class Cell(Entity, Recurrent):
     """
     Клетка карты.
     """
@@ -62,10 +63,7 @@ class Cell(Agent, Recurrent):
         return all_recurrents
 
     def get_pop(self, name):
-        for pop in self.pops:
-            if pop.name == name:
-                return pop
-        return None
+        return entities.get_entity(name, self.pops)
 
     def get_res(self, name):
         return entities.get_entity(name, self.resources)
@@ -77,32 +75,11 @@ class Cell(Agent, Recurrent):
         return False
 
 
-def migrate_and_merge(pop, start, destination):
-    if pop in start.pops:
-        start.pops.remove(pop)
-    arrive_and_merge(pop, destination)
-
-
-def arrive_and_merge(pop, destination):
-    present = destination.get_pop(pop.name)
-    if present is None:
-        destination.pops.append(pop)
-    else:
-        present.size += pop.size
-
-
 def add_territory(cell, structure):
     if structure not in cell.structures:
         cell.structures.append(structure)
     if cell not in structure.territory:
         structure.territory.append(cell)
-
-
-def get_pop(name, pop_list):
-    for check in pop_list:
-        if check.name == name:
-            return check
-    return None
 
 
 def _find_structure(name, cell):
@@ -124,7 +101,6 @@ def create_cell(x, y, biome_name, factory):
         Logger.error(f"Trying to create cell with invalid biome name: {biome}")
     else:
         result.biome = biome
-        result.effects = biome.effects
     Logger.debug(f"Creating cell at ({str(x)},{str(y)}) with biome {biome_name}")
     for res_name, size in biome.starting_resources:
         resource = factory.new_resource(res_name, result)

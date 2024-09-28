@@ -5,7 +5,7 @@ import yaml
 from src.gui.assets import Assets
 from src.gui.map_filter import MapFilter
 from src.io import load_factory, load_worlds
-from src.io.models import AgentModel
+from src.io.models import EffectModel, WorldModel
 from src.logic.computation import Agent
 
 # the following methods are required to load effects into models
@@ -62,7 +62,7 @@ def _load_models_and_replace_effects(worlds_dir):
 
     effect_models = []
     for model in all_models:
-        if isinstance(model, AgentModel):
+        if isinstance(model, EffectModel):
             effect_models.append(model)
 
     # заменяем названия эффектов ссылками на них
@@ -97,7 +97,7 @@ def _load_models_from_yaml_file(path):
     return result
 
 
-def _replace_effects(model_list: List[AgentModel], get_effect):
+def _replace_effects(model_list: List[EffectModel], get_effect):
     """
     Заменяем названия эффектов в поле model.effects ссылками на эффекты
     """
@@ -105,11 +105,18 @@ def _replace_effects(model_list: List[AgentModel], get_effect):
         if not hasattr(model, "effects") or model.effects is None:
             model.effects = []
         else:
-            model.effects = _get_model_effects(model, get_effect)
+            model.effects = _get_model_effects(model, model.effects, get_effect)
+
+        if isinstance(model, WorldModel):
+            if not hasattr(model, "cell_effects") or model.cell_effects is None:
+                model.cell_effects = []
+            else:
+                model.cell_effects = _get_model_effects(model, model.cell_effects, get_effect)
 
 
-def _get_model_effects(model: Agent, get_effect):
+
+def _get_model_effects(model, string_list, get_effect):
     result = []
-    for effect_name in model.effects:
+    for effect_name in string_list:
         result.append(get_effect(effect_name))
     return result

@@ -27,55 +27,55 @@ class Model(yaml.YAMLObject):
 
 
 @dataclasses.dataclass
-class AgentModel(Model):
+class EffectModel(Model):
 
     yaml_tag = '!agent'
     linked_class = Agent
 
 @dataclasses.dataclass
-class PopModel(AgentModel):
+class PopModel(EffectModel):
 
     yaml_tag = '!population'
     linked_class = Population
 
 
 @dataclasses.dataclass
-class StructureModel(AgentModel):
+class StructureModel(EffectModel):
 
     yaml_tag = '!structure'
     linked_class = Structure
 
 
 @dataclasses.dataclass
-class MarketModel(AgentModel):
+class MarketModel(EffectModel):
 
     yaml_tag = '!market'
     linked_class = Market
 
 
 @dataclasses.dataclass
-class ResourceModel(AgentModel):
+class ResourceModel(EffectModel):
 
     yaml_tag = '!resource'
     linked_class = Resource
 
 
 @dataclasses.dataclass
-class NeedModel(AgentModel):
+class NeedModel(EffectModel):
 
     yaml_tag = '!need'
     linked_class = Need
 
 
 @dataclasses.dataclass
-class BiomeModel(AgentModel):
+class BiomeModel(EffectModel):
 
     yaml_tag = '!biome'
     linked_class = Biome
 
 
 @dataclasses.dataclass
-class CellModel(AgentModel):
+class CellModel(EffectModel):
 
     yaml_tag = '!cell'
 
@@ -83,7 +83,7 @@ class CellModel(AgentModel):
 
 
 @dataclasses.dataclass
-class WorldModel(AgentModel):
+class WorldModel(EffectModel):
 
     yaml_tag = '!world'
     linked_class = World
@@ -136,26 +136,6 @@ _register_constructors_for_model_subclasses(Model)
 
 """
 Конец черной магии. Отправляемся в церковь или кабак, запивать или замаливать совесть. 
-"""
-
-"""
-def _create_fields_for_model_recursive(model_cls):
-    _create_fields_for_model(model_cls)
-
-    for _class in model_cls.__subclasses__():
-        _create_fields_for_model_recursive(model_cls)
-
-def _create_fields_for_model(model_cls):
-    linked_cls = model_cls.linked_class
-    for field in dataclasses.fields(linked_cls):
-        setattr()
-        field.default
-        value = getattr(to_copy, field.name)
-        if isinstance(value, list) or isinstance(value, dict):
-            setattr(copy, field.name, value.copy())
-
-
-_create_fields_for_model_recursive(Model)
 """
 
 def create_from_model(model):
