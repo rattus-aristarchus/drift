@@ -55,23 +55,6 @@ class Cell(Agent, Recurrent):
     # трудность миграции / социального лифта
     barrier: dict = field(default_factory=lambda: {})
 
-    def do_effects(self, cell_buffer=None, grid_buffer=None):
-        for func in self.effects:
-            func(self, cell_buffer, grid_buffer)
-
-        for pop in self.pops:
-            # если ссылка на last_copy отсутстввует, эта популяция
-            # была создана в эту итерацию, и вычислять ее эффекты
-            # не нужно
-            if pop.last_copy:
-                pop.do_effects(cell_buffer, grid_buffer)
-
-        for resource in self.resources:
-            if resource.last_copy:
-                resource.do_effects(cell_buffer, grid_buffer)
-
-        for market in self.markets:
-            market.do_effects(cell_buffer, grid_buffer)
 
     def on_copy(self, original, all_recurrents):
         # рынкам ничего от прошлой итерации сохранять не нужно

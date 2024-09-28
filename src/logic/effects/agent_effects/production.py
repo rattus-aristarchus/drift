@@ -7,18 +7,18 @@ from src.logic.entities.agents import ownership
 
 _log_name = __name__.split('.')[-1]
 
-def produce(pop, cell, grid_buffer):
+def produce(pop, cell, buffer):
     for output in pop.produces:
         if not output:
             pass
         prototype = util.factory.prototype_resource(output)
         if prototype.type == "food":
-            natural_resource_exploitation(pop, prototype, cell, grid_buffer)
+            natural_resource_exploitation(pop, prototype, cell, buffer)
         elif prototype.type == "tools":
-            natural_resource_exploitation(pop, prototype, cell, grid_buffer)
+            natural_resource_exploitation(pop, prototype, cell, buffer)
 
 
-def natural_resource_exploitation(pop, prototype, cell, grid_buffer):
+def natural_resource_exploitation(pop, prototype, cell, buffer):
     land_name = prototype.inputs[0]
     old_land = cell.last_copy.get_res(land_name)
     # без земли делать нечего
@@ -34,7 +34,7 @@ def natural_resource_exploitation(pop, prototype, cell, grid_buffer):
             labor_per_land = old_land.min_labor
         land_used = people_num / labor_per_land
         tech_factor = get_tech_factor(pop.last_copy)
-        limit = _resource_productivity(old_land, grid_buffer, tech_factor)
+        limit = _resource_productivity(old_land, buffer, tech_factor)
 
         output = hyperbolic_function(limit, labor_per_land, land_used)
     else:
@@ -67,11 +67,11 @@ def hyperbolic_function(limit, labor_per_land, land_used):
     return round(output_per_land * land_used)
 
 
-def _resource_productivity(resource, grid_buffer, tech_factor):
+def _resource_productivity(resource, buffer, tech_factor):
     result = resource.max_labor * tech_factor
 
     if resource.type == "land":
-        deviation_factor = grid_buffer.temp_deviation / grid_buffer.history.world.deviation_50
+        deviation_factor = buffer.memory["temp_deviation"] / buffer.world.deviation_50
         if deviation_factor >= 0:
             result *= (1 + deviation_factor)
         else:

@@ -34,7 +34,7 @@ def growth(res):
         # TODO: здесь из-за округления суммы будут не сходиться
 
 
-def producer_grow(pop, cell_buffer, grid_buffer):
+def producer_grow(pop):
     num = pop.last_copy.size
     growth_rate = pop.yearly_growth
     food_need = pop.last_copy.get_need("food")
@@ -48,8 +48,7 @@ def producer_grow(pop, cell_buffer, grid_buffer):
     pop.size += change
 
 
-def do_food(pop, cell_buffer, grid_buffer):
-    cell = cell_buffer.cell
+def do_food(pop, cell):
     food_list = []
     ttl_food = 0
 
@@ -73,7 +72,7 @@ def do_food(pop, cell_buffer, grid_buffer):
         sated = ttl_food / needs
         surplus = 0
 
-    surplus_obj = util.get_or_create_res('surplus', cell_buffer.cell)
+    surplus_obj = util.get_or_create_res('surplus', cell)
     surplus_obj.size += surplus
     ownership.add_ownership(pop, surplus_obj, surplus)
 
