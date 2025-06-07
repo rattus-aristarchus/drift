@@ -6,13 +6,13 @@
 """
 
 
-def temp_change(cell, grid_buffer):
+def temp_change(cell, buffer):
     if not cell.biome.capacity:
         return
 
     # first, we have to know, how much temperature deviation is "bad" or "good".
-    # we know that from the world.deviation_50
-    deviation_factor = grid_buffer.temp_deviation / grid_buffer.history.world.deviation_50
+    # we know that from world.deviation_50
+    deviation_factor = buffer.memory["temp_deviation"] / buffer.world.deviation_50
 
     # for a wet climate, high temperature is bad, cold is good - so the
     # deviation factor is accurate; but for a wet climate, hot is bad. so:

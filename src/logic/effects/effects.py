@@ -3,7 +3,8 @@
 эффекта, зная только ее имя, она обращается сюда к функции
 get_effect.
 """
-from src.logic.buffers import GridBuffer
+
+from src.logic.computation import Buffer
 from src.logic.effects import world_effects, cell_effects, structure_effects
 from src.logic.effects.agent_effects import migration, production, consumption, social
 
@@ -26,42 +27,42 @@ def get_effect(func_name):
 Эффекты популяций
 """
 
-def migrate(pop, cell_buffer, grid_buffer):
-    migration.migrate(pop, cell_buffer.cell)
+def migrate(pop, cell, buffer):
+    migration.migrate(pop, cell)
 
 
-def brownian_migration(pop, cell_buffer, grid_buffer):
-    migration.brownian_migration(pop, cell_buffer.cell)
+def brownian_migration(pop, cell, buffer):
+    migration.brownian_migration(pop, cell)
 
 
-def producer_grow(pop, cell_buffer, grid_buffer):
-    consumption.producer_grow(pop, cell_buffer, grid_buffer)
+def producer_grow(pop, cell, buffer):
+    consumption.producer_grow(pop)
 
 
-def basic_agriculture(pop, cell_buffer, grid_buffer):
+def basic_agriculture(pop, cell, buffer):
     product = pop.produces[0]
-    production.natural_resource_exploitation(pop, product, cell_buffer.cell, grid_buffer)
+    production.natural_resource_exploitation(pop, product, cell, buffer)
 
 
-def produce(pop, cell_buffer, grid_buffer):
-    production.produce(pop, cell_buffer.cell, grid_buffer)
+def produce(pop, cell, buffer):
+    production.produce(pop, cell, buffer)
 
 
-def do_food(pop, cell_buffer, grid_buffer):
-    consumption.do_food(pop, cell_buffer, grid_buffer)
+def do_food(pop, cell, buffer):
+    consumption.do_food(pop, cell)
 
 
-def social_mobility(pop, cell_buffer, grid_buffer):
-    social.social_mobility(pop, cell_buffer.cell)
+def social_mobility(pop, cell, buffer):
+    social.social_mobility(pop, cell)
 
 
-def exchange(market, cell_buffer, grid_buffer):
+def exchange(market, cell, buffer):
     structure_effects.exchange(market)
 
 
-def pop_to_market(pop, cell_buffer, grid_buffer):
-    social.sell(pop, cell_buffer.cell)
-    social.buy(pop, cell_buffer.cell)
+def pop_to_market(pop, cell, buffer):
+    social.sell(pop, cell)
+    social.buy(pop, cell)
 
 
 """
@@ -69,11 +70,11 @@ def pop_to_market(pop, cell_buffer, grid_buffer):
 """
 
 
-def grow_natural(res, cell_buffer, grid_buffer):
-    consumption.natural_growth(res, cell_buffer.cell)
+def grow_natural(res, cell, buffer):
+    consumption.natural_growth(res, cell)
 
 
-def grow(res, cell_buffer, grid_buffer):
+def grow(res, cell, buffer):
     consumption.growth(res)
 
 
@@ -82,20 +83,16 @@ def grow(res, cell_buffer, grid_buffer):
 """
 
 
-def temp_change(cell, cell_buffer, grid_buffer):
-    cell_effects.temp_change(cell, grid_buffer)
+def temp_change(cell, buffer):
+    cell_effects.temp_change(cell, buffer)
 
 
 """
 Ниже - эффекты уровня карты; у всех по два аргумента
-- объект
-- буфер карты
+- карта
+- буфер
 """
 
 
-def settlement(structure, grid_buffer):
-    structure_effects.settlement(structure, grid_buffer)
-
-
-def climate(history, grid_buffer: GridBuffer):
-    world_effects.climate(history, grid_buffer)
+def climate(grid, buffer: Buffer):
+    world_effects.climate(grid, buffer)

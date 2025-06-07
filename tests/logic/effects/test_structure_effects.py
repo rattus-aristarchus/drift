@@ -1,7 +1,7 @@
-import src.logic.entities.agents.agents
+import src.logic.entities.agents.ownership
 from src.logic.effects import structure_effects
 from src.logic.effects.agent_effects import social
-from src.logic.entities.agents import agents
+from src.logic.entities.agents import ownership
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.structures import Market, Commodity, Structure
@@ -17,13 +17,15 @@ def test_exchange_happy_path():
         size=100,
         name="stuff"
     )
-    src.logic.entities.agents.agents.set_ownership(seller, market.product, 100)
+    ownership.set_ownership(seller, market.product, 100)
     market.exchange = Resource(
         size=1000,
         name="surplus"
     )
-    src.logic.entities.agents.agents.set_ownership(buyer_0, market.exchange, 500)
-    src.logic.entities.agents.agents.set_ownership(buyer_1, market.exchange, 500)
+
+    ownership.set_ownership(buyer_0, market.exchange, 500)
+
+    ownership.set_ownership(buyer_1, market.exchange, 500)
     market.sale = Commodity(
         seller=seller,
         amount=100
@@ -74,7 +76,7 @@ def test_buy_happy_path(init_factory):
         name="surplus",
         size=500
     )
-    agents.set_ownership(buyer, surplus)
+    ownership.set_ownership(buyer, surplus)
     cell = Cell()
 
     social.buy(buyer, cell)

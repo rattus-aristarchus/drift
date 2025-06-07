@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import field
 
 from src.logic.entities.basic import custom_fields, entities
-from src.logic.entities.agents.agents import Agent
+from src.logic.computation import Agent
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.basic.recurrents import Recurrent
 
@@ -19,9 +19,9 @@ class Structure(Agent, Recurrent):
     territory: list = custom_fields.relations_list()
     resources: list = custom_fields.relations_list()
 
-    def do_effects(self, cell_buffer=None, grid_buffer=None):
+    def do_effects(self, cell, buffer):
         for func in self.effects:
-            func(self, grid_buffer)
+            func(self, buffer)
 
     def get_res(self, name):
         return entities.get_entity(name, self.resources)

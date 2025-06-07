@@ -1,11 +1,9 @@
 - !biome
     name: "sea"
     moisture: "wet"
-    effects: [temp_change]
 - !biome
     name: "mountains"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         yaks: 10000
     starting_resources:
@@ -13,29 +11,24 @@
 - !biome
     name: "tibet"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         yaks: 10000
 - !biome
     name: "peaks"
     moisture: "wet"
-    effects: [temp_change]
 - !biome
     name: "mountain_forest"
     moisture: "wet"
-    effects: [temp_change]
     starting_resources:
         - ["millet_land", 1000]
 - !biome
     name: "steppe"
     moisture: "dry"
-    effects: [temp_change]
     capacity:
         sheep: 50000
 - !biome
     name: "loess_plateau"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         sheep: 25000
     starting_resources:
@@ -43,7 +36,6 @@
 - !biome
     name: "temperate_river_valley"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         sheep: 50000
     starting_resources:
@@ -51,7 +43,6 @@
 - !biome
     name: "tropical_river_valley"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         sheep: 10000
     starting_resources:
@@ -59,18 +50,15 @@
 - !biome
     name: "desert"
     moisture: "dry"
-    effects: [temp_change]
     capacity:
 - !biome
     name: "semi-desert"
     moisture: "dry"
-    effects: [temp_change]
     capacity:
         sheep: 10000
 - !biome
     name: "plains"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         sheep: 50000
     starting_resources:
@@ -78,7 +66,6 @@
 - !biome
     name: "chernozem"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         sheep: 50000
     starting_resources:
@@ -86,7 +73,6 @@
 - !biome
     name: "hills"
     moisture: "wet"
-    effects: [temp_change]
     capacity:
         sheep: 50000
     starting_resources:
