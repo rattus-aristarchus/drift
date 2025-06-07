@@ -302,6 +302,16 @@ class CellDisplay(TreeView):
                     base_node
                 )
 
+        # markets
+        if len(cell.markets) > 0:
+            base_node = TreeViewLabel(text=f"рынки:")
+            self.add_node(base_node)
+            for market in cell.markets:
+                self.add_node(
+                    TreeViewLabel(text=str(market)),
+                    base_node
+                )
+
         # structures
         for structure in cell.structures:
             pass
