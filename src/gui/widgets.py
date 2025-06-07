@@ -273,7 +273,7 @@ class CellDisplay(TreeView):
 
         # location
         self.add_node(
-            TreeViewLabel(text=f"местоположение: ({cell.x}, {cell.y})")
+            TreeViewLabel(text=f"местоположение: ({cell.x}, {cell.y})", is_open=True)
         )
 
         # biome
@@ -284,7 +284,7 @@ class CellDisplay(TreeView):
 
         # resources
         if len(cell.resources) > 0:
-            base_node = TreeViewLabel(text=f"ресурсы:")
+            base_node = TreeViewLabel(text=f"ресурсы:", is_open=True)
             self.add_node(base_node)
             for resource in cell.resources:
                 res_node = TreeViewLabel(
@@ -294,7 +294,7 @@ class CellDisplay(TreeView):
 
         # populations
         if len(cell.pops) > 0:
-            base_node = TreeViewLabel(text=f"популяции:")
+            base_node = TreeViewLabel(text=f"популяции:", is_open=True)
             self.add_node(base_node)
             for pop in cell.pops:
                 self.add_node(
@@ -304,7 +304,7 @@ class CellDisplay(TreeView):
 
         # markets
         if len(cell.markets) > 0:
-            base_node = TreeViewLabel(text=f"рынки:")
+            base_node = TreeViewLabel(text=f"рынки:", is_open=True)
             self.add_node(base_node)
             for market in cell.markets:
                 self.add_node(
