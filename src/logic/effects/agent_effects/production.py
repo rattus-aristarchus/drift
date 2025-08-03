@@ -7,25 +7,26 @@ from src.logic.entities.agents import ownership
 
 _log_name = __name__.split('.')[-1]
 
-def produce(pop, cell, buffer):
-    for output in pop.produces:
+def produce(pop_write, pop_read, cell_write, cell_read, buffer):
+    for output in pop_read.produces:
         if not output:
             pass
         prototype = util.factory.prototype_resource(output)
         if prototype.type == "food":
-            natural_resource_exploitation(pop, prototype, cell, buffer)
+            natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
         elif prototype.type == "tools":
-            natural_resource_exploitation(pop, prototype, cell, buffer)
+            natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
 
 
-def natural_resource_exploitation(pop, prototype, cell, buffer):
+def natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, prototype, buffer):
     land_name = prototype.inputs[0]
-    old_land = cell.last_copy.get_res(land_name)
+    old_land = cell_read.get_res(land_name)
+
     # без земли делать нечего
     if not old_land:
         return
 
-    people_num = pop.last_copy.size
+    people_num = pop_read.size
     if old_land:
         land_size = old_land.size
         labor_per_land = people_num / land_size
@@ -33,10 +34,10 @@ def natural_resource_exploitation(pop, prototype, cell, buffer):
         if labor_per_land < old_land.min_labor:
             labor_per_land = old_land.min_labor
         land_used = people_num / labor_per_land
-        tech_factor = get_tech_factor(pop.last_copy)
+        tech_factor = _get_tech_factor(pop_read)
         limit = _resource_productivity(old_land, buffer, tech_factor)
 
-        output = hyperbolic_function(limit, labor_per_land, land_used)
+        output = _hyperbolic_function(limit, labor_per_land, land_used)
     else:
         land_size = 0
         land_used = 0
@@ -44,14 +45,14 @@ def natural_resource_exploitation(pop, prototype, cell, buffer):
         output = 0
         tech_factor = 0
 
-    product = util.get_or_create_res(prototype.name, cell)
+    product = util.get_or_create_res(prototype.name, cell_write)
     product.size += output
-    ownership.set_ownership(pop, product)
+    ownership.set_ownership(pop_write, product)
 
-    land = cell.get_res(land_name)
-    ownership.set_ownership(pop, land, land_used)
+    land = cell_write.get_res(land_name)
+    ownership.set_ownership(pop_write, land, land_used)
 
-    Logger.debug(f"{_log_name}: {str(people_num)} {pop.name} from ({cell.x},{cell.y})  "
+    Logger.debug(f"{_log_name}: {str(people_num)} {pop_write.name} from ({cell_write.x},{cell_write.y})  "
                  f"with {str(round(land_used))} "
                  f"{land_name} (of total {land_size}) and {str(limit)} productivity cap (with "
                  f"{str(tech_factor)} tech factor) produced "
@@ -62,7 +63,7 @@ def natural_resource_exploitation(pop, prototype, cell, buffer):
 # и трудоинтенсивные технологии? первое можно преставить как
 # коэффициент, который тупо умножает общий результат, второе -
 # как увеличение limit
-def hyperbolic_function(limit, labor_per_land, land_used):
+def _hyperbolic_function(limit, labor_per_land, land_used):
     output_per_land = - limit / (labor_per_land + 1) + limit
     return round(output_per_land * land_used)
 
@@ -80,7 +81,7 @@ def _resource_productivity(resource, buffer, tech_factor):
     return result
 
 
-def get_tech_factor(pop):
+def _get_tech_factor(pop):
     result = 1
     for resource in pop.owned_resources:
         if resource.type == "tools":

@@ -21,7 +21,7 @@ test_data = [
 
 @pytest.mark.parametrize("optimum,labor_per_land,land_used,expected_result", test_data)
 def test_hyperbolic(optimum, labor_per_land, land_used, expected_result):
-    result = production.hyperbolic_function(optimum, labor_per_land, land_used)
+    result = production._hyperbolic_function(optimum, labor_per_land, land_used)
     assert result == expected_result
 
 
@@ -50,8 +50,8 @@ def test_tech_factor_additive():
     )
     pop_1.owned_resources.append(tool_2)
 
-    tech_factor = production.get_tech_factor(pop)
-    tech_factor_1 = production.get_tech_factor(pop_1)
+    tech_factor = production._get_tech_factor(pop)
+    tech_factor_1 = production._get_tech_factor(pop_1)
 
     assert tech_factor == 2
     assert tech_factor == tech_factor_1

@@ -6,8 +6,9 @@
 """
 
 
-def temp_change(cell, buffer):
-    if not cell.biome.capacity:
+def temp_change(cell_write, cell_read, buffer):
+    # if the biome has no capacity, we don't need to change it
+    if not cell_write.biome.capacity:
         return
 
     # first, we have to know, how much temperature deviation is "bad" or "good".
@@ -16,7 +17,7 @@ def temp_change(cell, buffer):
 
     # for a wet climate, high temperature is bad, cold is good - so the
     # deviation factor is accurate; but for a wet climate, hot is bad. so:
-    if cell.biome.moisture == "dry":
+    if cell_read.biome.moisture == "dry":
         deviation_factor = -deviation_factor
 
     # deviation_50 means the capacities have to be reduced/increased by 50%
@@ -27,6 +28,6 @@ def temp_change(cell, buffer):
         multiplier = 1 + deviation_factor / (1 - deviation_factor)
 
     # multiplier is how much the capacities are changed
-    for name, mean_cap in cell.biome.capacity.items():
+    for name, mean_cap in cell_read.biome.capacity.items():
         cap = round(mean_cap * multiplier)
-        cell.biome.capacity[name] = cap
+        cell_write.biome.capacity[name] = cap

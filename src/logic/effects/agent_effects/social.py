@@ -3,38 +3,38 @@ from src.logic.effects import util
 from src.logic.entities.agents.structures import Commodity
 
 
-def social_mobility(pop, cell):
-    if cell.has_res_type("ore") and cell.get_pop("blacksmiths") is None:
+def social_mobility(pop_write, pop_read, cell_write, cell_read):
+    if cell_read.has_res_type("ore") and cell_write.get_pop("blacksmiths") is None:
         blacksmiths = util.factory.new_population("blacksmiths")
-        cell.pops.append(blacksmiths)
+        cell_write.pops.append(blacksmiths)
         blacksmiths.size = 1000
-        pop.size -= 1000
+        pop_write.size -= 1000
 
 
-def buy(pop, cell):
-    old_pop = pop.last_copy
+def buy(pop_write, pop_read, cell_write, cell_read):
+    old_pop = pop_read
 
     for need in old_pop.needs:
         if need.actual < need.per_1000:
-            surplus, amount = _available_surplus(pop)
+            surplus, amount = _available_surplus(pop_read)
             if surplus and amount > 0:
                 if need.resource:
-                    market = _get_market(need.resource.name, cell)
+                    market = _get_market(need.resource.name, cell_write)
                 else:
-                    market = _get_or_create_market_by_type(need.type, cell)
+                    market = _get_or_create_market_by_type(need.type, cell_write)
                 if market:
                     market.exchange = surplus
                     market.purchases.append(
-                        Commodity(pop, amount)
+                        Commodity(pop_write, amount)
                     )
 
 
-def sell(pop, cell):
-    for resource in pop.owned_resources:
-        if resource.name in pop.sells:
-            how_much = resource.owners[pop.name]
-            market = _get_or_create_market(resource, cell)
-            market.sale = Commodity(pop, how_much)
+def sell(pop_write, pop_read, cell_write, cell_read):
+    for resource in pop_write.owned_resources:
+        if resource.name in pop_write.sells:
+            how_much = resource.owners[pop_write.name]
+            market = _get_or_create_market(resource, cell_write)
+            market.sale = Commodity(pop_write, how_much)
 
 
 def _get_market_for_type(resource_type, cell):

@@ -76,10 +76,13 @@ def test_buy_happy_path(init_factory):
         name="surplus",
         size=500
     )
-    ownership.set_ownership(buyer, surplus)
+    ownership.set_ownership(old_buyer, surplus)
+    
     cell = Cell()
+    old_cell = Cell()
+    cell.last_copy = old_cell
 
-    social.buy(buyer, cell)
+    social.buy(buyer, old_buyer, cell, old_cell)
 
     assert len(cell.markets) == 1
     assert cell.markets[0].exchange is not None

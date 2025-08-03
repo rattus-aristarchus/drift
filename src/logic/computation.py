@@ -50,13 +50,13 @@ class GridCPU:
 
         # вначале общие, уровня карты
         for func in self.effects:
-            func(self.grid, buffer)
+            func(self.grid, self.grid.last_copy, buffer)
 
         self._grid_level_messages(buffer)
 
         # затем алгоритмы структур
         for structure in self.grid.structures:
-            structure.do_effects(None, buffer)
+            structure.do_effects(None, None, None, buffer)
 
         # передаем выполнение управляющим объектам для отдельных клеток
         for cell_cpu in self.cpus:
@@ -87,7 +87,7 @@ class CellCPU:
 
         # вначале - алгоритмы уровня клетки
         for func in cell_effects:
-            func(self.cell, buffer)
+            func(self.cell, self.cell.last_copy, buffer)
 
         # алгоритмы для популяций
         for pop in self.cell.pops:
@@ -95,16 +95,16 @@ class CellCPU:
             # была создана в эту итерацию, и вычислять ее эффекты
             # не нужно
             if pop.last_copy:
-                pop.do_effects(self.cell, buffer)
+                pop.do_effects(pop.last_copy, self.cell, self.cell.last_copy, buffer)
 
         # алгоритмы для ресурсов
         for resource in self.cell.resources:
             if resource.last_copy:
-                resource.do_effects(self.cell, buffer)
+                resource.do_effects(resource.last_copy, self.cell, self.cell.last_copy, buffer)
 
         # алгоритмы для рынков
         for market in self.cell.markets:
-            market.do_effects(self.cell, buffer)
+            market.do_effects(None, self.cell, self.cell.last_copy, buffer)
 
         # удаляем вымершие популяции
         # remove pops that have died out
@@ -134,9 +134,15 @@ class Agent(Entity):
 
     effects: list = field(default_factory=lambda: [])
 
-    def do_effects(self, cell, buffer):
+    # Чтение можно производить только из объектов прошлой итерации,
+    # а запись - только в текущую (потому что иначе порядок выполнения)
+    # агентов будет влиять на результаты вчислений).
+    # Чтобы не возникало путаницы на уровне эффектов, в кждый эффект мы 
+    # передаём отдельно объект для чтения (=объект прошлой итерации) и 
+    # объект для записи. 
+    def do_effects(self, agent_read, cell_write, cell_read, buffer):
         """
         Вызывается каждую итерацию.
         """
         for func in self.effects:
-            func(self, cell, buffer)
+            func(self, agent_read, cell_write, cell_read, buffer)
