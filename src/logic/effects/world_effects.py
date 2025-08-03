@@ -7,13 +7,11 @@
 
 import math
 
-from src.logic.buffers import GridBuffer
 
-
-def climate(history, grid_buffer: GridBuffer):
-    age = grid_buffer.grid.state.age
-    mean = history.world.mean_temp
+def climate(grid, buffer):
+    age = grid.state.age
+    mean = buffer.world.mean_temp
 
     temp = mean + math.sin(age / 5) / 2
-    grid_buffer.grid.state.temperature = temp
-    grid_buffer.temp_deviation = history.world.mean_temp - temp
+    grid.state.temperature = temp
+    buffer.memory["temp_deviation"] = buffer.world.mean_temp - temp

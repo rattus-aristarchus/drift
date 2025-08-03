@@ -2,11 +2,12 @@ import ast
 
 import pytest
 
-from src.logic.buffers import GridBuffer
+from src.logic.computation import GridCPU
 from src.logic.entities import grids
 from src.logic.entities.agents.structures import Structure
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
+from src.logic.entities.histories import World
 
 
 def test_increase_grid_age(fresh_grid):
@@ -35,7 +36,7 @@ class __EffectSpy:
 def effect_spy():
     spy = __EffectSpy()
 
-    def __effect(structure, grid_buffer):
+    def __effect(structure, buffer):
         spy.calls += 1
 
     yield __effect, spy
@@ -53,11 +54,13 @@ def test_effect_calls_for_structures_are_not_repeated(effect_spy):
     cell_0.structures.append(structure)
     cell_1.structures.append(structure)
     grid.structures.append(structure)
-    buffer = GridBuffer(grid, None, None)
+    cpu = GridCPU(World())
+    cpu.refresh_cpus(grid)
 
-    grid.do_effects(buffer)
+    cpu.do_effects()
 
     assert spy.calls == 1
+
 
 def test_get_neighbors():
     grid = Grid()

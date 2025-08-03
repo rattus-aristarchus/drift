@@ -2,7 +2,7 @@ import dataclasses
 
 import pytest
 
-from src.logic.entities.agents import agents
+from src.logic.entities.agents import ownership
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.basic import entities
@@ -39,7 +39,7 @@ def test_set_ownership_to_zero():
     pop.owned_resources.append(res)
     res.owners[pop.name] = 100
 
-    agents.set_ownership(pop, res, 0)
+    ownership.set_ownership(pop, res, 0)
 
     assert len(pop.owned_resources) == 0
     assert len(res.owners) == 0
@@ -53,7 +53,7 @@ def test_set_ownership_to_full():
         size=100
     )
 
-    agents.set_ownership(pop, res)
+    ownership.set_ownership(pop, res)
 
     assert len(pop.owned_resources) == 1
     assert len(res.owners) == 1

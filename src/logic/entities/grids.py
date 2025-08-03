@@ -1,10 +1,7 @@
 import dataclasses
 from dataclasses import field
 from kivy import Logger
-
 from src.logic.entities.basic import custom_fields, recurrents
-
-from src.logic.buffers import CellBuffer
 from src.logic.entities import cells
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
@@ -14,7 +11,7 @@ from src.logic.entities.basic.recurrents import Recurrent
 class GridState(Entity):
 
     age: int = 0
-    temperature: int = 0
+    temperature: float = 0.0
 
 
 @dataclasses.dataclass
@@ -62,33 +59,6 @@ class Grid(Entity, Recurrent):
                 # new_cell = cells.copy_cell_without_structures(original.cells[x][y])
                 self.cells[x][y] = new_cell
         return all_recurrents
-
-    def do_effects(self, grid_buffer):
-
-        for structure in self.structures:
-            structure.do_effects(grid_buffer=grid_buffer)
-
-        for cell in self.cells_as_list():
-            cell_buffer = CellBuffer(cell, grid_buffer)
-
-            # this is the main call that calls do_effects for all agents in a cell
-            cell.do_effects(cell_buffer, grid_buffer)
-
-            # remove pops that have died out
-            to_remove = []
-            for pop in cell.pops:
-                if pop.size <= 0:
-                    to_remove.append(pop)
-            for pop in to_remove:
-                cell.pops.remove(pop)
-
-            # remove resources that have been emptied out
-            to_remove = []
-            for res in cell.resources:
-                if res.size <= 0:
-                    to_remove.append(res)
-            for res in to_remove:
-                cell.resources.remove(res)
 
 
 def create_grid_with_default_biome(width, height, biome_name: str, factory, age=0):
