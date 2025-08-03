@@ -25,6 +25,8 @@ def exchange(market: Market):
 
     # подразумевается, что все покупатели приходят
     # с одним товаром - surplus
+
+    # измеряем спрос
     ttl_demand = 0
     for purchase in market.purchases:
         ttl_demand += purchase.amount
@@ -32,6 +34,7 @@ def exchange(market: Market):
     if ttl_demand <= 0 or not market.sale or market.sale.amount <= 0:
         return
 
+    # рассчитываем цену
     price = ttl_demand / market.sale.amount
     market.price = price
 

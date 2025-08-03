@@ -7,20 +7,20 @@ from src.logic.entities.basic.recurrents import Recurrent
 
 
 @dataclasses.dataclass
-class TestEntity(Entity):
+class SampleEntity(Entity):
 
     pass
 
 @dataclasses.dataclass
-class TestModel(Model):
+class SampleModel(Model):
 
-    linked_class = TestEntity
+    linked_class = SampleEntity
 
     name: str = ""
 
 
 def test_create_from_model():
-    test_model = TestModel(name="test")
+    test_model = SampleModel(name="test")
 
     test_entity = models.create_from_model(test_model)
 
@@ -28,13 +28,13 @@ def test_create_from_model():
 
 
 @dataclasses.dataclass
-class TestClass(Recurrent):
+class SampleClass(Recurrent):
 
     test_field: str = ""
 
 
 """
 def test_get_class_members():
-    members = TestClass.__dict__
+    members = SampleClass.__dict__
     print(members)
 """

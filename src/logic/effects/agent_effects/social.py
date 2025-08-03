@@ -16,12 +16,12 @@ def buy(pop, cell):
 
     for need in old_pop.needs:
         if need.actual < need.per_1000:
-            surplus, amount = available_surplus(pop)
+            surplus, amount = _available_surplus(pop)
             if surplus and amount > 0:
                 if need.resource:
-                    market = get_market(need.resource.name, cell)
+                    market = _get_market(need.resource.name, cell)
                 else:
-                    market = get_or_create_market_by_type(need.type, cell)
+                    market = _get_or_create_market_by_type(need.type, cell)
                 if market:
                     market.exchange = surplus
                     market.purchases.append(
@@ -33,11 +33,11 @@ def sell(pop, cell):
     for resource in pop.owned_resources:
         if resource.name in pop.sells:
             how_much = resource.owners[pop.name]
-            market = get_or_create_market(resource, cell)
+            market = _get_or_create_market(resource, cell)
             market.sale = Commodity(pop, how_much)
 
 
-def get_market_for_type(resource_type, cell):
+def _get_market_for_type(resource_type, cell):
     market = None
     for check_market in cell.markets:
         if check_market.product.type == resource_type:
@@ -45,7 +45,7 @@ def get_market_for_type(resource_type, cell):
     return market
 
 
-def get_market(resource_name, cell):
+def _get_market(resource_name, cell):
     market = None
     for check_market in cell.markets:
         if check_market.product.name == resource_name:
@@ -55,7 +55,7 @@ def get_market(resource_name, cell):
 
 # TODO: возможно, это проблема. рынок добавляется в список рынков текущей клетки -
 # то время как выполняются эффекты этой клетки
-def get_or_create_market(resource, cell):
+def _get_or_create_market(resource, cell):
     market = None
     for check_market in cell.markets:
         if check_market.product == resource:
@@ -71,7 +71,7 @@ def get_or_create_market(resource, cell):
     return market
 
 
-def get_or_create_market_by_type(type, cell):
+def _get_or_create_market_by_type(type, cell):
     market = None
     for check_market in cell.markets:
         if check_market.type == type and check_market.product is None:
@@ -83,7 +83,7 @@ def get_or_create_market_by_type(type, cell):
     return market
 
 
-def available_surplus(pop):
+def _available_surplus(pop):
     for resource in pop.owned_resources:
         if resource.name == "surplus":
             size = resource.owners[pop.name]

@@ -46,15 +46,15 @@ def test_load_models_has_proper_links():
 
 
 @dataclasses.dataclass
-class TestModel0(Model):
+class SampleModel0(Model):
 
-    yaml_tag = '!TestModel0'
+    yaml_tag = '!SampleModel0'
 
 
 @dataclasses.dataclass
-class TestModel1(Model):
+class SampleModel1(Model):
 
-    yaml_tag = '!TestModel1'
+    yaml_tag = '!SampleModel1'
 
 
 def test_load_model_file():
@@ -64,11 +64,11 @@ def test_load_model_file():
 
     assert len(models) == 3
     assert models[0].name == "0"
-    assert isinstance(models[0], TestModel0)
+    assert isinstance(models[0], SampleModel0)
     assert models[1].name == "1"
-    assert isinstance(models[1], TestModel1)
+    assert isinstance(models[1], SampleModel1)
     assert models[2].name == "5"
-    assert isinstance(models[1], TestModel1)
+    assert isinstance(models[1], SampleModel1)
 
 """
 # under current implementation, missing fields don't have to be initialized 

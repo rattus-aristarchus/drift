@@ -63,20 +63,20 @@ def test_set_ownership_to_full():
 
 
 @dataclasses.dataclass
-class TestSubEntity(Entity):
+class SampleSubEntity(Entity):
     pass
 
 @dataclasses.dataclass
-class TestEntity:
+class SampleEntity:
 
-    sub_entity: TestSubEntity = None
+    sub_entity: SampleSubEntity = None
     sub_entity_list: list = dataclasses.field(default_factory=lambda: [])
 
 
 def test_inherit_prototype_fields_copies_sub_entity():
-    test = TestEntity()
-    sub = TestSubEntity()
-    sub_1 = TestSubEntity()
+    test = SampleEntity()
+    sub = SampleSubEntity()
+    sub_1 = SampleSubEntity()
     test.sub_entity = sub
     test.sub_entity_list.append(sub_1)
 
@@ -85,10 +85,10 @@ def test_inherit_prototype_fields_copies_sub_entity():
     sub_1.name = "changed"
 
     assert copy.sub_entity
-    assert isinstance(copy.sub_entity, TestSubEntity)
+    assert isinstance(copy.sub_entity, SampleSubEntity)
     assert copy.sub_entity.name == ""
     assert len(copy.sub_entity_list) == 1
-    assert isinstance(copy.sub_entity_list[0], TestSubEntity)
+    assert isinstance(copy.sub_entity_list[0], SampleSubEntity)
     assert copy.sub_entity_list[0].name == ""
 
 @dataclasses.dataclass

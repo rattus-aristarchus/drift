@@ -3,11 +3,11 @@ import kivy.resources
 from kivy.logger import Logger, LOG_LEVELS
 from src.io.output import Output
 from src.logic.entities import populate_history, factories
-from util import CONF, ASSETS_DIR, NAMESPACES_DIR, ICONS_DIR, BACKGROUNDS_DIR
+from src.util import CONF, ASSETS_DIR, NAMESPACES_DIR, ICONS_DIR, BACKGROUNDS_DIR
 from src.logic.effects import util as effects_util
 Logger.setLevel(LOG_LEVELS[CONF["log_level"]])
 os.environ["KIVY_GL_DEBUG"] = "0"
-import gui.main as gui
+import src.gui.main as gui
 from src.io import storage
 
 
