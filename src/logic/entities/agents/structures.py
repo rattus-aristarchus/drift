@@ -1,4 +1,5 @@
 import dataclasses
+import os
 from dataclasses import field
 
 from src.logic.entities.basic import custom_fields, entities
@@ -47,3 +48,21 @@ class Market(Agent):
     sale: Commodity = None
     purchases: list[Commodity] = field(default_factory=lambda: [])
     price: float = 0.0
+
+    def __str__(self):
+        if self.product is not None:
+            title = f"{self.product.name}"
+        elif self.type != "":
+            title = f"{self.type}"
+        else:
+            title = f"просто рынок"
+
+        if self.exchange:
+            exchange_str = self.exchange.name
+        else:
+            exchange_str = ""
+
+        description = (
+            f"{title} - {exchange_str}{os.linesep}"
+            f"цена: {self.price}")
+        return description
