@@ -1,12 +1,12 @@
 import pytest
-from src.logic.effects import util
+from src.logic.effects import effects_util
 from src.logic.effects.agent_effects import production
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.agents.resources import Resource
 
 
 def test_growth_with_capacity():
-    result = util.growth_with_capacity(1000, 10000, 0.05)
+    result = effects_util.growth_with_capacity(1000, 10000, 0.05)
 
     assert result == 45
 

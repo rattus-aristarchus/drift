@@ -36,7 +36,7 @@ def brownian_migration(pop_write, pop_read, cell_write, cell_read, buffer):
 
 
 def producer_grow(pop_write, pop_read, cell_write, cell_read, buffer):
-    consumption.producer_grow(pop_write, pop_read)
+    consumption.producer_grow(pop_write, pop_read, cell_write, cell_read)
 
 
 def basic_agriculture(pop_write, pop_read, cell_write, cell_read, buffer):

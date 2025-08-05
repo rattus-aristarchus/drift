@@ -2,7 +2,7 @@ import sys
 from kivy import Logger
 
 import src.logic.entities.agents.ownership
-from src.logic.effects import util
+from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
 
 _log_name = __name__.split('.')[-1]
@@ -11,7 +11,7 @@ def produce(pop_write, pop_read, cell_write, cell_read, buffer):
     for output in pop_read.produces:
         if not output:
             pass
-        prototype = util.factory.prototype_resource(output)
+        prototype = effects_util.factory.prototype_resource(output)
         if prototype.type == "food":
             natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
         elif prototype.type == "tools":
@@ -45,7 +45,7 @@ def natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, pr
         output = 0
         tech_factor = 0
 
-    product = util.get_or_create_res(prototype.name, cell_write)
+    product = effects_util.get_or_create_res(prototype.name, cell_write)
     product.size += output
     ownership.set_ownership(pop_write, product)
 

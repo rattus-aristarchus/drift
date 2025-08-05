@@ -2,6 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug drift",
+            "type": "python",
+            "request": "launch",
+            "module": "src",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },        
+        {
             "name": "Debug pytest - All tests",
             "type": "python",
             "request": "launch",

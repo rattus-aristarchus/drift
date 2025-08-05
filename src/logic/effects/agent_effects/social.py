@@ -1,14 +1,21 @@
 from src.logic.entities.agents import structures, populations
-from src.logic.effects import util
+from src.logic.effects import effects_util
 from src.logic.entities.agents.structures import Commodity
+from kivy import Logger
 
+_log_name = __name__.split('.')[-1]
 
 def social_mobility(pop_write, pop_read, cell_write, cell_read):
     if cell_read.has_res_type("ore") and cell_write.get_pop("blacksmiths") is None:
-        blacksmiths = util.factory.new_population("blacksmiths")
+        blacksmiths = effects_util.factory.new_population("blacksmiths")
         cell_write.pops.append(blacksmiths)
         blacksmiths.size = 1000
         pop_write.size -= 1000
+
+        Logger.debug(
+            f"{_log_name}: 1000 people from {pop_read.name} at {cell_read.x},{cell_read.y} "
+            f"became blacksmiths"
+        )
 
 
 def buy(pop_write, pop_read, cell_write, cell_read):
@@ -64,7 +71,7 @@ def _get_or_create_market(resource, cell):
             market = check_market
             market.product = resource
     if not market:
-        market = util.factory.new_misc("market")
+        market = effects_util.factory.new_misc("market")
         cell.markets.append(market)
         market.type = resource.type
         market.product = resource
@@ -77,7 +84,7 @@ def _get_or_create_market_by_type(type, cell):
         if check_market.type == type and check_market.product is None:
             market = check_market
     if not market:
-        market = util.factory.new_misc("market")
+        market = effects_util.factory.new_misc("market")
         cell.markets.append(market)
         market.type = type
     return market

@@ -1,4 +1,4 @@
-from src.logic.effects import util
+from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
 from kivy import Logger
 
@@ -16,7 +16,7 @@ def brownian_migration(pop_write, pop_read, cell_write, cell_read):
     ttl = 0
     amount = round(pop_read.size * 0.001) if pop_read.size > 1000 else 1
     for dest in destinations:
-        target_pop = util.get_or_create_pop(pop_read.name, dest.next_copy)
+        target_pop = effects_util.get_or_create_pop(pop_read.name, dest.next_copy)
         ttl += amount
 
         pop_write.size -= amount
@@ -28,7 +28,7 @@ def brownian_migration(pop_write, pop_read, cell_write, cell_read):
 
 
 def _livable_destinations(pop, cell):
-    result = util.get_neighbors_with_free_res(
+    result = effects_util.get_neighbors_with_free_res(
         pop.looks_for[0],
         _all_destinations(pop, cell)
     )
@@ -74,7 +74,7 @@ def migrate(pop_write, pop_read, cell_write, cell_read):
 
             # если таковых нет, создаем
             if not target_res:
-                new_res = util.factory.new_resource(old_res.name, cell)
+                new_res = effects_util.factory.new_resource(old_res.name, cell)
                 ownership.set_ownership(old_target.next_copy, new_res)
                 target_res = new_res
 
@@ -83,7 +83,7 @@ def migrate(pop_write, pop_read, cell_write, cell_read):
             _move_amount(old_res.next_copy, target_res, amount)
 
     Logger.debug(f"{_log_name}: {ttl} {pop_read.name} from ({cell_read.x},{cell_read.y}) migrated "
-                 f"to {len(cells_and_pops)} neighbors")
+                 f"to {len(cells_and_pops)} neighbors; {pop_write.size} people are left")
 
 
 def _all_destinations(pop, cell):

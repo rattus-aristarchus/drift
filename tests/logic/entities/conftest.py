@@ -1,5 +1,5 @@
 import pytest
-from src import util
+from src import effects_util
 from src.logic.effects import effects
 from src.logic.entities import grids
 from src.logic.entities.agents.populations import Population
