@@ -52,11 +52,11 @@ def natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, pr
     land = cell_write.get_res(land_name)
     ownership.set_ownership(pop_write, land, land_used)
 
-    Logger.debug(f"{_log_name}: {str(people_num)} {pop_write.name} from ({cell_write.x},{cell_write.y})  "
-                 f"with {str(round(land_used))} "
-                 f"{land_name} (of total {land_size}) and {str(limit)} productivity cap (with "
-                 f"{str(tech_factor)} tech factor) produced "
-                 f"{str(output)} {prototype.name}")
+    Logger.debug(f"{_log_name}: {people_num} {pop_write.name} from ({cell_write.x},{cell_write.y})  "
+                 f"with {round(land_used)} "
+                 f"{land_name} (of total {land_size}) and {round(limit, 3)} productivity cap (with "
+                 f"{round(tech_factor, 3)} tech factor) produced "
+                 f"{output} {prototype.name}")
 
 
 # вот тут вопрос. стоит ли различать трудосберегающие технологии

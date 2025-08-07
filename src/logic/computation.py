@@ -63,11 +63,13 @@ class GridCPU:
             cell_cpu.do_effects(buffer, self.cell_effects)
 
     def _grid_level_messages(self, buffer):
-        msg = (f"The age is {self.grid.state.age}. Global temeprature"
-                f" is {self.grid.state.temperature}.")
+        temp = round(self.grid.state.temperature, 3)
+        msg = (f"The age is {self.grid.state.age}. Global temperature"
+                f" is {temp}.")
         if "temp_deviation" in buffer.memory.keys():
-            msg += (f"It deviates from"
-                    f" mean by {buffer.memory["temp_deviation"]}.")
+            dev = round(buffer.memory["temp_deviation"], 3)
+            msg += (f" It deviates from"
+                    f" mean by {dev}.")
         Logger.info(msg)
 
 

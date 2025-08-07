@@ -11,6 +11,19 @@
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             }
+        },
+        {
+            "name": "Debug drift (legacy)",
+            "type": "python",
+            "request": "launch",
+            "module": "src",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "debugAdapter": "legacy"
         },        
         {
             "name": "Debug pytest - All tests",

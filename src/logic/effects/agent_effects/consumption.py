@@ -85,4 +85,4 @@ def do_food(pop_write, pop_read, cell_write, cell_read):
     food_need.actual = sated * 1000
 
     Logger.debug(f"{_log_name}: {pop_read.name} in ({cell_read.x},{cell_read.y}) ate {ttl_food - surplus}, "
-                 f"surplus is {str(surplus)}, satiation is {str(round(sated, 2))} (0-1)")
+                 f"surplus is {surplus}, satiation is {round(sated, 2)} (0-1)")
