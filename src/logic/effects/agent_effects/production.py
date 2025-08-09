@@ -13,29 +13,31 @@ def produce(pop_write, pop_read, cell_write, cell_read, buffer):
             pass
         prototype = effects_util.factory.prototype_resource(output)
         if prototype.type == "food":
-            natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
+            production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
         elif prototype.type == "tools":
-            natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
+            production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
 
 
-def natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, prototype, buffer):
+def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer):
     land_name = prototype.inputs[0]
-    old_land = cell_read.get_res(land_name)
+    # TODO: не учитывает собственность на землю; искать надо у популяции а не клетки
+    land_read = cell_read.get_res(land_name)
 
     # без земли делать нечего
-    if not old_land:
+    if not land_read:
         return
 
     people_num = pop_read.size
-    if old_land:
-        land_size = old_land.size
+    if land_read:
+        land_size = land_read.size
         labor_per_land = people_num / land_size
+
         # если земли слишком много, ее не пытаются обработать:
-        if labor_per_land < old_land.min_labor:
-            labor_per_land = old_land.min_labor
+        if labor_per_land < land_read.min_labor:
+            labor_per_land = land_read.min_labor
         land_used = people_num / labor_per_land
         tech_factor = _get_tech_factor(pop_read)
-        limit = _resource_productivity(old_land, buffer, tech_factor)
+        limit = _productivity_limit(land_read, buffer, tech_factor)
 
         output = _hyperbolic_function(limit, labor_per_land, land_used)
     else:
@@ -68,10 +70,19 @@ def _hyperbolic_function(limit, labor_per_land, land_used):
     return round(output_per_land * land_used)
 
 
-def _resource_productivity(resource, buffer, tech_factor):
-    result = resource.max_labor * tech_factor
+def _productivity_limit(resource, buffer, tech_factor):
+    """
+    Производительность ресурса при предельной загрузке рабочей силой.
+    Рассчитывается как естественная производительность * производительность
+    инструментов.
+    """
+
+    result = resource.max_labor * resource.productivity * tech_factor
+
 
     if resource.type == "land":
+        # если речь об обработке земли, нужно учесть влияние температуры
+        # ищем текущее отклонение температуры от средней для региона
         deviation_factor = buffer.memory["temp_deviation"] / buffer.world.deviation_50
         if deviation_factor >= 0:
             result *= (1 + deviation_factor)
@@ -82,13 +93,19 @@ def _resource_productivity(resource, buffer, tech_factor):
 
 
 def _get_tech_factor(pop):
+    """
+    Влияние средств производства на выпуск. Рассчитывается
+    на основе количества инструментов и их производительности
+    """
+
     result = 1
+    # ищем инструменты
     for resource in pop.owned_resources:
         if resource.type == "tools":
             availability = resource.size / pop.size
             if availability > 1:
                 availability = 1
             # если производительность инструмента 2, и он есть у 50%
-            # населения, то производительность должна вырости в 1.5 раза
+            # населения, то производительность должна вырасти в 1.5 раза
             result += (resource.productivity - 1) * availability
     return result

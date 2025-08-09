@@ -41,7 +41,7 @@ def producer_grow(pop_write, pop_read, cell_write, cell_read, buffer):
 
 def basic_agriculture(pop_write, pop_read, cell_write, cell_read, buffer):
     product = pop_read.produces[0]
-    production.natural_resource_exploitation(pop_write, pop_read, cell_write, cell_read, product, buffer)
+    production.production_from_resource(pop_write, pop_read, cell_write, cell_read, product, buffer)
 
 
 def produce(pop_write, pop_read, cell_write, cell_read, buffer):

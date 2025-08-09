@@ -17,6 +17,7 @@ def init_factory():
     )
     effects_util.factory.resources["test_res"] = Resource(name="test_res")
     effects_util.factory.populations["test_pop"] = Population(name="test_pop")
+    effects_util.factory.populations["test_pop"] = Resource(name="test_crop")
 
     yield
 

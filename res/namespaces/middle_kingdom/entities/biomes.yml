@@ -32,7 +32,7 @@
     capacity:
         sheep: 25000
     starting_resources:
-        - ["millet_land", 25000]
+        - ["millet_land", 75000]
 - !biome
     name: "temperate_river_valley"
     moisture: "wet"

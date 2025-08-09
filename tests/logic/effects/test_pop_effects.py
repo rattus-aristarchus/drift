@@ -1,8 +1,14 @@
 import pytest
+
+from src.logic.computation import Buffer
+from src.logic.entities.basic import recurrents
+from src.logic import logic_util
 from src.logic.effects import effects_util
 from src.logic.effects.agent_effects import production
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.agents.resources import Resource
+from src.logic.entities.cells import Cell
+from src.logic.entities.histories import World
 
 
 def test_growth_with_capacity():
@@ -55,3 +61,41 @@ def test_tech_factor_additive():
 
     assert tech_factor == 2
     assert tech_factor == tech_factor_1
+
+
+def test_zero_productivity_production():
+    pop_read = Population(size=1000)
+    tool = Resource(
+        name="test_tool",
+        type="tool",
+        productivity=1,
+        size=1000
+    )
+    pop_read.owned_resources.append(tool)
+    cell_read = Cell()
+    cell_read.pops.append(pop_read)
+    land = Resource(
+        name="test_land",
+        type="land",
+        productivity=0,
+        size=1000
+    )
+    cell_read.resources.append(land)
+    prototype = Resource(
+        name="test_crop",
+        type="food",
+        inputs=["test_land"]
+    )
+    world = World()
+    world.deviation_50 = 1
+    buffer = Buffer(world=world)
+    buffer.memory["temp_deviation"] = 0
+    cell_write = logic_util.copy_dataclass_with_collections(cell_read)
+    pop_write = logic_util.copy_dataclass_with_collections(pop_read)
+
+    production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
+
+    crop = cell_write.get_res("test_res")
+    assert crop is not None
+    assert crop.size == 0
+
