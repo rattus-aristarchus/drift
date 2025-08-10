@@ -79,7 +79,6 @@ def _productivity_limit(resource, buffer, tech_factor):
 
     result = resource.max_labor * resource.productivity * tech_factor
 
-
     if resource.type == "land":
         # если речь об обработке земли, нужно учесть влияние температуры
         # ищем текущее отклонение температуры от средней для региона

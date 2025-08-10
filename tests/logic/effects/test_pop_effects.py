@@ -62,8 +62,13 @@ def test_tech_factor_additive():
     assert tech_factor == 2
     assert tech_factor == tech_factor_1
 
+land_to_output = [
+    (0, 0),
+    (0.1, 250)
+]
 
-def test_zero_productivity_production():
+@pytest.mark.parametrize("land_productivity,output", land_to_output)
+def test_production_from_resource(init_factory, land_productivity, output):
     pop_read = Population(size=1000)
     tool = Resource(
         name="test_tool",
@@ -77,7 +82,8 @@ def test_zero_productivity_production():
     land = Resource(
         name="test_land",
         type="land",
-        productivity=0,
+        max_labor=5,
+        productivity=land_productivity,
         size=1000
     )
     cell_read.resources.append(land)
@@ -95,7 +101,7 @@ def test_zero_productivity_production():
 
     production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
 
-    crop = cell_write.get_res("test_res")
+    crop = cell_write.get_res("test_crop")
     assert crop is not None
-    assert crop.size == 0
+    assert crop.size == output
 
