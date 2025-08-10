@@ -11,36 +11,46 @@
 - !resource
     name: "surplus"
 - !resource
+    name: "labor"
+    type: "labor"
+    effects: [grow]
+    yearly_growth: -1
+- !resource
     name: "millet"
     type: "food"
     max_labor_share: 0.25
-    inputs: ["millet_land"]
+    land: ["millet_land"]
+    inputs:
+        labor: 1
     effects: [grow]
     yearly_growth: -1
 - !resource
     name: "rice"
     type: "food"
     max_labor_share: 0.25
-    inputs: ["rice_land"]
+    land: ["rice_land"]
+    inputs:
+        labor: 1
     effects: [grow]
     yearly_growth: -1
 - !resource
     name: "millet_land"
     type: "land"
     min_labor: 0.25
-    max_labor: 2
+    max_output: 2
     movable: False
 - !resource
     name: "rice_land"
     type: "land"
     min_labor: 0.5
-    max_labor: 4
+    max_output: 4
     movable: False
 - !resource
     name: "basic_copper_tools"
     type: "tools"
     max_labor_share: 0.1
-    inputs: ["surface_copper"]
+    land: ["surface_copper"]
+    inputs: ["labor"]
     productivity: 2
     effects: [grow]
     yearly_growth: -0.1
@@ -48,7 +58,9 @@
     name: "advanced_copper_tools"
     type: "tools"
     max_labor_share: 0.5
-    inputs: ["surface_copper"]
+    land: ["surface_copper"]
+    inputs:
+        labor: 1
     productivity: 2.5
     effects: [grow]
     yearly_growth: -0.1
@@ -56,5 +68,5 @@
     name: "surface_copper"
     type: "ore"
     min_labor: 0.25
-    max_labor: 3
+    max_output: 3
     movable: False

@@ -49,6 +49,19 @@ def get_res_size(res_name, cell):
     return num
 
 
+def get_owned_amount(res_name, pop, cell):
+    return get_owned_amount_from_pool(res_name, pop, cell.resources)
+
+
+def get_owned_amount_from_pool(res_name, pop, res_list):
+    for resource in res_list:
+        if resource.name == res_name:
+            for owner, amount in resource.owners.items():
+                if owner == pop.name:
+                    return amount
+
+    return 0
+
 def get_neighbors_with_lowest_density(pop_name, neighbors):
     lowest_density = math.inf
     lowest_cells = []

@@ -34,7 +34,7 @@
         - !need
             type: "tools"
             per_1000: 1000
-    produces: ["millet", "basic_copper_tools"]
+    produces: ["labor", "millet", "basic_copper_tools"]
     looks_for: ["millet_land"]
     effects: [produce, do_food, producer_grow, migrate, brownian_migration, social_mobility, pop_to_market]
 - !population
@@ -50,7 +50,7 @@
         - !need
             type: "tools"
             per_1000: 1000
-    produces: ["rice", "basic_copper_tools"]
+    produces: ["labor", "rice", "basic_copper_tools"]
     looks_for: ["rice_land"]
     effects: [produce, do_food, producer_grow, migrate, brownian_migration, social_mobility, pop_to_market]
 - !population
@@ -63,6 +63,6 @@
         - !need
             type: "food"
             per_1000: 1000
-    produces: ["advanced_copper_tools"]
+    produces: ["labor", "advanced_copper_tools"]
     sells: ["advanced_copper_tools"]
     effects: [produce, pop_to_market]

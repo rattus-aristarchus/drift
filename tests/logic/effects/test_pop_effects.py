@@ -1,6 +1,7 @@
 import pytest
 
 from src.logic.computation import Buffer
+from src.logic.entities.agents import ownership
 from src.logic.entities.basic import recurrents
 from src.logic import logic_util
 from src.logic.effects import effects_util
@@ -82,7 +83,7 @@ def test_production_from_resource(init_factory, land_productivity, output):
     land = Resource(
         name="test_land",
         type="land",
-        max_labor=5,
+        max_output=5,
         productivity=land_productivity,
         size=1000
     )
@@ -90,7 +91,7 @@ def test_production_from_resource(init_factory, land_productivity, output):
     prototype = Resource(
         name="test_crop",
         type="food",
-        inputs=["test_land"]
+        land=["test_land"]
     )
     world = World()
     world.deviation_50 = 1
@@ -99,9 +100,51 @@ def test_production_from_resource(init_factory, land_productivity, output):
     cell_write = logic_util.copy_dataclass_with_collections(cell_read)
     pop_write = logic_util.copy_dataclass_with_collections(pop_read)
 
-    production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
+    crop = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, [])
 
-    crop = cell_write.get_res("test_crop")
     assert crop is not None
     assert crop.size == output
 
+def test_production_reduces_inputs(init_factory):
+    pop_read = Population(size=1000)
+    tool = Resource(
+        name="test_tool",
+        type="tool",
+        productivity=1,
+        size=1000
+    )
+    pop_read.owned_resources.append(tool)
+    cell_read = Cell()
+    cell_read.pops.append(pop_read)
+    land = Resource(
+        name="test_land",
+        type="land",
+        max_output=1,
+        size=1000
+    )
+    cell_read.resources.append(land)
+    input = Resource(
+        name="test_input",
+        size=1000
+    )
+    cell_read.resources.append(input)
+    ownership.add_ownership(pop_read, input, 1000)
+    prototype = Resource(
+        name="test_crop",
+        type="food",
+        land=["test_land"],
+        inputs={
+            "test_input": 1
+        }
+    )
+    world = World()
+    world.deviation_50 = 1
+    buffer = Buffer(world=world)
+    buffer.memory["temp_deviation"] = 0
+    cell_write = logic_util.copy_dataclass_with_collections(cell_read)
+    pop_write = logic_util.copy_dataclass_with_collections(pop_read)
+
+    new_input = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, [])
+
+    assert new_input is not None
+    assert new_input.size == 500

@@ -19,9 +19,15 @@ class Resource(Agent, Recurrent):
     yearly_growth: float = 0.0
 
     type: str = ""
-    inputs: list = field(default_factory=lambda: [])
+    # сколько единиц нужно для производства одной единицы ресурса
+    inputs: dict = field(default_factory=lambda: {})
+    # "земля" в экономическом смысле, т.е. все естественные ресурсы
+    land: list = field(default_factory=lambda: [])
+
     min_labor: int = 0
-    max_labor: int = 0
+    # число, к которому асимптотически стремится выпуск при увеличении
+    # количества труда на единицу ресурса
+    max_output: int = 0
     max_labor_share: float = 0.0
     productivity: float = 1.0
     movable: bool = True
