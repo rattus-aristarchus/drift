@@ -28,13 +28,13 @@
     name: "millet_land"
     type: "land"
     min_labor: 0.25
-    max_labor: 3
+    max_labor: 2
     movable: False
 - !resource
     name: "rice_land"
     type: "land"
     min_labor: 0.5
-    max_labor: 6
+    max_labor: 4
     movable: False
 - !resource
     name: "basic_copper_tools"

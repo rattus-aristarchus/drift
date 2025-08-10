@@ -5,7 +5,7 @@
 import dataclasses
 import uuid
 
-from src.logic import util
+from src.logic import logic_util
 from src.logic.entities.basic.entities import Entity
 
 
@@ -90,7 +90,7 @@ def copy_recurrent_and_add_to_list(to_copy: Recurrent, all_recurrents: dict):
 
         # для обычных объектов выполняем просто глубокое копирование
         elif isinstance(old_value, Entity):
-            new_value = util.copy_dataclass_with_collections(old_value)
+            new_value = logic_util.copy_dataclass_with_collections(old_value)
 
         elif isinstance(old_value, list) or isinstance(old_value, dict):
             new_value = old_value.copy()

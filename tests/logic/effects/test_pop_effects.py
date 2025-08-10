@@ -1,12 +1,18 @@
 import pytest
-from src.logic.effects import util
+
+from src.logic.computation import Buffer
+from src.logic.entities.basic import recurrents
+from src.logic import logic_util
+from src.logic.effects import effects_util
 from src.logic.effects.agent_effects import production
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.agents.resources import Resource
+from src.logic.entities.cells import Cell
+from src.logic.entities.histories import World
 
 
 def test_growth_with_capacity():
-    result = util.growth_with_capacity(1000, 10000, 0.05)
+    result = effects_util.growth_with_capacity(1000, 10000, 0.05)
 
     assert result == 45
 
@@ -21,7 +27,7 @@ test_data = [
 
 @pytest.mark.parametrize("optimum,labor_per_land,land_used,expected_result", test_data)
 def test_hyperbolic(optimum, labor_per_land, land_used, expected_result):
-    result = production.hyperbolic_function(optimum, labor_per_land, land_used)
+    result = production._hyperbolic_function(optimum, labor_per_land, land_used)
     assert result == expected_result
 
 
@@ -50,8 +56,52 @@ def test_tech_factor_additive():
     )
     pop_1.owned_resources.append(tool_2)
 
-    tech_factor = production.get_tech_factor(pop)
-    tech_factor_1 = production.get_tech_factor(pop_1)
+    tech_factor = production._get_tech_factor(pop)
+    tech_factor_1 = production._get_tech_factor(pop_1)
 
     assert tech_factor == 2
     assert tech_factor == tech_factor_1
+
+land_to_output = [
+    (0, 0),
+    (0.1, 250)
+]
+
+@pytest.mark.parametrize("land_productivity,output", land_to_output)
+def test_production_from_resource(init_factory, land_productivity, output):
+    pop_read = Population(size=1000)
+    tool = Resource(
+        name="test_tool",
+        type="tool",
+        productivity=1,
+        size=1000
+    )
+    pop_read.owned_resources.append(tool)
+    cell_read = Cell()
+    cell_read.pops.append(pop_read)
+    land = Resource(
+        name="test_land",
+        type="land",
+        max_labor=5,
+        productivity=land_productivity,
+        size=1000
+    )
+    cell_read.resources.append(land)
+    prototype = Resource(
+        name="test_crop",
+        type="food",
+        inputs=["test_land"]
+    )
+    world = World()
+    world.deviation_50 = 1
+    buffer = Buffer(world=world)
+    buffer.memory["temp_deviation"] = 0
+    cell_write = logic_util.copy_dataclass_with_collections(cell_read)
+    pop_write = logic_util.copy_dataclass_with_collections(pop_read)
+
+    production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
+
+    crop = cell_write.get_res("test_crop")
+    assert crop is not None
+    assert crop.size == output
+

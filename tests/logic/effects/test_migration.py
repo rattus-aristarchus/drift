@@ -64,7 +64,12 @@ def test_brownian_migration_creates_pop(init_factory, two_cell_grid):
     )
     recurrents.copy_recurrent_and_add_to_list(two_cell_grid, {})
 
-    migration.brownian_migration(cell_a.next_copy.pops[0], cell_a.next_copy)
+    migration.brownian_migration(
+        cell_a.next_copy.pops[0],
+        cell_a.pops[0], 
+        cell_a.next_copy,
+        cell_a
+    )
 
     assert len(cell_b.next_copy.pops) == 1
     assert cell_b.next_copy.pops[0].size == 1
@@ -81,7 +86,7 @@ def test_migration_brings_along_resources(init_factory, mig_setup):
     pop_a = mig_setup[3]
     pop_b = mig_setup[4]
 
-    migration.migrate(pop_a, cell_a)
+    migration.migrate(pop_a, pop_a.last_copy, cell_a, cell_a.last_copy)
 
     assert pop_b.size == 51
     assert len(pop_b.owned_resources) == 1
@@ -98,6 +103,6 @@ def test_migration_cant_be_negative(init_factory, mig_setup):
     pop_b.last_copy.needs = [Need(per_1000=1000, actual=500)]
     pop_b.last_copy.size = 1
 
-    migration.migrate(pop_a, cell_a)
+    migration.migrate(pop_a, pop_a.last_copy, cell_a, cell_a.last_copy)
 
     assert pop_b.size == 1

@@ -10,20 +10,20 @@ from src.logic.entities.agents.structures import Structure
 
 
 @dataclasses.dataclass
-class TestRecurrent0(Recurrent):
+class SampleRecurrent0(Recurrent):
 
     mutual_reference: list = src.logic.entities.basic.custom_fields.relations_list()
 
 
 @dataclasses.dataclass
-class TestRecurrent1(Recurrent):
+class SampleRecurrent1(Recurrent):
 
     mutual_reference: list = src.logic.entities.basic.custom_fields.relations_list()
 
 
 def test_copy_mutual_reference():
-    recurrent_0 = TestRecurrent0()
-    recurrent_1 = TestRecurrent1()
+    recurrent_0 = SampleRecurrent0()
+    recurrent_1 = SampleRecurrent1()
     recurrent_0.mutual_reference.append(recurrent_1)
     recurrent_1.mutual_reference.append(recurrent_0)
 
@@ -35,14 +35,14 @@ def test_copy_mutual_reference():
 
 
 @dataclasses.dataclass
-class TestClass(Recurrent):
+class SampleClass(Recurrent):
 
     deep_list: list = src.logic.entities.basic.custom_fields.deep_copy_list()
     deep_dict: dict = src.logic.entities.basic.custom_fields.deep_copy_dict()
 
 
 def test_deep_copy_list_element_is_different():
-    test_obj = TestClass()
+    test_obj = SampleClass()
     test_ent = Entity(name="unchanged")
     test_obj.deep_list.append(test_ent)
 

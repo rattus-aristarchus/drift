@@ -1,49 +1,49 @@
-from src.logic.effects import util
+from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
 from kivy import Logger
 
 _log_name = __name__.split('.')[-1]
 
 
-def brownian_migration(pop, cell):
+def brownian_migration(pop_write, pop_read, cell_write, cell_read):
     """
     Случайное бродяжничество. Так создаются популяции в новых клетках.
     """
-    if pop.size < 100:
+    if pop_read.size < 100:
         return
 
-    destinations = _livable_destinations(pop.last_copy, cell.last_copy)
+    destinations = _livable_destinations(pop_read, cell_read)
     ttl = 0
-    amount = round(pop.size * 0.001) if pop.size > 1000 else 1
+    amount = round(pop_read.size * 0.001) if pop_read.size > 1000 else 1
     for dest in destinations:
-        target_pop = util.get_or_create_pop(pop.name, dest.next_copy)
+        target_pop = effects_util.get_or_create_pop(pop_read.name, dest.next_copy)
         ttl += amount
 
-        pop.size -= amount
+        pop_write.size -= amount
         target_pop.size += amount
 
-    Logger.debug(f"{_log_name}: {ttl} {pop.name} from "
-                 f"({cell.x},{cell.y}) did brownian migration "
+    Logger.debug(f"{_log_name}: {ttl} {pop_read.name} from "
+                 f"({cell_read.x},{cell_read.y}) did brownian migration "
                  f"to {len(destinations)} neighbors")
 
 
 def _livable_destinations(pop, cell):
-    result = util.get_neighbors_with_free_res(
+    result = effects_util.get_neighbors_with_free_res(
         pop.looks_for[0],
         _all_destinations(pop, cell)
     )
     return result
 
 
-def migrate(pop, cell):
+def migrate(pop_write, pop_read, cell_write, cell_read):
     """
     Рассчитываем миграцию в популяции других клеток для данной популяции.
     """
 
     # среди возможных целей миграции выбираем те, где есть такие же популяции
     cells_and_pops = []
-    for neighbor in _all_destinations(pop.last_copy, cell.last_copy):
-        target_pop = neighbor.get_pop(pop.name)
+    for neighbor in _all_destinations(pop_read, cell_read):
+        target_pop = neighbor.get_pop(pop_read.name)
         # чтобы оценить привлекательность, принимаем во внимание
         # только популяции возраста более 0; для 0 еще ни разу
         # не вычислены потребности, поэтому непонятно какая ситуация
@@ -55,16 +55,16 @@ def migrate(pop, cell):
 
     for cell, old_target in cells_and_pops:
         # рассчитываем привлекательность цели и сложность туда добраться
-        draw = calculate_draw(pop.last_copy, old_target)
-        barrier = calculate_barrier(pop.last_copy, old_target, cell.last_copy)
+        draw = _calculate_draw(pop_read, old_target)
+        barrier = _calculate_barrier(pop_read, old_target, cell.last_copy)
 
         # мигрируем
-        amount = round(pop.last_copy.size * draw * barrier)
-        _move_amount(pop, old_target.next_copy, amount)
+        amount = round(pop_read.size * draw * barrier)
+        _move_amount(pop_write, old_target.next_copy, amount)
         ttl += amount
 
         # вместе с популяцией мигрирует ее собственность
-        for old_res in pop.last_copy.owned_resources:
+        for old_res in pop_read.owned_resources:
             # ... но только если она 1. не была удалена и 2. движимая
             if old_res.next_copy is None or not old_res.movable:
                 continue
@@ -74,7 +74,7 @@ def migrate(pop, cell):
 
             # если таковых нет, создаем
             if not target_res:
-                new_res = util.factory.new_resource(old_res.name, cell)
+                new_res = effects_util.factory.new_resource(old_res.name, cell)
                 ownership.set_ownership(old_target.next_copy, new_res)
                 target_res = new_res
 
@@ -82,15 +82,15 @@ def migrate(pop, cell):
             amount = round(old_res.size * draw * barrier)
             _move_amount(old_res.next_copy, target_res, amount)
 
-    Logger.debug(f"{_log_name}: {ttl} {pop.name} from ({cell.x},{cell.y}) migrated "
-                 f"to {len(cells_and_pops)} neighbors")
+    Logger.debug(f"{_log_name}: {ttl} {pop_read.name} from ({cell_read.x},{cell_read.y}) migrated "
+                 f"to {len(cells_and_pops)} neighbors; {pop_write.size} people are left")
 
 
 def _all_destinations(pop, cell):
     return cell.neighbors
 
 
-def calculate_draw(pop, target_pop):
+def _calculate_draw(pop, target_pop):
     """
     Притяжение - от 0 до 1, какая доля исходной популяции готова
     перейти в целевую.
@@ -101,7 +101,7 @@ def calculate_draw(pop, target_pop):
     return result
 
 
-def calculate_barrier(pop, target_pop, target_cell):
+def _calculate_barrier(pop, target_pop, target_cell):
     """
     Порог - от 0 до 1, какая доля готовых к переходу
     могут перейти.

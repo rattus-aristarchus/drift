@@ -1,4 +1,3 @@
-from src.logic.computation import Agent
 from src.logic.entities.factories import Factory
 from src.io import models
 from src.io.models import PopModel, StructureModel, ResourceModel, BiomeModel, WorldModel, EffectModel

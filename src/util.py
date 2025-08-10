@@ -19,7 +19,8 @@ from kivy.logger import Logger
 # script was launched
 
 # MAIN_DIR = os.path.dirname(os.getcwd())
-MAIN_DIR = os.path.dirname(sys.path[0])
+# MAIN_DIR = os.path.dirname(sys.path[0])
+MAIN_DIR = os.getcwd()
 RES_DIR = os.path.join(MAIN_DIR, "res")
 Logger.info("Storage: loading dir " + MAIN_DIR)
 ASSETS_DIR = os.path.join(RES_DIR, "assets")

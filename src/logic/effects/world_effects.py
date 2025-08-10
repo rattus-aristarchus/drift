@@ -8,10 +8,10 @@
 import math
 
 
-def climate(grid, buffer):
-    age = grid.state.age
+def climate(grid_write, grid_read, buffer):
+    age = grid_read.state.age
     mean = buffer.world.mean_temp
 
-    temp = mean + math.sin(age / 5) / 2
-    grid.state.temperature = temp
+    temp = mean + math.sin(age + 1 / 5) / 2
+    grid_write.state.temperature = temp
     buffer.memory["temp_deviation"] = buffer.world.mean_temp - temp

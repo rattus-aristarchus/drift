@@ -1,7 +1,7 @@
 from kivy import Logger
 
 import src.logic.entities.agents.ownership
-from src.logic.effects import util
+from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
 
 _log_name = __name__.split('.')[-1]
@@ -9,35 +9,34 @@ _log_name = __name__.split('.')[-1]
 """
 def producer_grow(pop, cell_buffer, grid_buffer):
     num = pop.last_copy.size
-    cap = util.get_cap_for_pop(pop, cell_buffer.cell.last_copy)
+    cap = effects_util.get_cap_for_pop(pop, cell_buffer.cell.last_copy)
 
-    pop.size += util.growth_with_capacity(num, cap, pop.yearly_growth)
+    pop.size += effects_util.growth_with_capacity(num, cap, pop.yearly_growth)
 """
 
 
-def natural_growth(res, cell):
-    num = res.last_copy.size
-    capacity = cell.last_copy.biome.get_capacity(res.name)
+def natural_growth(res_write, res_read, cell_write, cell_read):
+    num = res_read.size
+    capacity = cell_read.biome.get_capacity(res_read.name)
 
-    res.size += util.growth_with_capacity(num, capacity, res.yearly_growth)
+    res_write.size += effects_util.growth_with_capacity(num, capacity, res_read.yearly_growth)
 
 
-def growth(res):
-    old_res = res.last_copy
-    growth = old_res.yearly_growth
-    num = old_res.size
+def growth(res_write, res_read):
+    growth = res_read.yearly_growth
+    num = res_read.size
 
-    res.size += round(num * growth)
+    res_write.size += round(num * growth)
 
-    for owner, amount in old_res.owners.items():
-        res.owners[owner] += round(amount * growth)
+    for owner, amount in res_read.owners.items():
+        res_write.owners[owner] += round(amount * growth)
         # TODO: здесь из-за округления суммы будут не сходиться
 
 
-def producer_grow(pop):
-    num = pop.last_copy.size
-    growth_rate = pop.yearly_growth
-    food_need = pop.last_copy.get_need("food")
+def producer_grow(pop_write, pop_read, cell_write, cell_read):
+    num = pop_read.size
+    growth_rate = pop_read.yearly_growth
+    food_need = pop_read.get_need("food")
     hunger = 1 - food_need.actual / food_need.per_1000
 
     if hunger <= 0:
@@ -45,21 +44,27 @@ def producer_grow(pop):
     else:
         change = - round(hunger * num / 2)
 
-    pop.size += change
+    pop_write.size += change
+
+    Logger.debug(
+        f"{_log_name}: a population of {pop_read.name} from "
+        f"({cell_read.x},{cell_read.y}) increased from {pop_read.size} "
+        f"to {pop_write.size} due to hunger being {hunger}."
+    )
 
 
-def do_food(pop, cell):
+def do_food(pop_write, pop_read, cell_write, cell_read):
     food_list = []
     ttl_food = 0
 
-    for resource in pop.last_copy.owned_resources:
+    for resource in pop_read.owned_resources:
         if resource.type == "food":
             food_list.append(resource)
             ttl_food += resource.size
 
-    needs = pop.last_copy.size
+    needs = pop_read.size
 
-    if pop.last_copy.age == 0:
+    if pop_read.age == 0:
         sated = 1
         surplus = 0
     elif needs < ttl_food:
@@ -72,12 +77,12 @@ def do_food(pop, cell):
         sated = ttl_food / needs
         surplus = 0
 
-    surplus_obj = util.get_or_create_res('surplus', cell)
+    surplus_obj = effects_util.get_or_create_res('surplus', cell_write)
     surplus_obj.size += surplus
-    ownership.add_ownership(pop, surplus_obj, surplus)
+    ownership.add_ownership(pop_write, surplus_obj, surplus)
 
-    food_need = pop.get_need("food")
+    food_need = pop_read.get_need("food")
     food_need.actual = sated * 1000
 
-    Logger.debug(f"{_log_name}: {pop.name} in ({cell.x},{cell.y}) ate {ttl_food - surplus}, "
-                 f"surplus is {str(surplus)}, satiation is {str(round(sated, 2))} (0-1)")
+    Logger.debug(f"{_log_name}: {pop_read.name} in ({cell_read.x},{cell_read.y}) ate {ttl_food - surplus}, "
+                 f"surplus is {surplus}, satiation is {round(sated, 2)} (0-1)")

@@ -2,7 +2,6 @@ import dataclasses
 import os
 from dataclasses import field
 from kivy import Logger
-from src.logic.computation import Agent
 from src.logic.entities.basic import custom_fields, entities
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent

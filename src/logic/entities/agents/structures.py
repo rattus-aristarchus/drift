@@ -20,7 +20,7 @@ class Structure(Agent, Recurrent):
     territory: list = custom_fields.relations_list()
     resources: list = custom_fields.relations_list()
 
-    def do_effects(self, cell, buffer):
+    def do_effects(self, structure_read, cell_write, cell_read, buffer):
         for func in self.effects:
             func(self, buffer)
 

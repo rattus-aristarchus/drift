@@ -27,42 +27,42 @@ def get_effect(func_name):
 Эффекты популяций
 """
 
-def migrate(pop, cell, buffer):
-    migration.migrate(pop, cell)
+def migrate(pop_write, pop_read, cell_write, cell_read, buffer):
+    migration.migrate(pop_write, pop_read, cell_write, cell_read)
 
 
-def brownian_migration(pop, cell, buffer):
-    migration.brownian_migration(pop, cell)
+def brownian_migration(pop_write, pop_read, cell_write, cell_read, buffer):
+    migration.brownian_migration(pop_write, pop_read, cell_write, cell_read)
 
 
-def producer_grow(pop, cell, buffer):
-    consumption.producer_grow(pop)
+def producer_grow(pop_write, pop_read, cell_write, cell_read, buffer):
+    consumption.producer_grow(pop_write, pop_read, cell_write, cell_read)
 
 
-def basic_agriculture(pop, cell, buffer):
-    product = pop.produces[0]
-    production.natural_resource_exploitation(pop, product, cell, buffer)
+def basic_agriculture(pop_write, pop_read, cell_write, cell_read, buffer):
+    product = pop_read.produces[0]
+    production.production_from_resource(pop_write, pop_read, cell_write, cell_read, product, buffer)
 
 
-def produce(pop, cell, buffer):
-    production.produce(pop, cell, buffer)
+def produce(pop_write, pop_read, cell_write, cell_read, buffer):
+    production.produce(pop_write, pop_read, cell_write, cell_read, buffer)
 
 
-def do_food(pop, cell, buffer):
-    consumption.do_food(pop, cell)
+def do_food(pop_write, pop_read, cell_write, cell_read, buffer):
+    consumption.do_food(pop_write, pop_read, cell_write, cell_read)
 
 
-def social_mobility(pop, cell, buffer):
-    social.social_mobility(pop, cell)
+def social_mobility(pop_write, pop_read, cell_write, cell_read, buffer):
+    social.social_mobility(pop_write, pop_read, cell_write, cell_read)
 
 
-def exchange(market, cell, buffer):
+def exchange(market, nothing, cell_write, cell_read, buffer):
     structure_effects.exchange(market)
 
 
-def pop_to_market(pop, cell, buffer):
-    social.sell(pop, cell)
-    social.buy(pop, cell)
+def pop_to_market(pop_write, pop_read, cell_write, cell_read, buffer):
+    social.sell(pop_write, pop_read, cell_write, cell_read)
+    social.buy(pop_write, pop_read, cell_write, cell_read)
 
 
 """
@@ -70,12 +70,12 @@ def pop_to_market(pop, cell, buffer):
 """
 
 
-def grow_natural(res, cell, buffer):
-    consumption.natural_growth(res, cell)
+def grow_natural(res_write, res_read, cell_write, cell_read, buffer):
+    consumption.natural_growth(res_write, res_read, cell_write, cell_read)
 
 
-def grow(res, cell, buffer):
-    consumption.growth(res)
+def grow(res_write, res_read, cell_write, cell_read, buffer):
+    consumption.growth(res_write, res_read)
 
 
 """
@@ -83,8 +83,8 @@ def grow(res, cell, buffer):
 """
 
 
-def temp_change(cell, buffer):
-    cell_effects.temp_change(cell, buffer)
+def temp_change(cell_write, cell_read, buffer):
+    cell_effects.temp_change(cell_write, cell_read, buffer)
 
 
 """
@@ -94,5 +94,5 @@ def temp_change(cell, buffer):
 """
 
 
-def climate(grid, buffer: Buffer):
-    world_effects.climate(grid, buffer)
+def climate(grid_write, grid_read, buffer: Buffer):
+    world_effects.climate(grid_write, grid_read, buffer)
