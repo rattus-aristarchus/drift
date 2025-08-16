@@ -32,7 +32,7 @@ def test_hyperbolic(optimum, labor_per_land, land_used, expected_result):
     assert result == expected_result
 
 
-def test_tech_factor_additive():
+def test_tech_factor_additive(init_factory):
     pop = Population(size=1000)
     tool_0 = Resource(
         name="tool",
@@ -56,9 +56,21 @@ def test_tech_factor_additive():
         size=1000
     )
     pop_1.owned_resources.append(tool_2)
+    prototype = Resource(
+        name="test_crop",
+        type="food",
+        land=["test_land"],
+        tools=["tools"]
+    )
+    land = Resource(
+        name="test_land",
+        type="land",
+        productivity=1,
+        size=1000
+    )
 
-    tech_factor = production._get_tech_factor(pop)
-    tech_factor_1 = production._get_tech_factor(pop_1)
+    tech_factor = production._get_productivity(pop, land, prototype)
+    tech_factor_1 = production._get_productivity(pop_1, land, prototype)
 
     assert tech_factor == 2
     assert tech_factor == tech_factor_1
@@ -91,7 +103,8 @@ def test_production_from_resource(init_factory, land_productivity, output):
     prototype = Resource(
         name="test_crop",
         type="food",
-        land=["test_land"]
+        land=["test_land"],
+        tools=["tool"]
     )
     world = World()
     world.deviation_50 = 1
@@ -100,7 +113,7 @@ def test_production_from_resource(init_factory, land_productivity, output):
     cell_write = logic_util.copy_dataclass_with_collections(cell_read)
     pop_write = logic_util.copy_dataclass_with_collections(pop_read)
 
-    crop = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, [])
+    crop = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
 
     assert crop is not None
     assert crop.size == output
@@ -133,6 +146,7 @@ def test_production_reduces_inputs(init_factory):
         name="test_crop",
         type="food",
         land=["test_land"],
+        tools=["tool"],
         inputs={
             "test_input": 1
         }
@@ -144,7 +158,7 @@ def test_production_reduces_inputs(init_factory):
     cell_write = logic_util.copy_dataclass_with_collections(cell_read)
     pop_write = logic_util.copy_dataclass_with_collections(pop_read)
 
-    new_input = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, [])
+    new_input = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
 
     assert new_input is not None
     assert new_input.size == 500

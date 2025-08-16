@@ -22,8 +22,7 @@
     type: "food"
     max_labor_share: 0.25
     land: ["millet_land"]
-    inputs:
-        labor: 1
+    tools: ["agricultural_tools"]
     effects: [grow]
     yearly_growth: -1
 - !resource
@@ -31,8 +30,7 @@
     type: "food"
     max_labor_share: 0.25
     land: ["rice_land"]
-    inputs:
-        labor: 1
+    tools: ["agricultural_tools"]
     effects: [grow]
     yearly_growth: -1
 - !resource
@@ -48,21 +46,18 @@
     max_output: 4
     movable: False
 - !resource
-    name: "basic_copper_tools"
-    type: "tools"
+    name: "basic_agricultural_tools"
+    type: "agricultural_tools"
     max_labor_share: 0.1
     land: ["surface_copper"]
-    inputs: ["labor"]
     productivity: 2
     effects: [grow]
     yearly_growth: -0.1
 - !resource
-    name: "advanced_copper_tools"
-    type: "tools"
+    name: "advanced_agricultural_tools"
+    type: "agricultural_tools"
     max_labor_share: 0.5
     land: ["surface_copper"]
-    inputs:
-        labor: 1
     productivity: 2.5
     effects: [grow]
     yearly_growth: -0.1

@@ -23,6 +23,8 @@ class Resource(Agent, Recurrent):
     inputs: dict = field(default_factory=lambda: {})
     # "земля" в экономическом смысле, т.е. все естественные ресурсы
     land: list = field(default_factory=lambda: [])
+    # средства производства
+    tools: list = field(default_factory=lambda: [])
 
     min_labor: int = 0
     # число, к которому асимптотически стремится выпуск при увеличении
