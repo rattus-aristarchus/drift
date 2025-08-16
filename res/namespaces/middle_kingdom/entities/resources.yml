@@ -10,6 +10,8 @@
     effects: [grow_natural]
 - !resource
     name: "surplus"
+    effects: [grow]
+    yearly_growth: -1
 - !resource
     name: "labor"
     type: "labor"

@@ -5,6 +5,8 @@
 эффектов в данном ходу не влияет на результат.
 """
 
+from src.logic.effects import effects_util
+
 
 def temp_change(cell_write, cell_read, buffer):
     # if the biome has no capacity, we don't need to change it
@@ -31,3 +33,4 @@ def temp_change(cell_write, cell_read, buffer):
     for name, mean_cap in cell_read.biome.capacity.items():
         cap = round(mean_cap * multiplier)
         cell_write.biome.capacity[name] = cap
+

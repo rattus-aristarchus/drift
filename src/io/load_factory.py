@@ -8,6 +8,8 @@ def make_factory_from_models(all_models):
     Generate a model storage object with models sorted into categories.
     """
 
+    #TODO явно выглядит как код который надо переписать в общем виде
+
     result = Factory()
 
     for model in all_models:
