@@ -1,20 +1,15 @@
-import sys
-from math import floor
+import math
 
 from kivy import Logger
 
-import src.logic.entities.agents.ownership
 from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
 
 _log_name = __name__.split('.')[-1]
 
 def produce(pop_write, pop_read, cell_write, cell_read, buffer):
-    labor_write = cell_write.get_res("labor")
-    if not labor_write:
-        effects_util.factory.prototype_resource("labor")
-
-    update_labor(pop_write, pop_read, cell_write, cell_read)
+    labor = effects_util.factory.new_resource("labor")
+    labor.size = pop_read.size
 
     for output_name, target in pop_read.produces.items():
         prototype = effects_util.factory.prototype_resource(output_name)
@@ -23,21 +18,10 @@ def produce(pop_write, pop_read, cell_write, cell_read, buffer):
                          f"{output_name}, which is a non-existent resource")
             continue
 
-        production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, target)
+        production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, labor, buffer, target)
 
 
-def update_labor(pop_write, pop_read, cell_write, cell_read):
-    output_size = pop_read.size
-    prototype = effects_util.factory.prototype_resource("labor")
-    output = _update_output(prototype, pop_write, cell_write, output_size)
-
-    Logger.debug(f"{_log_name}: {pop_read.size} {pop_read.name} from ({cell_read.x},{cell_read.y}) "
-                 f"worked {output_size} units of labor")
-
-    return output
-
-
-def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, target):
+def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, labor, buffer, target):
     land_name = prototype.land[0]
     # TODO: не учитывает собственность на землю; искать надо у популяции а не клетки;
     land_read = cell_read.get_res(land_name)
@@ -45,25 +29,23 @@ def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototy
     if not land_read:
         return None
 
-    max_output, land_size, land_used, tech_factor, limit = _calculate_max_output(pop_read, land_read, prototype, buffer, target)
+    max_output, output_per_labor, message = _calculate_max_output(labor, pop_read, land_read, prototype, buffer, target)
     actual_size = _inputs_suffice_for(pop_read, cell_read, prototype, max_output)
-    _reduce_inputs(prototype, pop_write, cell_write, actual_size)
+    _reduce_inputs(prototype, pop_write, cell_write, labor, actual_size)
     output = _update_output(prototype, pop_write, cell_write, actual_size)
+    if output_per_labor > 0:
+        labor.size -= math.ceil(actual_size / output_per_labor)
 
-    # TODO: пока что у нас владеет землёй тот кто её обрабатывает
-    land = cell_write.get_res(land_name)
-    ownership.set_ownership(pop_write, land, land_used)
-
-    Logger.debug(f"{_log_name}: {pop_read.size} {pop_read.name} from ({cell_read.x},{cell_read.y})  "
-                 f"with {round(land_used)} "
-                 f"{land_name} (of total {land_size}) and {round(limit, 3)} productivity cap (with "
-                 f"{round(tech_factor, 3)} tech factor) produced "
-                 f"{actual_size} {prototype.name}")
+    Logger.debug(
+        f"{_log_name}: {pop_read.size} {pop_read.name} from ({cell_read.x},{cell_read.y}) "
+        f"{message}"
+        f"produced {actual_size} {prototype.name} ({output_per_labor} per labor)"
+    )
 
     return output
 
 
-def _reduce_inputs(prototype, pop_write, cell_write, amount):
+def _reduce_inputs(prototype, pop_write, cell_write, labor, amount):
     for input_name, per_unit in prototype.inputs.items():
         res = cell_write.get_res(input_name)
 
@@ -71,13 +53,15 @@ def _reduce_inputs(prototype, pop_write, cell_write, amount):
         ownership.subtract_ownership(pop_write, res, consumed)
         res.size -= consumed
 
+    labor.size -= amount
+
 
 def _inputs_suffice_for(pop_read, cell_read, prototype, max_output):
     current_max = max_output
     for input_name, per_unit in prototype.inputs.items():
         input_amount = effects_util.get_owned_amount(input_name, pop_read, cell_read)
         if input_amount < current_max * per_unit:
-            current_max = floor(input_amount / per_unit)
+            current_max = math.floor(input_amount / per_unit)
     return current_max
 
 
@@ -91,30 +75,38 @@ def _update_output(prototype, pop_write, cell_write, output):
     return product
 
 
-def _calculate_max_output(pop_read, land_read, prototype, buffer, target):
-    people_num = pop_read.size
+def _calculate_max_output(labor, pop_read, land_read, prototype, buffer, target):
+    labor_num = labor.size
     if land_read:
         land_size = land_read.size
-        labor_per_land = people_num / land_size
+        labor_per_land = labor_num / land_size
 
         # если земли слишком много, ее не пытаются обработать:
         if labor_per_land < land_read.min_labor:
             labor_per_land = land_read.min_labor
-        land_used = people_num / labor_per_land
+        land_used = labor_num / labor_per_land
         productivity = _get_productivity(pop_read, land_read, prototype)
         limit = _get_output_limit(land_read, buffer, productivity)
 
         output = _hyperbolic_function(limit, labor_per_land, land_used)
+        output_per_labor = output / labor_num
         output = _correct_for_target(pop_read, prototype, output, target)
 
     else:
         output = 0
+        output_per_labor = 0
         land_size = 0
         land_used = 0
         limit = 0
         productivity = 0
 
-    return output, land_size, land_used, productivity, limit
+    message = (
+        f"with {round(land_used)} "
+        f"{land_read.name} (of total {land_size}) and {round(limit, 3)} limit (with "
+        f"{round(productivity, 3)} productivity) "
+    )
+
+    return output, output_per_labor, message
 
 
 def _correct_for_target(pop_read, prototype, output, target):

@@ -38,7 +38,7 @@
         millet: "need"
         basic_agricultural_tools: "need"
     looks_for: ["millet_land"]
-    effects: [produce, do_food, producer_grow, migrate, brownian_migration, social_mobility, pop_to_market]
+    effects: [migrate, brownian_migration, social_mobility, do_food, producer_grow, produce, pop_to_market]
 - !population
     name: "rice_growers"
     sapient: True
@@ -56,7 +56,7 @@
         rice: "need"
         basic_agricultural_tools: "need"
     looks_for: ["rice_land"]
-    effects: [produce, do_food, producer_grow, migrate, brownian_migration, social_mobility, pop_to_market]
+    effects: [migrate, brownian_migration, social_mobility, do_food, producer_grow, produce, pop_to_market]
 - !population
     name: "blacksmiths"
     sapient: True

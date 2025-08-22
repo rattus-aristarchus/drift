@@ -87,6 +87,10 @@ def temp_change(cell_write, cell_read, buffer):
     cell_effects.temp_change(cell_write, cell_read, buffer)
 
 
+def prepare_labor(cell_write, cell_read, buffer):
+    cell_effects.prepare_labor(cell_write, cell_read, buffer)
+
+
 """
 Ниже - эффекты уровня карты; у всех по два аргумента
 - карта

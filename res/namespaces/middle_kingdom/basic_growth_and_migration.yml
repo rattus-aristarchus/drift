@@ -6,6 +6,7 @@
     mean_temp: 7
     deviation_50: 1
     effects: [climate]
+    cell_effects: [temp_change]
     cell_instructions:
       - location: [17, 7]
         pops:

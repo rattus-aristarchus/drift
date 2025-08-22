@@ -5,7 +5,12 @@
 эффектов в данном ходу не влияет на результат.
 """
 
+from kivy import Logger
+
 from src.logic.effects import effects_util
+from src.logic.entities.agents import ownership
+
+_log_name = __name__.split('.')[-1]
 
 
 def temp_change(cell_write, cell_read, buffer):
@@ -34,3 +39,9 @@ def temp_change(cell_write, cell_read, buffer):
         cap = round(mean_cap * multiplier)
         cell_write.biome.capacity[name] = cap
 
+"""
+def prepare_labor(cell_write, cell_read, buffer):
+    labor = effects_util.get_or_create_res("labor", cell_write)
+    labor.size = 0
+    labor.owners = {}
+"""

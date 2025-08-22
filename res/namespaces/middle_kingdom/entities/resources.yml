@@ -15,8 +15,6 @@
 - !resource
     name: "labor"
     type: "labor"
-    effects: [grow]
-    yearly_growth: -1
 - !resource
     name: "millet"
     type: "food"
