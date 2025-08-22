@@ -1,3 +1,8 @@
+from kivy import Logger
+
+_log_name = __name__.split('.')[-1]
+
+
 def set_ownership(agent, resource, amount=None):
     """
     Сделать agent владельцем amount ресурса resource.
@@ -22,6 +27,7 @@ def set_ownership(agent, resource, amount=None):
         if resource not in agent.owned_resources:
             agent.owned_resources.append(resource)
 
+
 # полный бардак, конечно. почти то же самое что предыдущая функция
 def add_ownership(agent, resource, amount):
     if agent.name not in resource.owners.keys():
@@ -33,6 +39,15 @@ def add_ownership(agent, resource, amount):
 
 
 def subtract_ownership(agent, resource, amount):
+    if amount <= 0:
+        return
+
+    if agent.name not in resource.owners.keys():
+        Logger.warning(f"{_log_name}: trying to subtract {amount} of ownership "
+                       f"by agent {agent.name} from resource {resource.name} that "
+                       f"doesn't have that owner")
+        return
+
     current = resource.owners[agent.name]
 
     if current <= amount:

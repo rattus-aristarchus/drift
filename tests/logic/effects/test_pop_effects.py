@@ -6,7 +6,7 @@ from src.logic.entities.basic import recurrents
 from src.logic import logic_util
 from src.logic.effects import effects_util
 from src.logic.effects.agent_effects import production
-from src.logic.entities.agents.populations import Population
+from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.cells import Cell
 from src.logic.entities.histories import World
@@ -75,13 +75,9 @@ def test_tech_factor_additive(init_factory):
     assert tech_factor == 2
     assert tech_factor == tech_factor_1
 
-land_to_output = [
-    (0, 0),
-    (0.1, 250)
-]
 
-@pytest.mark.parametrize("land_productivity,output", land_to_output)
-def test_production_from_resource(init_factory, land_productivity, output):
+@pytest.fixture
+def production_setup():
     pop_read = Population(size=1000)
     tool = Resource(
         name="test_tool",
@@ -96,52 +92,15 @@ def test_production_from_resource(init_factory, land_productivity, output):
         name="test_land",
         type="land",
         max_output=5,
-        productivity=land_productivity,
         size=1000
     )
     cell_read.resources.append(land)
-    prototype = Resource(
-        name="test_crop",
-        type="food",
-        land=["test_land"],
-        tools=["tool"]
-    )
-    world = World()
-    world.deviation_50 = 1
-    buffer = Buffer(world=world)
-    buffer.memory["temp_deviation"] = 0
-    cell_write = logic_util.copy_dataclass_with_collections(cell_read)
-    pop_write = logic_util.copy_dataclass_with_collections(pop_read)
-
-    crop = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
-
-    assert crop is not None
-    assert crop.size == output
-
-def test_production_reduces_inputs(init_factory):
-    pop_read = Population(size=1000)
-    tool = Resource(
-        name="test_tool",
-        type="tool",
-        productivity=1,
-        size=1000
-    )
-    pop_read.owned_resources.append(tool)
-    cell_read = Cell()
-    cell_read.pops.append(pop_read)
-    land = Resource(
-        name="test_land",
-        type="land",
-        max_output=1,
-        size=1000
-    )
-    cell_read.resources.append(land)
-    input = Resource(
+    test_input = Resource(
         name="test_input",
         size=1000
     )
-    cell_read.resources.append(input)
-    ownership.add_ownership(pop_read, input, 1000)
+    cell_read.resources.append(test_input)
+    ownership.add_ownership(pop_read, test_input, 1000)
     prototype = Resource(
         name="test_crop",
         type="food",
@@ -158,7 +117,46 @@ def test_production_reduces_inputs(init_factory):
     cell_write = logic_util.copy_dataclass_with_collections(cell_read)
     pop_write = logic_util.copy_dataclass_with_collections(pop_read)
 
-    new_input = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
+    return pop_write, pop_read, cell_write, cell_read, prototype, buffer
+
+
+land_to_output = [
+    (0, 0),
+    (0.1, 250)
+]
+
+
+@pytest.mark.parametrize("land_productivity,output", land_to_output)
+def test_production_from_resource(init_factory, production_setup, land_productivity, output):
+    pop_write, pop_read, cell_write, cell_read, prototype, buffer = production_setup
+    cell_read.resources[0].productivity = land_productivity
+
+    crop = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, "max")
+
+    assert crop is not None
+    assert crop.size == output
+
+
+def test_production_reduces_inputs(init_factory, production_setup):
+    pop_write, pop_read, cell_write, cell_read, prototype, buffer = production_setup
+    cell_read.resources[0].max_output = 1
+
+    new_input = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, "max")
 
     assert new_input is not None
     assert new_input.size == 500
+
+
+def test_production_for_need(init_factory,production_setup):
+    pop_write, pop_read, cell_write, cell_read, prototype, buffer = production_setup
+    pop_read.needs.append(
+        Need(
+            type="food",
+            per_1000=800
+        )
+    )
+
+    output = production.production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, "need")
+
+    assert output is not None
+    assert output.size == 800

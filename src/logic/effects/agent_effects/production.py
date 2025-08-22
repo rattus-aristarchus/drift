@@ -10,33 +10,34 @@ from src.logic.entities.agents import ownership
 _log_name = __name__.split('.')[-1]
 
 def produce(pop_write, pop_read, cell_write, cell_read, buffer):
-    for output_name in pop_read.produces:
-        if not output_name:
-            pass
+    labor_write = cell_write.get_res("labor")
+    if not labor_write:
+        effects_util.factory.prototype_resource("labor")
 
+    update_labor(pop_write, pop_read, cell_write, cell_read)
+
+    for output_name, target in pop_read.produces.items():
         prototype = effects_util.factory.prototype_resource(output_name)
-        output = None
-        if prototype.type == "food":
-            output = production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
-        elif prototype.type == "tools":
-            output = production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer)
-        elif prototype.type == "labor":
-            output = create_labor(pop_write, pop_read, cell_write, cell_read, prototype)
-        if output:
-            cell_write.resources.append(output)
+        if not prototype:
+            Logger.error(f"{_log_name}: {pop_read.name} is trying to produce "
+                         f"{output_name}, which is a non-existent resource")
+            continue
+
+        production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, target)
 
 
-def create_labor(pop_write, pop_read, cell_write, cell_read, prototype):
+def update_labor(pop_write, pop_read, cell_write, cell_read):
     output_size = pop_read.size
-    output = _create_output(prototype, pop_write, output_size)
+    prototype = effects_util.factory.prototype_resource("labor")
+    output = _update_output(prototype, pop_write, cell_write, output_size)
 
-    Logger.debug(f"{_log_name}: {pop_read.size} {pop_read.name} from ({cell_read.x},{cell_read.y})  "
+    Logger.debug(f"{_log_name}: {pop_read.size} {pop_read.name} from ({cell_read.x},{cell_read.y}) "
                  f"worked {output_size} units of labor")
 
     return output
 
 
-def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer):
+def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototype, buffer, target):
     land_name = prototype.land[0]
     # TODO: не учитывает собственность на землю; искать надо у популяции а не клетки;
     land_read = cell_read.get_res(land_name)
@@ -44,10 +45,10 @@ def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototy
     if not land_read:
         return None
 
-    max_output, land_size, land_used, tech_factor, limit = _calculate_max_output(pop_read, land_read, prototype, buffer)
+    max_output, land_size, land_used, tech_factor, limit = _calculate_max_output(pop_read, land_read, prototype, buffer, target)
     actual_size = _inputs_suffice_for(pop_read, cell_read, prototype, max_output)
     _reduce_inputs(prototype, pop_write, cell_write, actual_size)
-    output = _create_output(prototype, pop_write, actual_size)
+    output = _update_output(prototype, pop_write, cell_write, actual_size)
 
     # TODO: пока что у нас владеет землёй тот кто её обрабатывает
     land = cell_write.get_res(land_name)
@@ -80,14 +81,17 @@ def _inputs_suffice_for(pop_read, cell_read, prototype, max_output):
     return current_max
 
 
-def _create_output(prototype, pop_write, output):
-    product = effects_util.factory.new_resource(prototype.name)
+def _update_output(prototype, pop_write, cell_write, output):
+    product = cell_write.get_res(prototype.name)
+    if not product:
+        product = effects_util.factory.prototype_resource(prototype.name)
+
     product.size += output
-    ownership.set_ownership(pop_write, product)
+    ownership.add_ownership(pop_write, product, output)
     return product
 
 
-def _calculate_max_output(pop_read, land_read, prototype, buffer):
+def _calculate_max_output(pop_read, land_read, prototype, buffer, target):
     people_num = pop_read.size
     if land_read:
         land_size = land_read.size
@@ -101,6 +105,8 @@ def _calculate_max_output(pop_read, land_read, prototype, buffer):
         limit = _get_output_limit(land_read, buffer, productivity)
 
         output = _hyperbolic_function(limit, labor_per_land, land_used)
+        output = _correct_for_target(pop_read, prototype, output, target)
+
     else:
         output = 0
         land_size = 0
@@ -110,6 +116,20 @@ def _calculate_max_output(pop_read, land_read, prototype, buffer):
 
     return output, land_size, land_used, productivity, limit
 
+
+def _correct_for_target(pop_read, prototype, output, target):
+    result = output
+    match target:
+        case "max":
+            pass
+        case "need":
+            need = pop_read.get_need(need_type=prototype.type)
+            if not need:
+                result = 0
+            else:
+                result = round(need.per_1000 * pop_read.size / 1000)
+
+    return result
 
 # вот тут вопрос. стоит ли различать трудосберегающие технологии
 # и трудоинтенсивные технологии? первое можно преставить как
@@ -177,7 +197,10 @@ def _get_tool_productivity(pop, prototype):
         if availability > 1:
             availability = 1
 
-        avg_productivity = ttl_productivity / ttl_available
+        if ttl_available == 0:
+            avg_productivity = 0
+        else:
+            avg_productivity = ttl_productivity / ttl_available
         # если производительность инструмента 2, и он есть у 50%
         # населения, то производительность должна вырасти в 1.5 раза
         result *= avg_productivity * availability

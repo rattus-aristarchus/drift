@@ -77,11 +77,7 @@ def do_food(pop_write, pop_read, cell_write, cell_read):
         sated = ttl_food / needs
         surplus = 0
 
-    surplus_obj = effects_util.get_or_create_res('surplus', cell_write)
-    surplus_obj.size += surplus
-    ownership.add_ownership(pop_write, surplus_obj, surplus)
-
-    food_need = pop_read.get_need("food")
+    food_need = pop_write.get_need("food")
     food_need.actual = sated * 1000
 
     Logger.debug(f"{_log_name}: {pop_read.name} in ({cell_read.x},{cell_read.y}) ate {ttl_food - surplus}, "

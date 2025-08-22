@@ -12,25 +12,36 @@ def brownian_migration(pop_write, pop_read, cell_write, cell_read):
     if pop_read.size < 100:
         return
 
-    destinations = _livable_destinations(pop_read, cell_read)
+    old_destinations = _livable_destinations(pop_read, cell_read)
     ttl = 0
     amount = round(pop_read.size * 0.001) if pop_read.size > 1000 else 1
-    for dest in destinations:
-        target_pop = effects_util.get_or_create_pop(pop_read.name, dest.next_copy)
+    for old_dest in old_destinations:
+        target_write = effects_util.get_or_create_pop(pop_read.name, old_dest.next_copy)
         ttl += amount
 
         pop_write.size -= amount
-        target_pop.size += amount
+        target_write.size += amount
+
+        fraction = amount / pop_read.size
+        for res_read in pop_read.owned_resources:
+            _migrate_property(
+                res_read,
+                res_read.next_copy,
+                pop_write,
+                target_write,
+                old_dest.next_copy,
+                fraction
+            )
 
     Logger.debug(f"{_log_name}: {ttl} {pop_read.name} from "
                  f"({cell_read.x},{cell_read.y}) did brownian migration "
-                 f"to {len(destinations)} neighbors")
+                 f"to {len(old_destinations)} neighbors")
 
 
 def _livable_destinations(pop, cell):
     result = effects_util.get_neighbors_with_free_res(
         pop.looks_for[0],
-        _all_destinations(pop, cell)
+        _all_destinations(cell)
     )
     return result
 
@@ -42,7 +53,7 @@ def migrate(pop_write, pop_read, cell_write, cell_read):
 
     # среди возможных целей миграции выбираем те, где есть такие же популяции
     cells_and_pops = []
-    for neighbor in _all_destinations(pop_read, cell_read):
+    for neighbor in _all_destinations(cell_read):
         target_pop = neighbor.get_pop(pop_read.name)
         # чтобы оценить привлекательность, принимаем во внимание
         # только популяции возраста более 0; для 0 еще ни разу
@@ -53,40 +64,56 @@ def migrate(pop_write, pop_read, cell_write, cell_read):
     # для учета, сколько всего мигрировало
     ttl = 0
 
-    for cell, old_target in cells_and_pops:
+    for old_cell, old_target in cells_and_pops:
         # рассчитываем привлекательность цели и сложность туда добраться
         draw = _calculate_draw(pop_read, old_target)
-        barrier = _calculate_barrier(pop_read, old_target, cell.last_copy)
+        barrier = _calculate_barrier(pop_read, old_target, old_cell)
 
         # мигрируем
-        amount = round(pop_read.size * draw * barrier)
+        fraction = draw * barrier
+        amount = round(pop_read.size * fraction)
         _move_amount(pop_write, old_target.next_copy, amount)
         ttl += amount
 
         # вместе с популяцией мигрирует ее собственность
-        for old_res in pop_read.owned_resources:
-            # ... но только если она 1. не была удалена и 2. движимая
-            if old_res.next_copy is None or not old_res.movable:
-                continue
+        for res_read in pop_read.owned_resources:
+            _migrate_property(
+                res_read,
+                res_read.next_copy,
+                pop_write,
+                old_target.next_copy,
+                old_cell.next_copy,
+                fraction
+            )
 
-            # аналогичный ресурс в целевой клетке
-            target_res = old_target.next_copy.get_resource(old_res.name)
-
-            # если таковых нет, создаем
-            if not target_res:
-                new_res = effects_util.factory.new_resource(old_res.name, cell)
-                ownership.set_ownership(old_target.next_copy, new_res)
-                target_res = new_res
-
-            # мигрируем
-            amount = round(old_res.size * draw * barrier)
-            _move_amount(old_res.next_copy, target_res, amount)
 
     Logger.debug(f"{_log_name}: {ttl} {pop_read.name} from ({cell_read.x},{cell_read.y}) migrated "
                  f"to {len(cells_and_pops)} neighbors; {pop_write.size} people are left")
 
 
-def _all_destinations(pop, cell):
+def _migrate_property(res_read, res_write, owner_write, target, cell_write, fraction):
+        # ... но только если она 1. не была удалена и 2. движимая
+        if res_write is None or not res_read.movable:
+            return
+
+        # аналогичный ресурс у целевой популяции
+        target_res = target.get_resource(res_read.name)
+
+        # если таковых нет, создаем
+        if not target_res:
+            target_res = effects_util.factory.new_resource(res_read.name, cell_write)
+            ownership.set_ownership(target, target_res)
+
+        # мигрируем
+        amount = round(res_read.size * fraction)
+        _move_amount(res_write, target_res, amount)
+
+        # обновляем собственность
+        ownership.add_ownership(target, target_res, amount)
+        ownership.subtract_ownership(owner_write, res_write, amount)
+
+
+def _all_destinations(cell):
     return cell.neighbors
 
 

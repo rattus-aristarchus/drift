@@ -24,7 +24,7 @@ class Population(Agent, Recurrent):
     owned_resources: list = custom_fields.relations_list()
     needs: list = custom_fields.deep_copy_list()
 
-    produces: list = field(default_factory=lambda: [])
+    produces: dict = field(default_factory=lambda: {})
     sells: list = field(default_factory=lambda: [])
     looks_for: list = field(default_factory=lambda: [])
 
