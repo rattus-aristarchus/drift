@@ -1,8 +1,10 @@
 import dataclasses
 from dataclasses import field
 
-from kivy import Logger
 from src.logic.entities.basic.entities import Entity
+from src.logger import CustomLogger
+
+logger = CustomLogger(__name__)
 
 """
 В этом модуле описывается максимально абстрактная логика последовательности
@@ -76,7 +78,7 @@ class GridCPU:
             dev = round(buffer.memory["temp_deviation"], 3)
             msg += (f" It deviates from"
                     f" mean by {dev}.")
-        Logger.info(msg)
+        logger.info(msg)
 
 
 

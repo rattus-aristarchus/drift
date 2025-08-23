@@ -1,10 +1,12 @@
 import dataclasses
 import os
 from dataclasses import field
-from kivy import Logger
 from src.logic.entities.basic import custom_fields, entities
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
+from src.logger import CustomLogger
+
+logger = CustomLogger(__name__)
 
 
 @dataclasses.dataclass
@@ -97,12 +99,12 @@ def create_cell(x, y, biome_name, factory):
     result = Cell(x=x, y=y)
     biome = factory.new_biome(biome_name)
     if biome is None:
-        Logger.error(f"Trying to create cell with invalid biome name: {biome}")
+        logger.error(f"Trying to create cell with invalid biome name: {biome}")
     else:
         result.biome = biome
-    Logger.debug(f"Creating cell at ({str(x)},{str(y)}) with biome {biome_name}")
+    logger.debug(f"Creating cell at ({str(x)},{str(y)}) with biome {biome_name}")
     for res_name, size in biome.starting_resources:
         resource = factory.new_resource(res_name, result)
         resource.size = size
-        Logger.debug(f"Adding {str(size)} of resource {res_name}")
+        logger.debug(f"Adding {str(size)} of resource {res_name}")
     return result

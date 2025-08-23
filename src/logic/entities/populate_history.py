@@ -1,10 +1,11 @@
 import random
-from kivy.logger import Logger
 from src.logic.entities import histories
 from src.logic.entities.agents import populations, resources
 from src.logic.entities.factories import Factory
 from src.logic.entities.histories import World
+from src.logger import CustomLogger
 
+logger = CustomLogger(__name__)
 
 def do(world: World, factory: Factory, write_output):
     """
@@ -81,14 +82,14 @@ def _populate_cell(cell, cell_dict, factory):
             pop = factory.new_population(pop_dict['name'])
             cell.pops.append(pop)
             pop.size = pop_dict['size']
-            Logger.debug(f"{__name__}: created pop " + pop.name +
+            logger.debug(f"created pop " + pop.name +
                          " of size " + str(pop.size))
 
     if 'resources' in cell_dict.keys():
         for res_dict in cell_dict['resources']:
             resource = factory.new_resource(res_dict['name'], cell)
             resource.size = res_dict['size']
-            Logger.debug(f"{__name__}: created resource {resource.name}" +
+            logger.debug(f"created resource {resource.name}" +
                          f" of size {str(resource.size)}")
 
 

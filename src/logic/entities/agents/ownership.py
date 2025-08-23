@@ -1,6 +1,6 @@
-from kivy import Logger
+from src.logger import CustomLogger
 
-_log_name = __name__.split('.')[-1]
+logger = CustomLogger(__name__)
 
 
 def set_ownership(agent, resource, amount=None):
@@ -43,7 +43,7 @@ def subtract_ownership(agent, resource, amount):
         return
 
     if agent.name not in resource.owners.keys():
-        Logger.warning(f"{_log_name}: trying to subtract {amount} of ownership "
+        logger.warning(f"trying to subtract {amount} of ownership "
                        f"by agent {agent.name} from resource {resource.name} that "
                        f"doesn't have that owner")
         return

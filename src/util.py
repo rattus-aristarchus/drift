@@ -11,7 +11,9 @@ import os
 import sys
 
 from src.io import conf
-from kivy.logger import Logger
+from src.logger import CustomLogger
+
+logger = CustomLogger(__name__)
 
 # getcwd returns the current working directory, which can change during program execution,
 # and which can give different results depending on where the program is launched from. for
@@ -22,7 +24,7 @@ from kivy.logger import Logger
 # MAIN_DIR = os.path.dirname(sys.path[0])
 MAIN_DIR = os.getcwd()
 RES_DIR = os.path.join(MAIN_DIR, "res")
-Logger.info("Storage: loading dir " + MAIN_DIR)
+logger.info("loading dir " + MAIN_DIR)
 ASSETS_DIR = os.path.join(RES_DIR, "assets")
 ICONS_DIR = os.path.join(ASSETS_DIR, "icons")
 BACKGROUNDS_DIR = os.path.join(ASSETS_DIR, "backgrounds")

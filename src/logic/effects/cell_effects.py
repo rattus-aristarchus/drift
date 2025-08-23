@@ -5,12 +5,11 @@
 эффектов в данном ходу не влияет на результат.
 """
 
-from kivy import Logger
-
 from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
+from src.logger import CustomLogger
 
-_log_name = __name__.split('.')[-1]
+logger = CustomLogger(__name__)
 
 
 def temp_change(cell_write, cell_read, buffer):

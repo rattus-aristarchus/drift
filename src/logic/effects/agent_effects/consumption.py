@@ -1,10 +1,10 @@
-from kivy import Logger
+from src.logger import CustomLogger
 
 import src.logic.entities.agents.ownership
 from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
 
-_log_name = __name__.split('.')[-1]
+logger = CustomLogger(__name__)
 
 """
 def producer_grow(pop, cell_buffer, grid_buffer):
@@ -46,8 +46,8 @@ def producer_grow(pop_write, pop_read, cell_write, cell_read):
 
     pop_write.size += change
 
-    Logger.debug(
-        f"{_log_name}: a population of {pop_read.name} from "
+    logger.debug(
+        f"a population of {pop_read.name} from "
         f"({cell_read.x},{cell_read.y}) increased from {pop_read.size} "
         f"to {pop_write.size} due to hunger being {hunger}."
     )
@@ -80,5 +80,5 @@ def do_food(pop_write, pop_read, cell_write, cell_read):
     food_need = pop_write.get_need("food")
     food_need.actual = sated * 1000
 
-    Logger.debug(f"{_log_name}: {pop_read.name} in ({cell_read.x},{cell_read.y}) ate {ttl_food - surplus}, "
+    logger.debug(f"{pop_read.name} in ({cell_read.x},{cell_read.y}) ate {ttl_food - surplus}, "
                  f"surplus is {surplus}, satiation is {round(sated, 2)} (0-1)")

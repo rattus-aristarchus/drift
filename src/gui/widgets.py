@@ -4,12 +4,13 @@ from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
-from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ColorProperty, ObjectProperty, NumericProperty, StringProperty
 from kivy.clock import Clock
 from kivy.uix.treeview import TreeViewLabel, TreeView
+from src.logger import CustomLogger
 
+logger = CustomLogger(__name__)
 
 class Tooltip(Label):
     pass
@@ -175,11 +176,11 @@ def _get_cell_representation(cell, filter, assets):
     elif filter.accept_type == "biome" or filter.accept_type == "":
         image = _get_image(cell.biome, assets)
         if image == "none":
-            Logger.error(f"Could not find image for biome {cell.biome.name}")
+            logger.error(f"Could not find image for biome {cell.biome.name}")
         return "", image
 
     if not filter.can_be_empty:
-        Logger.error(f"Could not find anything to represent cell ({cell.x}, {cell.y})")
+        logger.error(f"Could not find anything to represent cell ({cell.x}, {cell.y})")
 
     return "", assets.get_icon_name("none")
 

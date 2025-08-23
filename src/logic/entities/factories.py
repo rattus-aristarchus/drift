@@ -1,7 +1,7 @@
-from kivy import Logger
-
 from src.logic.entities.basic import entities
+from src.logger import CustomLogger
 
+logger = CustomLogger(__name__)
 
 class Factory:
 
@@ -57,14 +57,14 @@ class Factory:
 
     def _get_from_dict(self, _dict, name):
         if name not in _dict.keys():
-            Logger.error(f"Trying to get an entity with name {name} that is not in a dictionary of all entities.")
+            logger.error(f"Trying to get an entity with name {name} that is not in a dictionary of all entities.")
             return None
         else:
             return _dict[name]
 
     def _new(self, prototype_dict, name):
         if name not in prototype_dict.keys():
-            Logger.error(f"Trying to create entity of none-existent type {name}.")
+            logger.error(f"Trying to create entity of none-existent type {name}.")
             return None
         else:
             prototype = prototype_dict[name]

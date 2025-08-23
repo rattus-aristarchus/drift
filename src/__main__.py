@@ -1,15 +1,20 @@
 import os
 import kivy.resources
-from kivy.logger import Logger, LOG_LEVELS
+import src.logger
 from src.io.output import Output
 from src.logic.entities import populate_history, factories
 from src.util import CONF, ASSETS_DIR, NAMESPACES_DIR, ICONS_DIR, BACKGROUNDS_DIR
 from src.logic.effects import effects_util
-Logger.setLevel(LOG_LEVELS[CONF["log_level"]])
 os.environ["KIVY_GL_DEBUG"] = "0"
 import src.gui.main as gui
 from src.io import storage
+from src.logger import CustomLogger
 
+src.logger.set_level(
+    kivy.logger.LOG_LEVELS[CONF["log_level"]]
+)
+
+logger = CustomLogger(__name__)
 
 if __name__ == '__main__':
     # load everything from disk, each folder into a separate factory
@@ -17,7 +22,7 @@ if __name__ == '__main__':
     # find the factory and world specified in CONF
     factory = factories.get_factory_with_world_name(CONF['world'], f_list)
     if not factory:
-        Logger.critical(f"{__name__}: conf specified a name of a non-existent world: {CONF['world']}")
+        logger.critical(f"conf specified a name of a non-existent world: {CONF['world']}")
     world = factory.get_world(CONF['world'])
     # make the factory available for effects
     effects_util.factory = factory

@@ -1,8 +1,8 @@
 from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
-from kivy import Logger
+from src.logger import CustomLogger
 
-_log_name = __name__.split('.')[-1]
+logger = CustomLogger(__name__)
 
 
 def brownian_migration(pop_write, pop_read, cell_write, cell_read):
@@ -33,7 +33,7 @@ def brownian_migration(pop_write, pop_read, cell_write, cell_read):
                 fraction
             )
 
-    Logger.debug(f"{_log_name}: {ttl} {pop_read.name} from "
+    logger.debug(f"{ttl} {pop_read.name} from "
                  f"({cell_read.x},{cell_read.y}) did brownian migration "
                  f"to {len(old_destinations)} neighbors")
 
@@ -87,7 +87,7 @@ def migrate(pop_write, pop_read, cell_write, cell_read):
             )
 
 
-    Logger.debug(f"{_log_name}: {ttl} {pop_read.name} from ({cell_read.x},{cell_read.y}) migrated "
+    logger.debug(f"{ttl} {pop_read.name} from ({cell_read.x},{cell_read.y}) migrated "
                  f"to {len(cells_and_pops)} neighbors; {pop_write.size} people are left")
 
 

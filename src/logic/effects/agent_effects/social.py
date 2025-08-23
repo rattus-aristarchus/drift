@@ -1,9 +1,9 @@
 from src.logic.entities.agents import structures, populations
 from src.logic.effects import effects_util
 from src.logic.entities.agents.structures import Commodity
-from kivy import Logger
+from src.logger import CustomLogger
 
-_log_name = __name__.split('.')[-1]
+logger = CustomLogger(__name__)
 
 def social_mobility(pop_write, pop_read, cell_write, cell_read):
     if cell_read.has_res_type("ore") and cell_write.get_pop("blacksmiths") is None:
@@ -12,8 +12,8 @@ def social_mobility(pop_write, pop_read, cell_write, cell_read):
         blacksmiths.size = 1000
         pop_write.size -= 1000
 
-        Logger.debug(
-            f"{_log_name}: 1000 people from {pop_read.name} at {cell_read.x},{cell_read.y} "
+        logger.debug(
+            f"1000 people from {pop_read.name} at {cell_read.x},{cell_read.y} "
             f"became blacksmiths"
         )
 

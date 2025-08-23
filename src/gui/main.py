@@ -1,10 +1,11 @@
 from kivy.app import App
-from kivy.logger import Logger
 from kivy.core.window import Window
 
 from src.gui.widgets import View
 from src.gui.controller import Controller
+from src.logger import CustomLogger
 
+logger = CustomLogger(__name__)
 
 class Main(App):
 
@@ -16,7 +17,7 @@ class Main(App):
         self.assets = assets
 
     def build(self):
-        Logger.info("Main: building the app")
+        logger.info("building the app")
 
         self.title = "Drift"
         Window.size = (1200, 900)

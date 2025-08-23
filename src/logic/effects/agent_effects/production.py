@@ -1,11 +1,10 @@
 import math
 
-from kivy import Logger
-
 from src.logic.effects import effects_util
 from src.logic.entities.agents import ownership
+from src.logger import CustomLogger
 
-_log_name = __name__.split('.')[-1]
+logger = CustomLogger(__name__)
 
 def produce(pop_write, pop_read, cell_write, cell_read, buffer):
     labor = effects_util.factory.new_resource("labor")
@@ -14,7 +13,7 @@ def produce(pop_write, pop_read, cell_write, cell_read, buffer):
     for output_name, target in pop_read.produces.items():
         prototype = effects_util.factory.prototype_resource(output_name)
         if not prototype:
-            Logger.error(f"{_log_name}: {pop_read.name} is trying to produce "
+            logger.error(f"{pop_read.name} is trying to produce "
                          f"{output_name}, which is a non-existent resource")
             continue
 
@@ -36,8 +35,8 @@ def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototy
     if output_per_labor > 0:
         labor.size -= math.ceil(actual_size / output_per_labor)
 
-    Logger.debug(
-        f"{_log_name}: {pop_read.size} {pop_read.name} from ({cell_read.x},{cell_read.y}) "
+    logger.debug(
+        f"{pop_read.size} {pop_read.name} from ({cell_read.x},{cell_read.y}) "
         f"{message}"
         f"produced {actual_size} {prototype.name} ({output_per_labor} per labor)"
     )
@@ -77,7 +76,7 @@ def _update_output(prototype, pop_write, cell_write, output):
 
 def _calculate_max_output(labor, pop_read, land_read, prototype, buffer, target):
     labor_num = labor.size
-    if land_read:
+    if land_read and labor_num > 0:
         land_size = land_read.size
         labor_per_land = labor_num / land_size
 
