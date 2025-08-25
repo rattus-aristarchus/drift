@@ -38,7 +38,6 @@
         millet: "need"
         basic_agricultural_tools: "need"
     looks_for: ["millet_land"]
-    effects: [social_mobility, do_food, producer_grow, produce, pop_to_market]
 - !population
     name: "rice_growers"
     sapient: True
@@ -56,7 +55,6 @@
         rice: "need"
         basic_agricultural_tools: "need"
     looks_for: ["rice_land"]
-    effects: [social_mobility, do_food, producer_grow, produce, pop_to_market]
 - !population
     name: "blacksmiths"
     sapient: True
@@ -70,4 +68,3 @@
     produces:
         advanced_agricultural_tools: "max"
     sells: ["advanced_agricultural_tools"]
-    effects: [produce, pop_to_market]

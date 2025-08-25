@@ -7,6 +7,7 @@
     deviation_50: 1
     effects: [climate]
     cell_effects: [temp_change]
+    pop_effects: [social_mobility, do_food, producer_grow, produce, pop_to_market]
     cell_instructions:
       - location: [17, 7]
         pops:

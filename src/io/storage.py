@@ -101,17 +101,20 @@ def _replace_effects(model_list: List[EffectModel], get_effect):
     Заменяем названия эффектов в поле model.effects ссылками на эффекты
     """
     for model in model_list:
-        if not hasattr(model, "effects") or model.effects is None:
-            model.effects = []
-        else:
-            model.effects = _get_model_effects(model, model.effects, get_effect)
+        _init_effect_field(model, "effects", get_effect)
 
         if isinstance(model, WorldModel):
-            if not hasattr(model, "cell_effects") or model.cell_effects is None:
-                model.cell_effects = []
-            else:
-                model.cell_effects = _get_model_effects(model, model.cell_effects, get_effect)
+            _init_effect_field(model, "cell_effects", get_effect)
+            _init_effect_field(model, "pop_effects", get_effect)
+            _init_effect_field(model, "res_effects", get_effect)
 
+
+def _init_effect_field(model, field_name, get_effect):
+    if not hasattr(model, field_name) or getattr(model, field_name) is None:
+        setattr(model, field_name, [])
+    else:
+        effects = _get_model_effects(model, eval(f"model.{field_name}"), get_effect)
+        setattr(model, field_name, effects)
 
 
 def _get_model_effects(model, string_list, get_effect):

@@ -26,6 +26,8 @@ class World:
 
     effects: list = field(default_factory=lambda: [])
     cell_effects: list = field(default_factory=lambda: [])
+    pop_effects: list = field(default_factory=lambda: [])
+    res_effects: list = field(default_factory=lambda: [])
 
 
 class History:
@@ -40,7 +42,7 @@ class History:
         self.world = world
         self.write_output = write_output
 
-        self.cpu = GridCPU(self.world)
+        self.cpu = GridCPU(self.world, lambda: _create_intermediate_grid(self))
 
     def current_state(self):
         return self.past_grids[-1]
@@ -74,6 +76,14 @@ def _create_new_turn_grid(history):
     old_grid = history.past_grids[-1]
     new_grid, all_recurrents = recurrents.copy_recurrent_and_add_to_list(old_grid, {})
     grids.increase_age_for_everything(new_grid)
+    history.past_grids.append(new_grid)
+    return new_grid
+
+
+def _create_intermediate_grid(history):
+    old_grid = history.past_grids[-1]
+    new_grid, all_recurrents = recurrents.copy_recurrent_and_add_to_list(old_grid, {})
+    history.past_grids.pop()
     history.past_grids.append(new_grid)
     return new_grid
 
