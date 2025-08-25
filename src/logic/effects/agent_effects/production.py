@@ -30,6 +30,9 @@ def production_from_resource(pop_write, pop_read, cell_write, cell_read, prototy
 
     max_output, output_per_labor, message = _calculate_max_output(labor, pop_read, land_read, prototype, buffer, target)
     actual_size = _inputs_suffice_for(pop_read, cell_read, prototype, max_output)
+    if actual_size <= 0:
+        return None
+
     _reduce_inputs(prototype, pop_write, cell_write, labor, actual_size)
     output = _update_output(prototype, pop_write, cell_write, actual_size)
     if output_per_labor > 0:
@@ -118,7 +121,8 @@ def _correct_for_target(pop_read, prototype, output, target):
             if not need:
                 result = 0
             else:
-                result = round(need.per_1000 * pop_read.size / 1000)
+                ceiling = round(need.per_1000 * pop_read.size / 1000)
+                result = ceiling if ceiling < result else result
 
     return result
 

@@ -34,6 +34,7 @@ class Resource(Agent, Recurrent):
     productivity: float = 1.0
     movable: bool = True
 
+
     def __str__(self):
         if self.type == "":
             title = f"{self.name}"
@@ -47,6 +48,7 @@ class Resource(Agent, Recurrent):
             for owner, amount in self.owners.items():
                 description += f"{os.linesep}{owner}: {amount}"
         return description
+
 
     def get_free_amount(self):
         free = self.size

@@ -91,26 +91,26 @@ def migrate(pop_write, pop_read, cell_write, cell_read):
                  f"to {len(cells_and_pops)} neighbors; {pop_write.size} people are left")
 
 
-def _migrate_property(res_read, res_write, owner_write, target, cell_write, fraction):
+def _migrate_property(property_read, property_write, owner_write, target_pop_write, cell_write, fraction):
         # ... но только если она 1. не была удалена и 2. движимая
-        if res_write is None or not res_read.movable:
+        if property_write is None or not property_read.movable:
             return
 
         # аналогичный ресурс у целевой популяции
-        target_res = target.get_resource(res_read.name)
+        target_res = target_pop_write.get_resource(property_read.name)
 
         # если таковых нет, создаем
         if not target_res:
-            target_res = effects_util.factory.new_resource(res_read.name, cell_write)
-            ownership.set_ownership(target, target_res)
+            target_res = effects_util.factory.new_resource(property_read.name, cell_write)
+            ownership.set_ownership(target_pop_write, target_res)
 
         # мигрируем
-        amount = round(res_read.size * fraction)
-        _move_amount(res_write, target_res, amount)
+        amount = round(property_read.size * fraction)
+        _move_amount(property_write, target_res, amount)
 
         # обновляем собственность
-        ownership.add_ownership(target, target_res, amount)
-        ownership.subtract_ownership(owner_write, res_write, amount)
+        ownership.add_ownership(target_pop_write, target_res, amount)
+        ownership.subtract_ownership(owner_write, property_write, amount)
 
 
 def _all_destinations(cell):

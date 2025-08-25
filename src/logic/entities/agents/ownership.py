@@ -6,10 +6,6 @@ logger = CustomLogger(__name__)
 def set_ownership(agent, resource, amount=None):
     """
     Сделать agent владельцем amount ресурса resource.
-
-    Сумма количеств по всем ресурсам никак не контролируется,
-    она может оказаться больше общего количества ресурса (при
-    ошибке в подсчетах).
     """
 
     if amount is None:
@@ -27,15 +23,34 @@ def set_ownership(agent, resource, amount=None):
         if resource not in agent.owned_resources:
             agent.owned_resources.append(resource)
 
+        ttl_owned = _get_ttl_owned(resource)
+        if ttl_owned > resource.size:
+            logger.error(
+                f"owned {resource.name} ({ttl_owned}) exceeded total "
+                f"amount of that resource ({resource.size}) when trying "
+                f"to add {amount} owned by {agent.name}"
+            )
 
-# полный бардак, конечно. почти то же самое что предыдущая функция
+
+def _get_ttl_owned(resource):
+    ttl = 0
+
+    for agent, size in resource.owners.items():
+        ttl += size
+
+    return ttl
+
+
 def add_ownership(agent, resource, amount):
-    if agent.name not in resource.owners.keys():
-        resource.owners[agent.name] = 0
-    resource.owners[agent.name] += amount
+    if amount <= 0:
+        return
 
-    if resource not in agent.owned_resources:
-        agent.owned_resources.append(resource)
+    if agent.name not in resource.owners.keys():
+        set_to = amount
+    else:
+        set_to = resource.owners[agent.name] + amount
+
+    set_ownership(agent, resource, set_to)
 
 
 def subtract_ownership(agent, resource, amount):
@@ -50,12 +65,4 @@ def subtract_ownership(agent, resource, amount):
 
     current = resource.owners[agent.name]
 
-    if current <= amount:
-        resource.owners.pop(agent.name, None)
-        agent.owned_resources.remove(resource)
-    else:
-        resource.owners[agent.name] -= amount
-
-
-def remove_ownership(population, resource):
-    set_ownership(population, resource, 0)
+    set_ownership(agent, resource, current - amount)

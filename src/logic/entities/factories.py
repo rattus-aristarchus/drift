@@ -14,28 +14,28 @@ class Factory:
 
         self.worlds = {}
 
-    def new_population(self, name):
-        new_pop = self._new(self.populations, name)
+    def new_population(self, name, fields=None):
+        new_pop = self._new(self.populations, name, fields)
         # чтобы в первый ход существовния популяции, когда еще
         # не успели рассчитать реальные потребности, не было эффекта кризиса
         for need in new_pop.needs:
             need.actual = need.per_1000
         return new_pop
 
-    def new_structure(self, name):
-        return self._new(self.structures, name)
+    def new_structure(self, name, fields=None):
+        return self._new(self.structures, name, fields)
 
-    def new_resource(self, name, cell=None):
-        new = self._new(self.resources, name)
+    def new_resource(self, name, cell=None, fields=None):
+        new = self._new(self.resources, name, fields)
         if cell:
             cell.resources.append(new)
         return new
 
-    def new_biome(self, name):
-        return self._new(self.biomes, name)
+    def new_biome(self, name, fields=None):
+        return self._new(self.biomes, name, fields)
 
-    def new_misc(self, name):
-        return self._new(self.misc, name)
+    def new_misc(self, name, fields=None):
+        return self._new(self.misc, name, fields)
 
     def prototype_population(self, name):
         return self._get_from_dict(self.populations, name)
@@ -62,10 +62,15 @@ class Factory:
         else:
             return _dict[name]
 
-    def _new(self, prototype_dict, name):
+    def _new(self, prototype_dict, name, fields=None):
         if name not in prototype_dict.keys():
             logger.error(f"Trying to create entity of none-existent type {name}.")
             return None
+        elif fields is not None:
+            prototype = prototype_dict[name]
+            result = entities.inherit_prototype_fields(prototype)
+            entities.override_fields(result, fields)
+            return result
         else:
             prototype = prototype_dict[name]
             return entities.inherit_prototype_fields(prototype)

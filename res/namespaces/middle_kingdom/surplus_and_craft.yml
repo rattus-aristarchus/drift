@@ -14,9 +14,17 @@
             size: 5000
         resources:
           - name: "millet"
-            size: 50000
+            size: 5000
+            owners:
+              northern_farmers: 5000
           - name: "surface_copper"
             size: 1000
+            owners:
+              northern_farmers: 1000
+          - name: "basic_agricultural_tools"
+            size: 5000
+            owners:
+              northern_farmers: 5000
         watch: True
       - location: [21, 9]
         pops:
@@ -24,7 +32,15 @@
             size: 5000
         resources:
           - name: "rice"
-            size: 50000
+            size: 5000
+            owners:
+              rice_growers: 5000
           - name: "surface_copper"
             size: 1000
+            owners:
+              rice_growers: 1000
+          - name: "basic_agricultural_tools"
+            size: 5000
+            owners:
+              rice_growers: 5000
         watch: True

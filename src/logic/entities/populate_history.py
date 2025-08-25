@@ -79,16 +79,24 @@ def _retreive_cell(cell_dict, grid):
 def _populate_cell(cell, cell_dict, factory):
     if 'pops' in cell_dict.keys():
         for pop_dict in cell_dict['pops']:
-            pop = factory.new_population(pop_dict['name'])
+            pop = factory.new_population(pop_dict['name'], pop_dict)
             cell.pops.append(pop)
-            pop.size = pop_dict['size']
             logger.debug(f"created pop " + pop.name +
                          " of size " + str(pop.size))
 
     if 'resources' in cell_dict.keys():
         for res_dict in cell_dict['resources']:
-            resource = factory.new_resource(res_dict['name'], cell)
-            resource.size = res_dict['size']
+            resource = factory.new_resource(res_dict['name'], cell, res_dict)
+            for owner_name, amount in resource.owners.items():
+                owner = cell.get_pop(owner_name)
+                if owner:
+                    owner.owned_resources.append(resource)
+                else:
+                    logger.error(
+                        f"when populating cell ({cell.x}, {cell.y}) from yaml, "
+                        f"resource {resource.name} has a non-existent owner {owner_name}"
+                    )
+
             logger.debug(f"created resource {resource.name}" +
                          f" of size {str(resource.size)}")
 

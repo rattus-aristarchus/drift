@@ -67,6 +67,11 @@ def inherit_prototype_fields(entity):
     return copy
 
 
+def override_fields(entity, fields_dict):
+    for field, new_value in fields_dict.items():
+        setattr(entity, field, new_value)
+
+
 def get_entity(name, _list):
     for e in _list:
         if e.name == name:

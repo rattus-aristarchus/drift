@@ -102,3 +102,15 @@ def test_inherit_prototype_fields_ignores_id():
     copy = entities.inherit_prototype_fields(test_entity)
 
     assert copy._id != test_entity._id
+
+
+def test_override_fields():
+    test = Entity("test_entity")
+    field_list = {
+        "name": "test_entity_1"
+    }
+
+    entities.override_fields(test, field_list)
+
+    assert test.name == "test_entity_1"
+
