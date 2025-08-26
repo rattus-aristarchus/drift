@@ -20,6 +20,7 @@ class World:
 
     effects: list = field(default_factory=lambda: [])
     structure_effects: list = field(default_factory=lambda: [])
-    cell_effects: list = field(default_factory=lambda: [])
     pop_effects: list = field(default_factory=lambda: [])
     res_effects: list = field(default_factory=lambda: [])
+    relation_effects: list = field(default_factory=lambda: [])
+    cell_effects: list = field(default_factory=lambda: [])

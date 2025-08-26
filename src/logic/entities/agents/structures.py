@@ -22,7 +22,7 @@ class Structure(Agent, Recurrent):
 
     def do_effects(self, structure_read, cell_write, cell_read, buffer):
         for func in self.effects:
-            func(self, buffer)
+            func(self, structure_read, buffer)
 
     def get_res(self, name):
         return entities.get_entity(name, self.resources)

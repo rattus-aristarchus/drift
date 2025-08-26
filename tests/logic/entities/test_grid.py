@@ -37,7 +37,7 @@ class __EffectSpy:
 def effect_spy():
     spy = __EffectSpy()
 
-    def __effect(structure, buffer):
+    def __effect(structure, structure_read, buffer):
         spy.calls += 1
 
     yield __effect, spy
@@ -100,17 +100,20 @@ def test_intermediate_grids_are_created(grid_cpu, grid_spy):
     spy.proper_grid_call = grid_cpu._create_intermediate_grid
     grid_cpu._create_intermediate_grid = callback
     first_cell = grid_cpu.grid.cells[0][0]
-    world_effect = lambda a, b, c: pass
-
-    grid_cpu.effects.append
+    world_effect = lambda a, b, c: None
+    effect = lambda a, b, c, d, e: None
+    grid_cpu.effects.append(world_effect)
+    grid_cpu.pop_effects.append(effect)
+    grid_cpu.pop_effects.append(effect)
+    grid_cpu.res_effects.append(effect)
 
     grid_cpu.do_effects()
 
-    assert spy.calls == 2
-    second_cell = spy.grids[-2].cells[0][0]
-    third_cell = spy.grids[-1].cells[0][0]
-    assert third_cell.last_copy == second_cell
-    assert second_cell.last_copy == first_cell
+    assert spy.calls == 3
+    third_cell = spy.grids[-2].cells[0][0]
+    fourth_cell = spy.grids[-1].cells[0][0]
+    assert third_cell.next_copy == fourth_cell
+    assert fourth_cell.last_copy == third_cell
 
 
 def test_get_neighbors():

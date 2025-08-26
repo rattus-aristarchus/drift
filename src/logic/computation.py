@@ -27,18 +27,18 @@ class GridCPU:
     Главный класс, заведующий выполнением алгоритмов модели
     """
 
-
     def __init__(self, world, create_intermediate_grid):
         self.grid = None
         self.cpus = []
-
         self.world = world
         self._create_intermediate_grid = create_intermediate_grid
+
         self.effects = world.effects
-        self.cell_effects = world.cell_effects
+        self.structure_effects = world.structure_effects
+        self.relation_effects = world.relation_effects
         self.pop_effects = world.pop_effects
         self.res_effects = world.res_effects
-
+        self.cell_effects = world.cell_effects
 
     def refresh_cpus(self, grid):
         """
@@ -61,7 +61,7 @@ class GridCPU:
         # calculations multiple times
         buffer = Buffer(self.world)
 
-        # вначале общие, уровня карты
+        # вначале общие алгоритмы, которые одинаковы для всех сущностей
         first = True
         for func in self.effects:
             if first:
@@ -72,14 +72,22 @@ class GridCPU:
 
         self._grid_level_messages(buffer)
 
-        # затем алгоритмы структур
-        for structure in self.grid.structures:
-            structure.do_effects(None, None, None, buffer)
+        for func in self.structure_effects:
+            self.grid = self._create_intermediate_grid()
+            for structure in self.grid.structures:
+                if structure.last_copy:
+                    func(structure, structure.last_copy, buffer)
 
+        for func in self.relation_effects:
+            self._traverse_grid_with_effect(func, "structures", buffer)
         for func in self.pop_effects:
             self._traverse_grid_with_effect(func, "pops", buffer)
         for func in self.res_effects:
             self._traverse_grid_with_effect(func, "resources", buffer)
+
+        # затем алгоритмы, которые могут отличаться у разных сущностей одного вида
+        for structure in self.grid.structures:
+            structure.do_effects(None, None, None, buffer)
 
         # передаем выполнение управляющим объектам для отдельных клеток
         self.refresh_cpus(self.grid)

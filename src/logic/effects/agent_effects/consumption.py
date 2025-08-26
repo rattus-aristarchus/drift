@@ -23,13 +23,13 @@ def natural_growth(res_write, res_read, cell_write, cell_read):
 
 
 def growth(res_write, res_read):
-    growth = res_read.yearly_growth
+    increase = res_read.yearly_growth
     num = res_read.size
 
-    res_write.size += round(num * growth)
+    res_write.size += round(num * increase)
 
     for owner, amount in res_read.owners.items():
-        res_write.owners[owner] += round(amount * growth)
+        res_write.owners[owner] += round(amount * increase)
         # TODO: здесь из-за округления суммы будут не сходиться
 
 
