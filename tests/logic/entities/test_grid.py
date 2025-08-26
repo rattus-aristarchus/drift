@@ -7,7 +7,8 @@ from src.logic.entities import grids, histories
 from src.logic.entities.agents.structures import Structure
 from src.logic.entities.cells import Cell
 from src.logic.entities.grids import Grid
-from src.logic.entities.histories import World, History
+from src.logic.entities.histories import History
+from src.logic.entities.worlds import World
 
 
 def test_increase_grid_age(fresh_grid):
@@ -98,13 +99,18 @@ def test_intermediate_grids_are_created(grid_cpu, grid_spy):
     spy.grid_cpu = grid_cpu
     spy.proper_grid_call = grid_cpu._create_intermediate_grid
     grid_cpu._create_intermediate_grid = callback
+    first_cell = grid_cpu.grid.cells[0][0]
+    world_effect = lambda a, b, c: pass
+
+    grid_cpu.effects.append
 
     grid_cpu.do_effects()
 
     assert spy.calls == 2
-    cell = spy.grids[-1].cells[0][0]
-    last_cell = spy.grids[-2].cells[0][0]
-    assert cell.last_copy == last_cell
+    second_cell = spy.grids[-2].cells[0][0]
+    third_cell = spy.grids[-1].cells[0][0]
+    assert third_cell.last_copy == second_cell
+    assert second_cell.last_copy == first_cell
 
 
 def test_get_neighbors():

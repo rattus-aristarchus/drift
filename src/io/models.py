@@ -8,7 +8,7 @@ from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.structures import Structure, Market
 from src.logic.entities.cells import Biome, Cell
-from src.logic.entities.histories import World
+from src.logic.entities.worlds import World
 
 """
 При переносе данных из моделей в связанные с ними классы система

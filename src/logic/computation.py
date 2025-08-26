@@ -62,7 +62,12 @@ class GridCPU:
         buffer = Buffer(self.world)
 
         # вначале общие, уровня карты
+        first = True
         for func in self.effects:
+            if first:
+                first = False
+            else:
+                self.grid = self._create_intermediate_grid()
             func(self.grid, self.grid.last_copy, buffer)
 
         self._grid_level_messages(buffer)
@@ -71,22 +76,23 @@ class GridCPU:
         for structure in self.grid.structures:
             structure.do_effects(None, None, None, buffer)
 
-        self._traverse_grid_for_entities(self.pop_effects, "pops", buffer)
-        self.grid = self._create_intermediate_grid()
-        self._traverse_grid_for_entities(self.res_effects, "resources", buffer)
-        self.refresh_cpus(self._create_intermediate_grid())
+        for func in self.pop_effects:
+            self._traverse_grid_with_effect(func, "pops", buffer)
+        for func in self.res_effects:
+            self._traverse_grid_with_effect(func, "resources", buffer)
 
         # передаем выполнение управляющим объектам для отдельных клеток
+        self.refresh_cpus(self.grid)
         for cell_cpu in self.cpus:
             cell_cpu.do_effects(buffer, self.cell_effects)
 
 
-    def _traverse_grid_for_entities(self, effects, entity_list_name, buffer):
-        for func in effects:
-            for cell in self.grid.cells_as_list():
-                for recurrent in eval(f"cell.{entity_list_name}"):
-                    if recurrent.last_copy:
-                        func(recurrent, recurrent.last_copy, cell, cell.last_copy, buffer)
+    def _traverse_grid_with_effect(self, effect, entity_list_name, buffer):
+        self.grid = self._create_intermediate_grid()
+        for cell in self.grid.cells_as_list():
+            for recurrent in eval(f"cell.{entity_list_name}"):
+                if recurrent.last_copy:
+                    effect(recurrent, recurrent.last_copy, cell, cell.last_copy, buffer)
 
 
     def _grid_level_messages(self, buffer):

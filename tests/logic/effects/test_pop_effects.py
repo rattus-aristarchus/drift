@@ -9,7 +9,7 @@ from src.logic.effects.agent_effects import production
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.cells import Cell
-from src.logic.entities.histories import World
+from src.logic.entities.worlds import World
 
 
 def test_growth_with_capacity():

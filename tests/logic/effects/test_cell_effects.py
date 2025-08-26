@@ -4,7 +4,7 @@ from src.logic.effects import cell_effects
 from src.logic.entities import grids
 from src.logic.entities.cells import Biome
 from src.logic.entities.factories import Factory
-from src.logic.entities.histories import World
+from src.logic.entities.worlds import World
 from src.logic.entities.basic import recurrents
 
 

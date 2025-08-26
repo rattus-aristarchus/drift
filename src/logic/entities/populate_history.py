@@ -2,7 +2,7 @@ import random
 from src.logic.entities import histories
 from src.logic.entities.agents import populations, resources
 from src.logic.entities.factories import Factory
-from src.logic.entities.histories import World
+from src.logic.entities.worlds import World
 from src.logger import CustomLogger
 
 logger = CustomLogger(__name__)
