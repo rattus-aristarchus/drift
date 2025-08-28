@@ -3,11 +3,13 @@ import inspect
 from dataclasses import field
 import yaml
 
-from src.logic.computation import Agent
+from src.logic.entities.agents.agents import Agent
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
-from src.logic.entities.agents.structures import Structure, Market
-from src.logic.entities.cells import Biome, Cell
+from src.logic.entities.agents.structures import Structure
+from src.logic.entities.agents.markets import Market
+from src.logic.entities.cells import Cell
+from src.logic.entities.biomes import Biome
 from src.logic.entities.worlds import World
 
 """

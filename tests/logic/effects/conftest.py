@@ -4,7 +4,7 @@ import src
 from src.logic.effects import effects_util, effects
 from src.logic.entities.agents.populations import Population
 from src.logic.entities.agents.resources import Resource
-from src.logic.entities.agents.structures import Market
+from src.logic.entities.agents.markets import Market
 from src.logic.entities.factories import Factory
 
 

@@ -1,7 +1,7 @@
 import pytest
 from src.logic.entities import grids
 from src.logic.entities.agents.populations import Population
-from src.logic.entities.cells import Biome
+from src.logic.entities.biomes import Biome
 from src.logic.entities.factories import Factory
 from src.logic.entities.histories import History
 from src.logic.entities.worlds import World

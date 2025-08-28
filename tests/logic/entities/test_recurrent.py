@@ -3,7 +3,8 @@ import dataclasses
 import src.logic.entities.basic.custom_fields
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.basic import recurrents
-from src.logic.entities.cells import Cell, Biome
+from src.logic.entities.cells import Cell
+from src.logic.entities.biomes import Biome
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
 from src.logic.entities.agents.structures import Structure

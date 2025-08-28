@@ -1,8 +1,3 @@
-import dataclasses
-from dataclasses import field
-
-from src.logic.entities.basic import recurrents
-from src.logic.entities.basic.entities import Entity
 from src.logger import CustomLogger
 
 logger = CustomLogger(__name__)
@@ -99,7 +94,7 @@ class GridCPU:
         self.grid = self._create_intermediate_grid()
         for cell in self.grid.cells_as_list():
             for recurrent in eval(f"cell.{entity_list_name}"):
-                if recurrent.last_copy:
+                if recurrent.age > 0:
                     effect(recurrent, recurrent.last_copy, cell, cell.last_copy, buffer)
 
 
@@ -132,23 +127,22 @@ class CellCPU:
         for func in cell_effects:
             func(self.cell, self.cell.last_copy, buffer)
 
-        # алгоритмы для популяций
-        for pop in self.cell.pops:
-            # если ссылка на last_copy отсутствует, эта популяция
-            # была создана в эту итерацию, и вычислять ее эффекты
-            # не нужно
-            if pop.last_copy:
-                pop.do_effects(pop.last_copy, self.cell, self.cell.last_copy, buffer)
+        recurrent_agents = self.cell.structures + self.cell.pops + self.cell.resources
 
-        # алгоритмы для ресурсов
-        for resource in self.cell.resources:
-            if resource.last_copy:
-                resource.do_effects(resource.last_copy, self.cell, self.cell.last_copy, buffer)
+        for agent in recurrent_agents:
+            # если возраст нулевой, агент
+            # был создан в эту итерацию, и вычислять его эффекты
+            # не нужно
+            if agent.age > 0:
+                agent.do_effects(agent.last_copy, self.cell, self.cell.last_copy, buffer)
 
         # алгоритмы для рынков
         for market in self.cell.markets:
             market.do_effects(None, self.cell, self.cell.last_copy, buffer)
 
+        self._garbage_collection()
+
+    def _garbage_collection(self):
         # удаляем вымершие популяции
         # remove pops that have died out
         to_remove = []
@@ -166,26 +160,3 @@ class CellCPU:
                 to_remove.append(res)
         for res in to_remove:
             self.cell.resources.remove(res)
-
-
-@dataclasses.dataclass
-class Agent(Entity):
-    """
-    Нечто, обладающее "эффектами" - уравнениями, которые
-    вычисляются в каждую итерацию системы.
-    """
-
-    effects: list = field(default_factory=lambda: [])
-
-    # Чтение можно производить только из объектов прошлой итерации,
-    # а запись - только в текущую (потому что иначе порядок выполнения)
-    # агентов будет влиять на результаты вчислений).
-    # Чтобы не возникало путаницы на уровне эффектов, в кждый эффект мы 
-    # передаём отдельно объект для чтения (=объект прошлой итерации) и 
-    # объект для записи. 
-    def do_effects(self, agent_read, cell_write, cell_read, buffer):
-        """
-        Вызывается каждую итерацию.
-        """
-        for func in self.effects:
-            func(self, agent_read, cell_write, cell_read, buffer)

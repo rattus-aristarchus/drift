@@ -6,14 +6,6 @@ from src.logic.entities.agents import ownership
 
 logger = CustomLogger(__name__)
 
-"""
-def producer_grow(pop, cell_buffer, grid_buffer):
-    num = pop.last_copy.size
-    cap = effects_util.get_cap_for_pop(pop, cell_buffer.cell.last_copy)
-
-    pop.size += effects_util.growth_with_capacity(num, cap, pop.yearly_growth)
-"""
-
 
 def natural_growth(res_write, res_read, cell_write, cell_read):
     num = res_read.size
@@ -23,14 +15,23 @@ def natural_growth(res_write, res_read, cell_write, cell_read):
 
 
 def growth(res_write, res_read):
-    increase = res_read.yearly_growth
-    num = res_read.size
+    increase = round(res_read.size * res_read.yearly_growth)
 
-    res_write.size += round(num * increase)
+    res_write.size += increase
 
-    for owner, amount in res_read.owners.items():
-        res_write.owners[owner] += round(amount * increase)
+    msg_owners = ""
+    for owner, owned_amount in res_read.owners.items():
+        increase = round(owned_amount * res_read.yearly_growth)
+        res_write.owners[owner] += increase
         # TODO: здесь из-за округления суммы будут не сходиться
+        msg_owners +=f"{owner}: {increase}\n"
+
+    msg = f"resource {res_read.name} changed amount by {increase}, new size {res_write.size}"
+    if len(msg_owners) > 0:
+        msg += f"; affected owners:\n{msg_owners[:-1]}"
+    logger.debug(
+        msg
+    )
 
 
 def producer_grow(pop_write, pop_read, cell_write, cell_read):
@@ -54,31 +55,47 @@ def producer_grow(pop_write, pop_read, cell_write, cell_read):
 
 
 def do_food(pop_write, pop_read, cell_write, cell_read):
-    food_list = []
-    ttl_food = 0
-
-    for resource in pop_read.owned_resources:
-        if resource.type == "food":
-            food_list.append(resource)
-            ttl_food += resource.size
-
-    needs = pop_read.size
+    ttl_food = _count_food(pop_read)
+    ttl_appetite = pop_read.size
 
     if pop_read.age == 0:
         sated = 1
-        surplus = 0
-    elif needs < ttl_food:
+        consumed = ttl_appetite
+    elif ttl_appetite < ttl_food:
         sated = 1
-        surplus = ttl_food - needs
-    elif ttl_food < 0:
-        sated = 0
-        surplus = 0
+        consumed = ttl_appetite
     else:
-        sated = ttl_food / needs
-        surplus = 0
+        sated = ttl_food / ttl_appetite
+        consumed = ttl_food
 
+    surplus = ttl_food - consumed
     food_need = pop_write.get_need("food")
     food_need.actual = sated * 1000
 
+    _reduce_food(consumed, pop_write)
+
     logger.debug(f"{pop_read.name} in ({cell_read.x},{cell_read.y}) ate {ttl_food - surplus}, "
                  f"surplus is {surplus}, satiation is {round(sated, 2)} (0-1)")
+
+
+def _count_food(pop_read):
+    result = 0
+    for resource in pop_read.owned_resources:
+        if resource.type == "food":
+            result += resource.owners[pop_read.name]
+    return result
+
+
+def _reduce_food(ttl_consumed, pop_write):
+    to_subtract = ttl_consumed
+    for resource in pop_write.owned_resources:
+        if resource.type == "food":
+            if resource.owners[pop_write.name] > to_subtract:
+                subtracted = to_subtract
+                resource.reduce_for_owner(pop_write, to_subtract)
+            else:
+                subtracted = resource.owners[pop_write.name]
+                resource.set_for_owner(pop_write, 0)
+            to_subtract -= subtracted
+            if to_subtract <= 0:
+                break

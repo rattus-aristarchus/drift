@@ -20,6 +20,8 @@ class Recurrent:
     # и той же сущности
     _id: str = dataclasses.field(default_factory=lambda: str(uuid.uuid4()))
 
+    age: int = 0
+
     # при создании новой итерации модели все сущности
     # копируются в нее; last_copy - ссылка на сущность
     # в прошлой итерации; next_copy - ссылка на следующую

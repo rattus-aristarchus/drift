@@ -2,7 +2,8 @@ import dataclasses
 import os
 from dataclasses import field
 
-from src.logic.computation import Agent
+from src.logic.entities.agents import ownership
+from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic.recurrents import Recurrent
 
 
@@ -49,7 +50,6 @@ class Resource(Agent, Recurrent):
                 description += f"{os.linesep}{owner}: {amount}"
         return description
 
-
     def get_free_amount(self):
         free = self.size
         for name, amount in self.owners.items():
@@ -58,3 +58,15 @@ class Resource(Agent, Recurrent):
         if free < 0:
             free = 0
         return free
+
+    def increase_for_owner(self, agent, change):
+        self.size += change
+        ownership.add_ownership(agent, self, change)
+
+    def reduce_for_owner(self, agent, change):
+        self.size -= change
+        ownership.subtract_ownership(agent, self, change)
+
+    def set_for_owner(self, agent, amount):
+        self.size = amount
+        ownership.set_ownership(agent, self, amount)

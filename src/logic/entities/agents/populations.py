@@ -1,7 +1,7 @@
 import dataclasses
 from dataclasses import field
 import os
-from src.logic.computation import Agent
+from src.logic.entities.agents.agents import Agent
 from src.logic.entities.basic import custom_fields, entities
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
@@ -14,7 +14,6 @@ class Population(Agent, Recurrent):
     """
 
     size: int = 0
-    age: int = 0
     sapient: bool = False
     type: str = ""
     yearly_growth: float = 0.0

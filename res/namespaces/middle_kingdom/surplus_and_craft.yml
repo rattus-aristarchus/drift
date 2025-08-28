@@ -7,17 +7,13 @@
     deviation_50: 1
     effects: [climate]
     cell_effects: [temp_change]
-    pop_effects: [social_mobility, do_food, producer_grow, produce, pop_to_market]
+    pop_effects: [social_mobility, produce, pop_to_market, do_food, producer_grow]
     cell_instructions:
       - location: [17, 7]
         pops:
           - name: "northern_farmers"
             size: 5000
         resources:
-          - name: "millet"
-            size: 5000
-            owners:
-              northern_farmers: 5000
           - name: "surface_copper"
             size: 1000
             owners:

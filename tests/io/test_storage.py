@@ -5,7 +5,7 @@ import pytest
 
 from src.io import storage, load_factory, load_worlds
 from src.logic.entities.agents.populations import Need
-from src.logic.entities.cells import Biome
+from src.logic.entities.biomes import Biome
 from src.logic.entities.factories import Factory
 from src.logic.entities.grids import Grid
 from src.io.models import Model

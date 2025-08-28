@@ -9,7 +9,7 @@ from random import Random
 
 import src.logic.entities.agents.ownership
 from src.logic.entities.agents import ownership
-from src.logic.entities.agents.structures import Market
+from src.logic.entities.agents.markets import Market
 
 
 def get_effect(func_name):

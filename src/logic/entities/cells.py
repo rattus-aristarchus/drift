@@ -1,38 +1,12 @@
 import dataclasses
-import os
 from dataclasses import field
 from src.logic.entities.basic import custom_fields, entities
 from src.logic.entities.basic.entities import Entity
 from src.logic.entities.basic.recurrents import Recurrent
 from src.logger import CustomLogger
+from src.logic.entities.biomes import Biome
 
 logger = CustomLogger(__name__)
-
-
-@dataclasses.dataclass
-class Biome(Entity):
-    """
-    Экология клетки карты.
-    """
-
-    # сколько популяций или ресурсов может вместить данная клетка:
-    capacity: dict = dataclasses.field(default_factory=lambda: {})
-    starting_resources: list = dataclasses.field(default_factory=lambda: [])
-    moisture: str = ""
-
-    def __str__(self):
-        description = self.name
-        if len(self.capacity) > 0:
-            description += f"{os.linesep}вместимость:"
-            for pop_type, amount in self.capacity.items():
-                description += f"{os.linesep}{pop_type}: {amount}"
-        return description
-
-    def get_capacity(self, pop_name):
-        if pop_name in self.capacity.keys():
-            return self.capacity[pop_name]
-        else:
-            return 0
 
 
 @dataclasses.dataclass
@@ -75,24 +49,23 @@ class Cell(Entity, Recurrent):
                 return True
         return False
 
+    def add_territory(self, structure):
+        if structure not in self.structures:
+            self.structures.append(structure)
+        if self not in structure.territory:
+            structure.territory.append(self)
 
-def add_territory(cell, structure):
-    if structure not in cell.structures:
-        cell.structures.append(structure)
-    if cell not in structure.territory:
-        structure.territory.append(cell)
+    def _find_structure(self, name):
+        for group in self.structures:
+            if group.name == name:
+                return group
+        return None
 
+    def increase_age_for_everything(self, value=1):
+        recurrents = [self] + self.pops + self.resources + self.structures
 
-def _find_structure(name, cell):
-    for group in cell.structures:
-        if group.name == name:
-            return group
-    return None
-
-
-def increase_age_for_everything(cell, value=1):
-    for pop in cell.pops:
-        pop.age += value
+        for recurrent in recurrents:
+            recurrent.age += value
 
 
 def create_cell(x, y, biome_name, factory):

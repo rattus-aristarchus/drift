@@ -2,21 +2,12 @@ import pytest
 
 from src.logic.computation import Buffer
 from src.logic.entities.agents import ownership
-from src.logic.entities.basic import recurrents
 from src.logic import logic_util
-from src.logic.effects import effects_util
 from src.logic.effects.agent_effects import production
 from src.logic.entities.agents.populations import Population, Need
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.cells import Cell
 from src.logic.entities.worlds import World
-
-
-def test_growth_with_capacity():
-    result = effects_util.growth_with_capacity(1000, 10000, 0.05)
-
-    assert result == 45
-
 
 test_data = [
     (50, 1, 1, 25),

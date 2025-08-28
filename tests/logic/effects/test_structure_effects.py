@@ -4,7 +4,8 @@ from src.logic.effects.agent_effects import social
 from src.logic.entities.agents import ownership
 from src.logic.entities.agents.resources import Resource
 from src.logic.entities.agents.populations import Population, Need
-from src.logic.entities.agents.structures import Market, Commodity, Structure
+from src.logic.entities.agents.structures import Structure
+from src.logic.entities.agents.markets import Commodity, Market
 from src.logic.entities.cells import Cell
 
 

@@ -1,6 +1,6 @@
 from src.logic.entities.agents import structures, populations
 from src.logic.effects import effects_util
-from src.logic.entities.agents.structures import Commodity
+from src.logic.entities.agents.markets import Commodity
 from src.logger import CustomLogger
 
 logger = CustomLogger(__name__)

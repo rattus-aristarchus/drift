@@ -2,7 +2,7 @@ import pytest
 
 from src.logic.entities import cells
 from src.logic.entities.agents.resources import Resource
-from src.logic.entities.cells import Biome
+from src.logic.entities.biomes import Biome
 from src.logic.entities.factories import Factory
 
 

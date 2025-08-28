@@ -79,7 +79,7 @@ def increase_age_for_everything(grid, value=1):
     grid.state.age += 1
     for x in range(0, grid.width):
         for y in range(0, grid.height):
-            cells.increase_age_for_everything(grid.cells[x][y], value)
+            grid.cells[x][y].increase_age_for_everything(value)
 
 
 def set_neighbors_for_cells(grid):
