@@ -17,7 +17,7 @@ class Buffer:
 
 
 
-class GridCPU:
+class CPU:
     """
     Главный класс, заведующий выполнением алгоритмов модели
     """
@@ -67,11 +67,13 @@ class GridCPU:
 
         self._grid_level_messages(buffer)
 
+        # в структурах хранятся все структуры карты, не только общие; поэтому
+        # вызовы для них не повторяются на уровне клеток
         for func in self.structure_effects:
             self.grid = self._create_intermediate_grid()
-            for structure in self.grid.structures:
-                if structure.last_copy:
-                    func(structure, structure.last_copy, buffer)
+            for structure in self.grid.last_copy.structures:
+                if structure.next_copy:
+                    func(structure.next_copy, structure, buffer)
 
         for func in self.relation_effects:
             self._traverse_grid_with_effect(func, "structures", buffer)
@@ -93,10 +95,13 @@ class GridCPU:
     def _traverse_grid_with_effect(self, effect, entity_list_name, buffer):
         self.grid = self._create_intermediate_grid()
         for cell in self.grid.cells_as_list():
-            for recurrent in eval(f"cell.{entity_list_name}"):
-                if recurrent.age > 0:
-                    effect(recurrent, recurrent.last_copy, cell, cell.last_copy, buffer)
-
+            _do_for_recurrents_in_list(
+                effect,
+                eval(f"cell.last_copy.{entity_list_name}"),
+                cell,
+                cell.last_copy,
+                buffer
+            )
 
     def _grid_level_messages(self, buffer):
         temp = round(self.grid.state.temperature, 3)
@@ -107,7 +112,6 @@ class GridCPU:
             msg += (f" It deviates from"
                     f" mean by {dev}.")
         logger.info(msg)
-
 
 
 class CellCPU:
@@ -127,12 +131,9 @@ class CellCPU:
         for func in cell_effects:
             func(self.cell, self.cell.last_copy, buffer)
 
-        recurrent_agents = self.cell.structures + self.cell.pops + self.cell.resources
+        recurrent_agents = self.cell.pops + self.cell.resources
 
         for agent in recurrent_agents:
-            # если возраст нулевой, агент
-            # был создан в эту итерацию, и вычислять его эффекты
-            # не нужно
             if agent.age > 0:
                 agent.do_effects(agent.last_copy, self.cell, self.cell.last_copy, buffer)
 
@@ -160,3 +161,12 @@ class CellCPU:
                 to_remove.append(res)
         for res in to_remove:
             self.cell.resources.remove(res)
+
+
+def _do_for_recurrents_in_list(effect, rec_list, cell_write, cell_read, buffer):
+    """
+    вызывается для сущностей прошлой итерации
+    """
+    for recurrent in rec_list:
+        if recurrent.next_copy:
+            effect(recurrent.next_copy, recurrent, cell_write, cell_read, buffer)

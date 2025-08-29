@@ -1,4 +1,4 @@
-from src.logic.computation import GridCPU
+from src.logic.computation import CPU
 from src.logic.entities.basic import recurrents
 from src.logic.entities import grids
 from src.logic.entities.basic.recurrents import copy_recurrent_and_add_to_list
@@ -16,7 +16,7 @@ class History:
         self.world = world
         self.write_output = write_output
 
-        self.cpu = GridCPU(self.world, lambda: _create_intermediate_grid(self))
+        self.cpu = CPU(self.world, lambda: _create_intermediate_grid(self))
 
     def current_state(self):
         return self.past_grids[-1]

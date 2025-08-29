@@ -2,7 +2,7 @@ import ast
 
 import pytest
 
-from src.logic.computation import GridCPU
+from src.logic.computation import CPU
 from src.logic.entities import grids, histories
 from src.logic.entities.agents.structures import Structure
 from src.logic.entities.cells import Cell
@@ -44,7 +44,7 @@ def effect_spy():
 
 
 @pytest.fixture
-def grid_cpu():
+def cpu_with_history():
     grid = Grid()
     cell_0 = Cell(name="first cell")
     cell_1 = Cell(name="second cell")
@@ -53,31 +53,33 @@ def grid_cpu():
     world = World()
     history = History(world)
     history.past_grids.append(grid)
-    cpu = GridCPU(
+    cpu = CPU(
         world,
         lambda: histories._create_intermediate_grid(history)
     )
     cpu.refresh_cpus(grid)
 
-    return cpu
+    return cpu, history
 
-def test_effect_calls_for_structures_are_not_repeated(effect_spy, grid_cpu):
+def test_effect_calls_for_structures_are_not_repeated(effect_spy, cpu_with_history):
+    cpu, history = cpu_with_history
     effect, spy = effect_spy
     structure = Structure()
     structure.effects.append(effect)
-    grid = grid_cpu.grid
+    grid = cpu.grid
     grid.cells[0][0].structures.append(structure)
     grid.cells[1][0].structures.append(structure)
     grid.structures.append(structure)
+    cpu.grid = histories._create_intermediate_grid(history)
 
-    grid_cpu.do_effects()
+    cpu.do_effects()
 
     assert spy.calls == 1
 
 class __GridSpy:
     calls: int = 0
     grids: list = []
-    grid_cpu: GridCPU = None
+    grid_cpu: CPU = None
     proper_grid_call = None
 
 
@@ -94,20 +96,21 @@ def grid_spy():
     yield __create_intermediate_grid, spy
 
 
-def test_intermediate_grids_are_created(grid_cpu, grid_spy):
+def test_intermediate_grids_are_created(cpu_with_history, grid_spy):
     callback, spy = grid_spy
-    spy.grid_cpu = grid_cpu
-    spy.proper_grid_call = grid_cpu._create_intermediate_grid
-    grid_cpu._create_intermediate_grid = callback
-    first_cell = grid_cpu.grid.cells[0][0]
+    cpu, history = cpu_with_history
+    spy.grid_cpu = cpu
+    spy.proper_grid_call = cpu._create_intermediate_grid
+    cpu._create_intermediate_grid = callback
+    first_cell = cpu.grid.cells[0][0]
     world_effect = lambda a, b, c: None
     effect = lambda a, b, c, d, e: None
-    grid_cpu.effects.append(world_effect)
-    grid_cpu.pop_effects.append(effect)
-    grid_cpu.pop_effects.append(effect)
-    grid_cpu.res_effects.append(effect)
+    cpu.effects.append(world_effect)
+    cpu.pop_effects.append(effect)
+    cpu.pop_effects.append(effect)
+    cpu.res_effects.append(effect)
 
-    grid_cpu.do_effects()
+    cpu.do_effects()
 
     assert spy.calls == 3
     third_cell = spy.grids[-2].cells[0][0]

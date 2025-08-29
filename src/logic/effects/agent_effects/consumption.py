@@ -82,6 +82,8 @@ def _count_food(pop_read):
     result = 0
     for resource in pop_read.owned_resources:
         if resource.type == "food":
+            if pop_read.name not in resource.owners.keys():
+                pass
             result += resource.owners[pop_read.name]
     return result
 

@@ -70,7 +70,7 @@ def _inputs_suffice_for(pop_read, cell_read, prototype, max_output):
 def _update_output(prototype, pop_write, cell_write, output):
     product = cell_write.get_res(prototype.name)
     if not product:
-        product = effects_util.factory.prototype_resource(prototype.name)
+        product = effects_util.factory.new_resource(prototype.name, cell_write)
 
     product.size += output
     ownership.add_ownership(pop_write, product, output)
